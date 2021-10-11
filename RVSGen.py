@@ -4,8 +4,8 @@ import regex as re
 
 class GenVerbSpace():
     def __init__(self):
-        self.Noun_Path = "action_annotation/noun_idx.txt"
-        self.Verb_Path = "action_annotation/verb_idx.txt"
+        self.Noun_Path = "data/action_annotation/noun_idx.txt"
+        self.Verb_Path = "data/action_annotation/verb_idx.txt"
         self.Noun_Space = pd.read_csv(self.Noun_Path,header=None)
         self.Verb_Space = pd.read_csv(self.Verb_Path,header=None)
         self.Splits = 3
@@ -39,7 +39,7 @@ class GenVerbSpace():
         for i in range(N):
             frequency=0
             for j in range(3):
-                train = pd.read_csv("Splits/train_split" + (str)(j+1)+".csv")
+                train = pd.read_csv("data/Splits/train_split" + (str)(j+1)+".csv")
                 frequency+=np.sum(train["Noun"]==Noun[i])
             P_Noun[Noun[i]] = frequency/totalSamples
         return P_Noun
@@ -51,7 +51,7 @@ class GenVerbSpace():
         for i in range(V):
             frequency=0
             for j in range(3):
-                train = pd.read_csv("Splits/train_split" + (str)(j+1)+".csv")
+                train = pd.read_csv("data/Splits/train_split" + (str)(j+1)+".csv")
                 frequency+=np.sum(train["Verb"]==Verb[i])
             P_Verb[Verb[i]] = frequency/totalSamples
         return P_Verb
@@ -64,7 +64,7 @@ class GenVerbSpace():
             for j in range(V):
                 frequency = 0
                 for k in range(3):
-                    train = pd.read_csv("Splits/train_split" + (str)(k+1)+".csv")
+                    train = pd.read_csv("data/Splits/train_split" + (str)(k+1)+".csv")
                     Combined = np.array(list(zip(train["Noun"],train["Verb"])))
                     frequency += np.sum(np.sum(Combined==(Noun[i],Verb[j]),axis=1)==2)
                 if frequency == 0:
@@ -77,6 +77,6 @@ class GenVerbSpace():
     def getTotalSamples(self):
         totalSamples=0
         for i in range(self.Splits):
-            train = pd.read_csv("Splits/train_split" + (str)(i+1) + ".csv")
+            train = pd.read_csv("data/Splits/train_split" + (str)(i+1) + ".csv")
             totalSamples+=len(train)
         return totalSamples
