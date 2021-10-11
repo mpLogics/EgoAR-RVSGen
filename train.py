@@ -147,7 +147,7 @@ class Train():
                 model.compiled_metrics.update_state(Y, y_pred)
                 Loss.append(loss)
                 print(Y)
-                print(y_pred.shape)
+                print(np.argmax(y_pred,axis=1))
                 print("Batch ",num_batches," training complete.")
                 print("Loss Value: ",loss.numpy())
                 print("Avg Loss: ",np.mean(np.array(Loss)))
