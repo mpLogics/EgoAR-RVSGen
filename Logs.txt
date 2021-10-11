@@ -1,0 +1,72 @@
+Error Detected 
+Time : 2021-07-04 13:59:12.863745
+Description: 'PreProcessing' object has no attribute 'alotBatch'Error Detected 
+Time : 2021-07-04 21:34:22.632331
+Description: [WinError 123] The filename, directory name, or volume label syntax is incorrect: 'preprocessed_data/*.*'
+
+Error Detected 
+Time : 2021-07-04 21:34:40.687176
+Description: [WinError 123] The filename, directory name, or volume label syntax is incorrect: 'preprocessed_data/*.*'
+
+Error Detected
+Time : 2021-07-04 22:31:10.373481
+Description: Logging error
+
+Error Detected
+Time : 2021-07-04 22:34:09.324932
+Description: name 'printf' is not defined
+
+Error Detected
+Time : 2021-07-10 16:24:19.903775
+Description: 'RGB'
+
+Error Detected
+Time : 2021-07-10 16:27:21.757459
+Description: 'RGB'
+
+Error Detected
+Time : 2021-07-10 16:30:22.549745
+Description: 'LoadData' object has no attribute 'loadRGBFrame'
+
+Error Detected
+Time : 2021-07-10 16:32:37.142699
+Description: 'Train' object has no attribute 'buildModel'
+
+Error Detected
+Time : 2021-07-10 16:33:37.309999
+Description: Expected binary or unicode string, got <module 'tensorflow.python.keras.applications.imagenet_utils' from 'C:\\Users\\prabh\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\tensorflow\\python\\keras\\applications\\imagenet_utils.py'>
+
+Error Detected
+Time : 2021-07-10 16:36:00.118154
+Description: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
+
+Error Detected
+Time : 2021-07-15 16:45:16.273375
+Description: OpenCV(4.5.1) C:\Users\appveyor\AppData\Local\Temp\1\pip-req-build-kh7iq4w7\opencv\modules\imgproc\src\color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cv::cvtColor'
+
+
+Error Detected
+Time : 2021-07-15 16:45:56.590697
+Description: OpenCV(4.5.1) C:\Users\appveyor\AppData\Local\Temp\1\pip-req-build-kh7iq4w7\opencv\modules\imgproc\src\color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cv::cvtColor'
+
+
+Error Detected
+Time : 2021-07-15 16:57:07.314379
+Description: OpenCV(4.5.1) C:\Users\appveyor\AppData\Local\Temp\1\pip-req-build-kh7iq4w7\opencv\modules\imgproc\src\color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cv::cvtColor'
+
+
+Error Detected
+Time : 2021-07-15 16:57:51.416315
+Description: OpenCV(4.5.1) C:\Users\appveyor\AppData\Local\Temp\1\pip-req-build-kh7iq4w7\opencv\modules\imgproc\src\color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cv::cvtColor'
+
+
+Error Detected
+Time : 2021-07-15 17:00:44.354279
+Description: OpenCV(4.5.1) C:\Users\appveyor\AppData\Local\Temp\1\pip-req-build-kh7iq4w7\opencv\modules\imgproc\src\color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cv::cvtColor'
+
+
+Error Detected
+Time : 2021-09-19 08:31:14.300311
+Description: OpenCV(4.5.3) C:\Users\runneradmin\AppData\Local\Temp\pip-req-build-sn_xpupm\opencv\modules\imgproc\src\color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cv::cvtColor'
+
+

@@ -1,0 +1,39 @@
+{
+"Configuration Values" : {
+
+    "setannotation" : {
+        "run_value": false,
+        "base_path":"data/"
+    },    
+    "preprocess" : {
+        "run_value": false
+    },    
+    "visualize" : {
+        "run_value": false,
+        "basepath": "data/video_clips/cropped_clips/",
+        "filepath": "OP02-R02-TurkeySandwich/OP02-R02-TurkeySandwich-339810-342610-F008149-F008229.mp4"
+    },    
+    "train" : {
+        "run_value": false,
+        "base_path":"data/",
+        "frames_to_be_extracted": 15,
+        "input_shape_x" : 299,
+        "input_shape_y" : 299,
+        "input_shape_z" : 3,
+        "base_trainable": false,
+        "batch_preprocess_size" : 200,
+        "Epochs" : 1,
+        "include_top" : false,
+        "modelWeights":"imagenet",
+        "pooling": {},
+        "activation" : "softmax",
+        "k_start" : 5,
+        "k_end" : 20,
+        "k_default" : 0
+        },
+        "RVSGen":{
+            "Noun_Path" : "data/action_annotation/noun_idx.txt",
+            "Verb_path" : "data/action_annotation/verb_idx.txt"
+        }
+    }
+}
