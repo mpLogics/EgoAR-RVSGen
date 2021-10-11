@@ -134,7 +134,8 @@ class Train():
                 X = np.array(Frame)
                 Y = tf.convert_to_tensor(Y_Noun)
                 print("Batch(es) read: ",num_batches,"\nBatch shape: ",X.shape,"\nFiles read = ",i)
-                
+                print(Y)
+                print(y_pred.shape)
                 if X.shape[0]!=self.batch_preprocess_size:
                     print("Anamoly at file ",i, " and Shape of X: ",X.shape())
                 
