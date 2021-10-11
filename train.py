@@ -90,6 +90,7 @@ class Train():
         print("Batch_size = ",self.batch_preprocess_size)
         Loss=[]
         i = -1
+        j = 0
         num_batches=0
         crt_batch = 0
         Frame=[]
@@ -159,7 +160,7 @@ class Train():
             if (num_batches+1)%30==0:
                 Visualizer.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
                 print((str)(i) + " examples trained")
-                j+=1
+                
     
         Visualizer.makePlot(Loss,caption = "Loss Curve",sloc="Loss_vs_Epoch_final.png")
         print("Length of loss: ",len(Loss))
