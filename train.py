@@ -144,9 +144,9 @@ class Train():
                 print("\nClasses covered in batch: ",np.count_nonzero(np.unique(np.array(Y_Noun))))
                 num_batches+=1
                 X = np.array(Frame)
-                Y = np.array(Y_Noun)
-                print(Y.shape)
-                exit()
+                Y = np.array(Y_Noun).reshape(np.array(Y_Noun).shape[0],1)
+                #print(Y.shape)
+                #exit()
                 print("Batch(es) read: ",num_batches,"\nBatch shape: ",X.shape,"\nFiles read = ",i)
 
                 if X.shape[0]!=self.batch_preprocess_size:
