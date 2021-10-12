@@ -90,8 +90,8 @@ class Train():
             loss = loss_func(Y,y_pred)
         gradients = Tape.gradient(loss,model.trainable_weights)
         optimizer.apply_gradients(zip(gradients, model.trainable_weights))
-        print("Loss: ",loss)
-        return loss,y_pred
+        #print("Loss: ",loss)
+        return loss
 
 
     def custom_train_model(self,loss_func,optimizer):
@@ -165,8 +165,7 @@ class Train():
                 #model.compiled_metrics.reset_states(Y,y_pred)
                 #model.compiled_metrics.update_state(Y, y_pred)
                 """
-                loss,y_pred = self.train_step(X = X,Y = Y,loss_func = loss_func,optimizer = optimizer,model=self.model)
-                print(y_pred)
+                print("Calculating ::",self.train_step(X = X,Y = Y,loss_func = loss_func,optimizer = optimizer,model=self.model))
                 Loss.append(loss)
                 #print(Y)
                 #print(np.argmax(y_pred,axis=1))
