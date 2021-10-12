@@ -74,7 +74,7 @@ class Train():
         self.classes = np.count_nonzero(GVS().getNounSet())
         self.input_shape = (120,160,3)
         self.base_trainable = False
-        self.include_top = False
+        self.include_top = False    
         self.modelWeights = "imagenet"
         self.pooling = None
         self.activation = "softmax"
@@ -144,6 +144,7 @@ class Train():
                 gradients = Tape.gradient(loss,model.trainable_weights)
                 print("Gradients: ",gradients)
                 print("Loss: ",loss)
+                print("Predicted values all: ",y_pred)
                 optimizer.apply_gradients(zip(gradients, model.trainable_weights))
                 #model.compiled_metrics.reset_states(Y,y_pred)
                 model.compiled_metrics.update_state(Y, y_pred)
