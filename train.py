@@ -84,7 +84,7 @@ class Train():
         self.model = "None"
     
     @tf.function
-    def train_step(self,x,y):
+    def train_step(self,X,Y,loss_func,optimizer):
         with tf.GradientTape() as Tape:
             y_pred = self.model(X,training=True)
             loss = loss_func(Y,y_pred)
@@ -162,7 +162,7 @@ class Train():
                 #model.compiled_metrics.reset_states(Y,y_pred)
                 #model.compiled_metrics.update_state(Y, y_pred)
                 """
-                loss,y_pred = self.train_step(X,Y)
+                loss,y_pred = self.train_step(X,Y,loss_func,optimizer)
                 Loss.append(loss)
                 print(Y)
                 print(np.argmax(y_pred,axis=1))
