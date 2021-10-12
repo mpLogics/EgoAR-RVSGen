@@ -162,7 +162,7 @@ class Train():
                 #model.compiled_metrics.reset_states(Y,y_pred)
                 #model.compiled_metrics.update_state(Y, y_pred)
                 """
-                loss,y_pred = self.train_step(x = X,y = Y,loss_func = loss_func,optimizer = optimizer)
+                loss,y_pred = self.train_step(X = X,Y = Y,loss_func = loss_func,optimizer = optimizer)
                 Loss.append(loss)
                 print(Y)
                 print(np.argmax(y_pred,axis=1))
