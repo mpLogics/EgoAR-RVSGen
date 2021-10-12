@@ -90,6 +90,7 @@ class Train():
             loss = loss_func(Y,y_pred)
         gradients = Tape.gradient(loss,model.trainable_weights)
         optimizer.apply_gradients(zip(gradients, model.trainable_weights))
+        print("Loss: ",loss)
         return loss,y_pred
 
 
@@ -167,12 +168,12 @@ class Train():
                 loss,y_pred = self.train_step(X = X,Y = Y,loss_func = loss_func,optimizer = optimizer,model=self.model)
                 print(y_pred.shape)
                 Loss.append(loss)
-                print(Y)
+                #print(Y)
                 #print(np.argmax(y_pred,axis=1))
                 print("Batch ",num_batches," training complete.")
-                print("Loss Value: ",loss.numpy())
-                print("Avg Loss: ",np.mean(np.array(Loss)))
-                print("Length of loss = ",len(Loss))
+                #print("Loss Value: ",loss)
+                #print("Avg Loss: ",np.mean(np.array(Loss)))
+                #print("Length of loss = ",len(Loss))
 
 
                     
