@@ -37,6 +37,7 @@ class Model():
         x = base_model(inputs)
         x = keras.layers.GlobalAveragePooling2D()(x)
         outputs = keras.layers.Dense(units=self.classes,
+                                     name="Predictions",
                                      kernel_regularizer=keras.regularizers.l1_l2(l1=1e-5,l2=1e-4),
                                      bias_regularizer=keras.regularizers.l2(1e-4),
                                      activity_regularizer=keras.regularizers.l2(1e-5))(x)
@@ -44,8 +45,8 @@ class Model():
         print("Total classes = ",self.classes)
         model = keras.Model(inputs,outputs)
         loss_func = keras.losses.SparseCategoricalCrossentropy()
-        optimizer = keras.optimizers.Adam(learning_rate=0.001,clipnorm=5)
-        model.compile(optimizer,loss_func,metrics = [keras.metrics.SparseCategoricalAccuracy()])
+        optimizer = keras.optimizers.Adam(learning_rate=0.001)
+        model.compile(optimizer,loss_func)
         model.summary()
         return model,loss_func,optimizer
 
@@ -80,8 +81,19 @@ class Train():
         self.activation = "softmax"
         self.inputTensor = None
         self.fix_frames = 15
+        self.model = "None"
     
-    def custom_train_model(self,model,loss_func,optimizer):
+    @tf.function
+    def train_step(self,x,y):
+        with tf.GradientTape() as Tape:
+            y_pred = self.model(X,training=True)
+            loss = loss_func(Y,y_pred)
+        gradients = Tape.gradient(loss,model.trainable_weights)
+        optimizer.apply_gradients(zip(gradients, model.trainable_weights))
+        return loss
+
+
+    def custom_train_model(self,loss_func,optimizer):
         L1 = LoadData()
         L1.train_test_splitNo = self.train_test_split 
         L1.batch_size = self.batch_preprocess_size
@@ -132,12 +144,13 @@ class Train():
                 print("\nClasses covered in batch: ",np.count_nonzero(np.unique(np.array(Y_Noun))))
                 num_batches+=1
                 X = np.array(Frame)
-                Y = tf.convert_to_tensor(Y_Noun)
+                Y = np.array(Y_Noun)
                 print("Batch(es) read: ",num_batches,"\nBatch shape: ",X.shape,"\nFiles read = ",i)
 
                 if X.shape[0]!=self.batch_preprocess_size:
                     print("Anamoly at file ",i, " and Shape of X: ",X.shape())
                 
+                """
                 with tf.GradientTape() as Tape:
                     y_pred = model(X,training=True)
                     loss = loss_func(Y,y_pred)
@@ -147,7 +160,9 @@ class Train():
                 print("Predicted values all: ",y_pred)
                 optimizer.apply_gradients(zip(gradients, model.trainable_weights))
                 #model.compiled_metrics.reset_states(Y,y_pred)
-                model.compiled_metrics.update_state(Y, y_pred)
+                #model.compiled_metrics.update_state(Y, y_pred)
+                """
+                loss,y_pred = train_step(X,Y)
                 Loss.append(loss)
                 print(Y)
                 print(np.argmax(y_pred,axis=1))
