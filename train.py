@@ -146,14 +146,12 @@ class Train():
                 num_batches+=1
                 X = np.array(Frame)
                 Y = tf.convert_to_tensor(np.array(Y_Noun)-1)
-                #print(Y.shape)
-                #exit()
                 print("Batch(es) read: ",num_batches,"\nBatch shape: ",X.shape,"\nFiles read = ",i)
 
                 if X.shape[0]!=self.batch_preprocess_size:
                     print("Anamoly at file ",i, " and Shape of X: ",X.shape())
                 
-                """
+                
                 with tf.GradientTape() as Tape:
                     y_pred = model(X,training=True)
                     loss = loss_func(Y,y_pred)
@@ -164,16 +162,14 @@ class Train():
                 optimizer.apply_gradients(zip(gradients, model.trainable_weights))
                 #model.compiled_metrics.reset_states(Y,y_pred)
                 #model.compiled_metrics.update_state(Y, y_pred)
-                """
-                loss = self.train_step(X = X,Y = Y,loss_func = loss_func,optimizer = optimizer,model=self.model)
-                print(loss)
+                
+                #loss = self.train_step(X = X,Y = Y,loss_func = loss_func,optimizer = optimizer,model=self.model)
                 Loss.append(loss)
-                #print(Y)
                 #print(np.argmax(y_pred,axis=1))
                 print("Batch ",num_batches," training complete.")
-                #print("Loss Value: ",loss)
-                #print("Avg Loss: ",np.mean(np.array(Loss)))
-                #print("Length of loss = ",len(Loss))
+                print("Loss Value: ",loss)
+                print("Avg Loss: ",np.mean(np.array(Loss)))
+                print("Length of loss = ",len(Loss))
 
 
                     
