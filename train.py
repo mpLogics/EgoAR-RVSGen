@@ -89,8 +89,7 @@ class Train():
         L1.batch_size = self.batch_preprocess_size
         totalSamples = L1.getTotal()
         print("Total samples = ",totalSamples)
-        print("Batch_size = ",self.batch_preprocess_size)
-        Loss=[]
+        #print("Batch_size = ",self.batch_preprocess_size)
         i = -1
         num_batches=0
         crt_batch = 0
@@ -100,12 +99,13 @@ class Train():
         access_order = [i for i in range(8299)]
         random.shuffle(access_order)
         plotter_flag=False
-        
+        Loss_per_epoch=[]
         
 
         for epochs in range(1,self.Epochs):
             if epochs%2==0:
                 model.save("model_checkpoints/RGB_"+(str)(epoch)+".h5")
+            Loss=[]
             while i<totalSamples-1:
                 if diff==0:
                     i+=1

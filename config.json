@@ -20,7 +20,7 @@
         "input_shape_x" : 299,
         "input_shape_y" : 299,
         "input_shape_z" : 3,
-        "base_trainable": false,
+        "base_trainable": true,
         "batch_preprocess_size" : 200,
         "Epochs" : 60,
         "include_top" : false,
