@@ -103,7 +103,7 @@ class Train():
         
         
 
-        for epochs in range(self.Epochs):
+        for epochs in range(1,self.Epochs):
             if epochs%2==0:
                 model.save("model_checkpoints/RGB_"+(str)(epoch)+".h5")
             while i<totalSamples-1:
