@@ -145,7 +145,7 @@ class Train():
                 print("\nClasses covered in batch: ",np.count_nonzero(np.unique(np.array(Y_Noun))))
                 num_batches+=1
                 X = np.array(Frame)
-                Y = tf.convert_to_tensor(Y_Noun)
+                Y = tf.convert_to_tensor(np.array(Y_Noun)-1)
                 #print(Y.shape)
                 #exit()
                 print("Batch(es) read: ",num_batches,"\nBatch shape: ",X.shape,"\nFiles read = ",i)
