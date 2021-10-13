@@ -155,11 +155,11 @@ class Train():
                 with tf.GradientTape() as Tape:
                     y_pred = self.model(X,training=True)
                     loss = loss_func(Y,y_pred)
-                gradients = Tape.gradient(loss,model.trainable_weights)
+                gradients = Tape.gradient(loss,self.model.trainable_weights)
                 print("Gradients: ",gradients)
                 print("Loss: ",loss)
                 print("Predicted values all: ",y_pred)
-                optimizer.apply_gradients(zip(gradients, model.trainable_weights))
+                optimizer.apply_gradients(zip(gradients, self.model.trainable_weights))
                 #model.compiled_metrics.reset_states(Y,y_pred)
                 #model.compiled_metrics.update_state(Y, y_pred)
                 
