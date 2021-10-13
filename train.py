@@ -132,11 +132,7 @@ class Train():
                     X = np.array(Frame)
                     Y = tf.convert_to_tensor(np.array(Y_Noun)-1)
                     print("Epoch",epochs,": Batch(es) read: ",num_batches)
-                    print("Epoch",epochs,": Files read = ",i)
-
-                    if X.shape[0]!=self.batch_preprocess_size:
-                        print("Anamoly at file ",i, " and Shape of X: ",X.shape())
-                    
+                    print("Epoch",epochs,": Files read = ",i)                   
                     
                     with tf.GradientTape() as Tape:
                         y_pred = self.model(X,training=True)
