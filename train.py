@@ -166,7 +166,8 @@ class Train():
                 #model.compiled_metrics.update_state(Y, y_pred)
                 """
                 loss = self.train_step(X = X,Y = Y,loss_func = loss_func,optimizer = optimizer,model=self.model)
-                Loss.append(loss.numpy())
+                print(loss)
+                Loss.append(loss)
                 #print(Y)
                 #print(np.argmax(y_pred,axis=1))
                 print("Batch ",num_batches," training complete.")
