@@ -153,7 +153,7 @@ class Train():
                 
                 
                 with tf.GradientTape() as Tape:
-                    y_pred = model(X,training=True)
+                    y_pred = self.model(X,training=True)
                     loss = loss_func(Y,y_pred)
                 gradients = Tape.gradient(loss,model.trainable_weights)
                 print("Gradients: ",gradients)
