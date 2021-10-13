@@ -131,7 +131,7 @@ class Train():
                     num_batches+=1
                     X = np.array(Frame)
                     Y = tf.convert_to_tensor(np.array(Y_Noun)-1)
-                    print("Batch(es) read: ",num_batches,"\nBatch shape: ",X.shape,"\nFiles read = ",i)
+                    print("Epoch ",epochs,": Batch(es) read: ",num_batches,"\nBatch shape: ",X.shape,"\nFiles read = ",i)
 
                     if X.shape[0]!=self.batch_preprocess_size:
                         print("Anamoly at file ",i, " and Shape of X: ",X.shape())
@@ -146,11 +146,10 @@ class Train():
                     Loss.append(loss)
 
                     #Printing logs
-                    print(np.argmax(y_pred,axis=1))
-                    print("Batch ",num_batches," training complete.")
-                    print("Loss Value: ",loss)
-                    print("Avg Loss: ",np.mean(np.array(Loss)))
-                    print("Length of loss = ",len(Loss))
+                    print("Epoch ",epochs,": Batch ",num_batches," training complete.")
+                    print("Epoch ",epochs,": Loss Value: ",loss)
+                    print("Epoch ",epochs,": Avg Loss: ",np.mean(np.array(Loss)))
+                    print("Epoch ",epochs,": Length of loss = ",len(Loss))
                         
                     Frame=[]
                     Y_Noun=[]

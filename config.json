@@ -22,7 +22,7 @@
         "input_shape_z" : 3,
         "base_trainable": false,
         "batch_preprocess_size" : 200,
-        "Epochs" : 1,
+        "Epochs" : 60,
         "include_top" : false,
         "modelWeights":"imagenet",
         "pooling": {},
