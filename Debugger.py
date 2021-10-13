@@ -55,6 +55,11 @@ config = ConfigProto()
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
 #t1.trainModel(model,loss_func,optimizer)
+
+print("Training metrics")
+print("Epochs: ",t1.Epochs)
+print("Batch Preprocess size: ",t1.batch_preprocess_size)
+
 t1.custom_train_model(loss_func=loss_func,optimizer=optimizer)
 
 session.close()

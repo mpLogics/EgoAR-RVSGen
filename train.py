@@ -9,7 +9,6 @@ from RVSGen import GenVerbSpace as GVS
 import pandas as pd
 import os
 import random
-
 from visualization import Visualizer
 import datetime
 
@@ -71,7 +70,7 @@ class Train():
         self.train_test_split = (("1","1"))
         self.model_save_path = ("saved_models")
         self.batch_preprocess_size = 25
-        self.Epochs = 1
+        self.Epochs = 60
         self.classes = np.count_nonzero(GVS().getNounSet())
         self.input_shape = (120,160,3)
         self.base_trainable = False
@@ -82,18 +81,8 @@ class Train():
         self.inputTensor = None
         self.fix_frames = 15
         self.model = "None"
+
     
-    @tf.function
-    def train_step(self,model,X,Y,loss_func,optimizer):
-        with tf.GradientTape() as Tape:
-            y_pred = model(X,training=True)
-            loss = loss_func(Y,y_pred)
-        gradients = Tape.gradient(loss,model.trainable_weights)
-        optimizer.apply_gradients(zip(gradients, model.trainable_weights))
-        #print("Loss: ",loss)
-        return loss
-
-
     def custom_train_model(self,loss_func,optimizer):
         L1 = LoadData()
         L1.train_test_splitNo = self.train_test_split 
@@ -103,7 +92,6 @@ class Train():
         print("Batch_size = ",self.batch_preprocess_size)
         Loss=[]
         i = -1
-        j = 0
         num_batches=0
         crt_batch = 0
         Frame=[]
@@ -111,201 +99,77 @@ class Train():
         diff=0
         access_order = [i for i in range(8299)]
         random.shuffle(access_order)
+        plotter_flag=False
         
-        while i<totalSamples-1:
-            if diff==0:
-                i+=1
-                try:
-                    #RGB,Noun,num_frames,interval_size = L1.load_file(access_order[i])
-                    RGB,Noun = L1.load_file(access_order[i])
-                    frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
-                    #print(access_order[i]," : ",frame_indices)
-                except Exception:
-                    print("File index" + (str)(i) + " could not be read.")
-                    i+=1
-            diff,crt_batch,Frame,Y_Noun = L1.random_frame_load(diff,self.batch_preprocess_size,
-                                                        crt_batch,
-                                                        Frame,Y_Noun,
-                                                        RGB,Noun,
-                                                        len(frame_indices),
-                                                        frame_indices)
-            #diff,crt_batch,Frame,Y_Noun = L1.load_data(diff,
-            #                                            self.batch_preprocess_size,
-            #                                            crt_batch,
-            #                                            Frame,Y_Noun,
-            #                                            RGB,Noun,
-            #                                            num_frames,interval_size)
-            #print(Frame.shape)
-            
-            if np.isnan(Frame).any():
-                print("Nan encountered. at file index",i)
-
-            if crt_batch == self.batch_preprocess_size  or i == totalSamples-1:
-                #print("\nBatch filled up moving on to next batch\n\n")
-                print("\nClasses covered in batch: ",np.count_nonzero(np.unique(np.array(Y_Noun))))
-                num_batches+=1
-                X = np.array(Frame)
-                Y = tf.convert_to_tensor(np.array(Y_Noun)-1)
-                print("Batch(es) read: ",num_batches,"\nBatch shape: ",X.shape,"\nFiles read = ",i)
-
-                if X.shape[0]!=self.batch_preprocess_size:
-                    print("Anamoly at file ",i, " and Shape of X: ",X.shape())
-                
-                
-                with tf.GradientTape() as Tape:
-                    y_pred = self.model(X,training=True)
-                    loss = loss_func(Y,y_pred)
-                gradients = Tape.gradient(loss,self.model.trainable_weights)
-                print("Gradients: ",gradients)
-                print("Loss: ",loss)
-                print("Predicted values all: ",y_pred)
-                optimizer.apply_gradients(zip(gradients, self.model.trainable_weights))
-                #model.compiled_metrics.reset_states(Y,y_pred)
-                #model.compiled_metrics.update_state(Y, y_pred)
-                
-                #loss = self.train_step(X = X,Y = Y,loss_func = loss_func,optimizer = optimizer,model=self.model)
-                Loss.append(loss)
-                #print(np.argmax(y_pred,axis=1))
-                print("Batch ",num_batches," training complete.")
-                print("Loss Value: ",loss)
-                print("Avg Loss: ",np.mean(np.array(Loss)))
-                print("Length of loss = ",len(Loss))
-
-
-                    
-                Frame=[]
-                Y_Noun=[]
-                crt_batch=0
-            
-            if (num_batches+1)%30==0:
-                Visualizer.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
-                print((str)(i) + " examples trained")
-                
-    
-        Visualizer.makePlot(Loss,caption = "Loss Curve",sloc="Loss_vs_Epoch_final.png")
-        print("Length of loss: ",len(Loss))
-        print("Model trained successfully")
         
 
-    
-    def train_step(self,model,X,Y,loss_func,optimizer):
-        with tf.GradientTape() as tape:
-            predictions = model(X)
-            loss_value = loss_func(Y,predictions)
-        
-        gradients = tape.gradient(loss_value,model.trainable_weights)
-        optimizer.apply_gradients(zip(gradients,model.trainable_weights))
-        return model,loss_value.numpy()
-
-
-    def trainModel(self,model,loss_func,optimizer):
-        L1 = LoadData()
-        L1.train_test_splitNo = self.train_test_split 
-        L1.batch_size = self.batch_preprocess_size
-        totalSamples = L1.getTotal()
-        
-        print(totalSamples)
-        Loss=[]
-        
-        for epochs in range(self.Epochs):
-            i = -1
-            j=0
-            crt_batch = 0
-            Frame=[]
-            Y_Noun=[]
-            diff=0
+        for epochs in self.Epochs:
+            if epochs%2==0:
+                model.save("model_checkpoints/RGB_"+(str)(epoch)+".h5")
             while i<totalSamples-1:
                 if diff==0:
                     i+=1
-                    j+=1
                     try:
-                        RGB,Noun,num_frames,interval_size = L1.load_file(i)
+                        #RGB,Noun,num_frames,interval_size = L1.load_file(access_order[i])
+                        RGB,Noun = L1.load_file(access_order[i])
+                        frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
                     except Exception:
                         print("File index" + (str)(i) + " could not be read.")
                         i+=1
-                
-                diff,crt_batch,Frame,Y_Noun = L1.load_data(diff,
-                                                            self.batch_preprocess_size,
+                diff,crt_batch,Frame,Y_Noun = L1.random_frame_load(diff,self.batch_preprocess_size,
                                                             crt_batch,
                                                             Frame,Y_Noun,
                                                             RGB,Noun,
-                                                            num_frames,interval_size)
+                                                            len(frame_indices),
+                                                            frame_indices)
                 
-                
+                if np.isnan(Frame).any():
+                    print("Nan encountered. at file index",i)
+
                 if crt_batch == self.batch_preprocess_size  or i == totalSamples-1:
-                    #print("\nBatch filled up moving on to next batch\n\n")
+                    print("\nClasses covered in batch: ",np.count_nonzero(np.unique(np.array(Y_Noun))))
+                    num_batches+=1
                     X = np.array(Frame)
-                    Y = np.array(Y_Noun)
+                    Y = tf.convert_to_tensor(np.array(Y_Noun)-1)
+                    print("Batch(es) read: ",num_batches,"\nBatch shape: ",X.shape,"\nFiles read = ",i)
+
                     if X.shape[0]!=self.batch_preprocess_size:
                         print("Anamoly at file ",i, " and Shape of X: ",X.shape())
+                    
+                    
+                    with tf.GradientTape() as Tape:
+                        y_pred = self.model(X,training=True)
+                        loss = loss_func(Y,y_pred)
+                    gradients = Tape.gradient(loss,self.model.trainable_weights)
+                    optimizer.apply_gradients(zip(gradients, self.model.trainable_weights))  
+                    plotter_flag=False
+                    Loss.append(loss)
 
-                    Loss.append(model.train_on_batch(x=X,y=Y,reset_metrics=False,return_dict=True)['loss'])
+                    #Printing logs
+                    print(np.argmax(y_pred,axis=1))
+                    print("Batch ",num_batches," training complete.")
+                    print("Loss Value: ",loss)
+                    print("Avg Loss: ",np.mean(np.array(Loss)))
+                    print("Length of loss = ",len(Loss))
+                        
                     Frame=[]
                     Y_Noun=[]
                     crt_batch=0
-                    
-                if j%100==0:
-                    print("Current Loss: ",Loss[-1])
-                    print("Avg Loss: ",np.mean(np.array(Loss)))
-                    print("Length of loss = ",len(Loss))
-                    Visualizer.makePlot(Loss,caption = "Loss Curve",sloc = "Graphs/Loss_vs_Epoch_" + (str)(j) + ".png")
+                
+                if (num_batches+1)%30==0 and plotter_flag!=True:
+                    Visualizer.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
                     print((str)(i) + " examples trained")
-                    j+=1
-        
-        Visualizer.makePlot(Loss,caption = "Loss Curve",sloc="Loss_vs_Epoch_.png")
-        print("Length of loss: ",len(Loss))
+                    plotter_flag=True
+                
+            Loss_per_epoch.append(np.mean(np.array(Loss)))
+            
+            if Loss_per_epoch[-1]-Loss_per_epoch[-2]==1e-4:
+                Visualizer.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epoch)+ ".png")
+                model.save('model_checkpoints/RGB_Noun.h5')
+                print("Model trained successfully")
+                break
+            Visualizer.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epoch)+ ".png")
+        model.save('model_checkpoints/RGB_Noun.h5')
         print("Model trained successfully")
-        session.close()
         
-        """
-        for epochs in range(self.Epochs):
-            for i in range(0,totalSamples,self.batch_preprocess_size):
-                X,Y = L1.load_train_RGBFrame(i)
-                Loss.append(model.train_on_batch(x=X,y=Y,reset_metrics=False,return_dict=True)['loss'])
-                
-                with tf.GradientTape() as tape:
-                    predictions = model(X)
-                    loss_value = loss_func(Y,np.argmax(np.array(predictions),axis=1))
-                    print(i)
-                
-                #print("Expected output: ",Y)
-                #print("Predicted Values: ",np.argmax(np.array(predictions),axis=1))
-                
-                gradients = tape.gradient(loss_value,model.trainable_weights)
-                optimizer.apply_gradients(zip(gradients,model.trainable_weights))
-
-                #loss_value, model = self.train_step(model,X,Y,loss_func,optimizer)
-                if loss_value.numpy()==NaN:
-                    print("Nan Loss Value encountered!")
-                    print((i-self.batch_preprocess_size,i))
-                    print("Predicted prob values: ",predictions)
-                    print("Expected output: ",Y)
-                    print("Predicted Values: ",np.argmax(np.array(predictions),axis=1))
-
-                Loss.append(loss_value)
-                
-                if i%500==0:
-                    print("Current Loss: ",Loss[-1])
-                    print("Avg Loss: ",np.mean(np.array(Loss)))
-                    print((str)(i) + " examples trained")
-                
-        #now = datetime.now()
-        Visualizer.makePlot(Loss,caption = "Loss Curve",sloc="Loss_vs_Epoch_.png")
-        #Visualizer.makePlot(Loss,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+(str)(now)+".png")
-        print("Length of loss: ",len(Loss))
-        print("Model trained successfully")
-        session.close()
-        
-        
-        try:
-            os.scandir(self.model_save_path+"/")
-            tf.saved_model.save(model,self.model_save_path)
-        except Exception:
-            os.mkdir(os.path.join(os.getcwd(),self.model_save_path))
-            tf.saved_model.save(model,self.model_save_path)
-        """
-        
-        return model
-
-
 
