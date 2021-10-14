@@ -167,7 +167,7 @@ class Train():
             Visualizer.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epoch)+ ".png")
         except Exception:
             print("Failed to print graph")
-        try
+        try:
             model.save('model_checkpoints/RGB_Noun.h5')
             print("Model trained successfully")
         except Exception:
