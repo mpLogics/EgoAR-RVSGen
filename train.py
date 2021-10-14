@@ -160,12 +160,12 @@ class Train():
             
             if epochs%2==0:
                 try:
-                    filename = "model_checkpoints/RGB_"+(str)(epoch)+".h5"
+                    filename = "model_checkpoints/RGB_"+(str)(epochs)+".h5"
                     model.save(filename)
                 except Exception:
                     print("Model Checkpoint save unsuccessful!")
         
-        Visualizer.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epoch)+ ".png")
+        Visualizer.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
         try:
             model.save('model_checkpoints/RGB_Noun.h5')
             print("Model trained successfully")
