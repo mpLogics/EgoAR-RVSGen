@@ -103,6 +103,7 @@ class Train():
         print("Total epochs :",self.Epochs)
 
         for epochs in range(1,self.Epochs+1):    
+            Loss=[]
             while i<totalSamples-1:
                 if diff==0:
                     i+=1
@@ -113,7 +114,7 @@ class Train():
                     except Exception:
                         print("File index" + (str)(i) + " could not be read.")
                         i+=1
-                        
+
                 diff,crt_batch,Frame,Y_Noun = L1.random_frame_load(diff,self.batch_preprocess_size,
                                                             crt_batch,
                                                             Frame,Y_Noun,
