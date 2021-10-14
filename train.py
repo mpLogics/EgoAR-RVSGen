@@ -100,16 +100,9 @@ class Train():
         random.shuffle(access_order)
         plotter_flag=False
         Loss_per_epoch=[]
-        
+        print("Total epochs :",self.Epochs)
 
-        for epochs in range(1,self.Epochs):
-            if epochs%2==0:
-                try:
-                    model.save("model_checkpoints/RGB_"+(str)(epoch)+".h5")
-                except Exception:
-                    print("Model Checkpoint save unsuccessful!")
-            
-            Loss=[]
+        for epochs in range(1,self.Epochs+1):    
             while i<totalSamples-1:
                 if diff==0:
                     i+=1
@@ -120,6 +113,7 @@ class Train():
                     except Exception:
                         print("File index" + (str)(i) + " could not be read.")
                         i+=1
+                        
                 diff,crt_batch,Frame,Y_Noun = L1.random_frame_load(diff,self.batch_preprocess_size,
                                                             crt_batch,
                                                             Frame,Y_Noun,
@@ -163,13 +157,16 @@ class Train():
                 
             Loss_per_epoch.append(np.mean(np.array(Loss)))
             
-        try:
-            Visualizer.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epoch)+ ".png")
-        except Exception:
-            print("Failed to print graph")
+            if epochs%2==0:
+                try:
+                    filename = "model_checkpoints/RGB_"+(str)(epoch)+".h5"
+                    model.save(filename)
+                except Exception:
+                    print("Model Checkpoint save unsuccessful!")
+        
+        Visualizer.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epoch)+ ".png")
         try:
             model.save('model_checkpoints/RGB_Noun.h5')
             print("Model trained successfully")
         except Exception:
             print("Model save unsuccessful")
-
