@@ -104,7 +104,11 @@ class Train():
 
         for epochs in range(1,self.Epochs):
             if epochs%2==0:
-                model.save("model_checkpoints/RGB_"+(str)(epoch)+".h5")
+                try:
+                    model.save("model_checkpoints/RGB_"+(str)(epoch)+".h5")
+                except Exception:
+                    print("Model Checkpoint save unsuccessful!")
+            
             Loss=[]
             while i<totalSamples-1:
                 if diff==0:
@@ -159,13 +163,13 @@ class Train():
                 
             Loss_per_epoch.append(np.mean(np.array(Loss)))
             
-            if Loss_per_epoch[-1]-Loss_per_epoch[-2]==1e-4:
-                Visualizer.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epoch)+ ".png")
-                model.save('model_checkpoints/RGB_Noun.h5')
-                print("Model trained successfully")
-                break
+        try:
             Visualizer.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epoch)+ ".png")
-        model.save('model_checkpoints/RGB_Noun.h5')
-        print("Model trained successfully")
-        
+        except Exception:
+            print("Failed to print graph")
+        try
+            model.save('model_checkpoints/RGB_Noun.h5')
+            print("Model trained successfully")
+        except Exception:
+            print("Model save unsuccessful")
 
