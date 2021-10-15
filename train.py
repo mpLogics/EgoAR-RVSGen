@@ -90,20 +90,22 @@ class Train():
         totalSamples = L1.getTotal()
         print("Total samples = ",totalSamples)
         #print("Batch_size = ",self.batch_preprocess_size)
-        i = -1
-        num_batches=0
-        crt_batch = 0
-        Frame=[]
-        Y_Noun=[]
-        diff=0
-        access_order = [i for i in range(8299)]
-        random.shuffle(access_order)
-        plotter_flag=False
         Loss_per_epoch=[]
         print("Total epochs :",self.Epochs)
 
         for epochs in range(1,self.Epochs+1):    
+            
+            i = -1
+            num_batches=0
+            crt_batch = 0
+            Frame=[]
+            Y_Noun=[]
+            diff=0
+            access_order = [i for i in range(8299)]
+            random.shuffle(access_order)
+            plotter_flag = False
             Loss=[]
+
             while i<totalSamples-1:
                 if diff==0:
                     i+=1
@@ -151,7 +153,7 @@ class Train():
                     Y_Noun=[]
                     crt_batch=0
                 
-                if (num_batches+1)%30==0 and plotter_flag!=True:
+                if (num_batches+1)%30==0 and plotter_flag==False:
                     Visualizer.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
                     print((str)(i) + " examples trained")
                     plotter_flag=True
