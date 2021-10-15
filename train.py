@@ -143,15 +143,12 @@ class Train():
                     plotter_flag=False
                     Loss.append(loss)
                     Prediction_values = np.argmax(y_pred,axis=1)
-                    print(Prediction_values.shape)
-                    print(Prediction_values)
-                    print(Y)
                     #Printing logs
                     print("Epoch",epochs,": Batch ",num_batches," training complete.")
                     print("Epoch",epochs,": Loss Value: ",loss)
                     print("Epoch",epochs,": Avg Loss: ",np.mean(np.array(Loss)))
                     print("Epoch",epochs,": Length of loss = ",len(Loss))
-                    print("Epoch",epochs,": Accuracy: ",np.sum(Prediction_values==Y))
+                    print("Epoch",epochs,": Accuracy: ",(np.sum(Prediction_values==Y)/self.batch_preprocess_size)*100)
                     
                     Frame=[]
                     Y_Noun=[]
