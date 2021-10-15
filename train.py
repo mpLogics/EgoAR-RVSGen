@@ -142,12 +142,14 @@ class Train():
                     optimizer.apply_gradients(zip(gradients, self.model.trainable_weights))  
                     plotter_flag=False
                     Loss.append(loss)
-
+                    Prediction_values = np.argmax(y_pred,axis=1)
+                    
                     #Printing logs
                     print("Epoch",epochs,": Batch ",num_batches," training complete.")
                     print("Epoch",epochs,": Loss Value: ",loss)
                     print("Epoch",epochs,": Avg Loss: ",np.mean(np.array(Loss)))
                     print("Epoch",epochs,": Length of loss = ",len(Loss))
+                    print("Epoch",epochs,": Accuracy: ",np.sum(Prediction_values==Y))
                         
                     Frame=[]
                     Y_Noun=[]
