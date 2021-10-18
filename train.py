@@ -36,10 +36,7 @@ class Model():
         x = base_model(inputs)
         x = keras.layers.GlobalAveragePooling2D()(x)
         outputs = keras.layers.Dense(units=self.classes,
-                                     name="Predictions",
-                                     kernel_regularizer=keras.regularizers.l1_l2(l1=1e-5,l2=1e-4),
-                                     bias_regularizer=keras.regularizers.l2(1e-4),
-                                     activity_regularizer=keras.regularizers.l2(1e-5))(x)
+                                     name="Predictions")(x)
     
         print("Total classes = ",self.classes)
         model = keras.Model(inputs,outputs)
