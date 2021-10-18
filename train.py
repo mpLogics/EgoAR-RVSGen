@@ -135,6 +135,8 @@ class Train():
                     print("Epoch",epochs,": Batch(es) read: ",num_batches)
                     print("Epoch",epochs,": Files read = ",i)                   
                     
+                    model.fit(X,Y,epochs=self.Epochs)
+                    
                     with tf.GradientTape() as Tape:
                         y_pred = self.model(X,training=True)
                         loss = loss_func(Y,y_pred)
