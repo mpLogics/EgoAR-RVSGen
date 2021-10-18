@@ -36,14 +36,14 @@ class Model():
         x = base_model(inputs)
         x = keras.layers.GlobalAveragePooling2D()(x)
         outputs = keras.layers.Dense(units=self.classes,
-                                     name="Predictions")(x)
+                                     name="Predictions",
+                                     kernel_regularizer=keras.regularizers.l1_l2(l1=1e-5,l2=1e-4),
+                                     bias_regularizer=keras.regularizers.l2(1e-4),
+                                     activity_regularizer=keras.regularizers.l2(1e-5))(x)
     
         print("Total classes = ",self.classes)
         model = keras.Model(inputs,outputs)
         loss_func = keras.losses.SparseCategoricalCrossentropy()
-        #lr_schedule = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=1e-2, decay_steps=10000, decay_rate=0.9)
-        #optimizer = keras.optimizers.SGD(learning_rate=lr_schedule)
-
         optimizer = keras.optimizers.Adam(learning_rate=0.001)
         model.compile(optimizer,loss_func)
         model.summary()

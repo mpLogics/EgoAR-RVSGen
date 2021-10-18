@@ -21,7 +21,7 @@
         "input_shape_y" : 299,
         "input_shape_z" : 3,
         "base_trainable": true,
-        "batch_preprocess_size" : 200,
+        "batch_preprocess_size" : 300,
         "Epochs" : 60,
         "include_top" : false,
         "modelWeights":"imagenet",
