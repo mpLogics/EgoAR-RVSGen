@@ -44,7 +44,10 @@ class Model():
         print("Total classes = ",self.classes)
         model = keras.Model(inputs,outputs)
         loss_func = keras.losses.SparseCategoricalCrossentropy()
-        optimizer = keras.optimizers.Adam(learning_rate=0.01)
+        lr_schedule = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=1e-2, decay_steps=10000, decay_rate=0.9)
+        optimizer = keras.optimizers.SGD(learning_rate=lr_schedule)
+
+        #optimizer = keras.optimizers.Adam(learning_rate=0.01)
         model.compile(optimizer,loss_func)
         model.summary()
         return model,loss_func,optimizer
