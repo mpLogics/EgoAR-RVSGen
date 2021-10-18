@@ -91,7 +91,6 @@ class Train():
         print("Total samples = ",totalSamples)
         #print("Batch_size = ",self.batch_preprocess_size)
         Loss_per_epoch=[]
-        print("Total epochs :",self.Epochs)
 
         for epochs in range(1,self.Epochs+1):    
             
@@ -135,7 +134,7 @@ class Train():
                     print("Epoch",epochs,": Batch(es) read: ",num_batches)
                     print("Epoch",epochs,": Files read = ",i)                   
                     
-                    model.fit(X,Y,epochs=self.Epochs)
+                    self.model.fit(X,Y,epochs=self.Epochs)
                     
                     with tf.GradientTape() as Tape:
                         y_pred = self.model(X,training=True)
