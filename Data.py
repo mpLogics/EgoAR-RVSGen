@@ -33,7 +33,7 @@ class LoadData():
                     crt_batch+=1
                     diff+=1
                     RGB_resized = cv2.resize(src=RGB[frame_indices[count]],dsize=self.input_shape)
-                    RGB_normalized = cv2.normalize(RGB_resized, None, alpha=-1, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+                    RGB_normalized = cv2.normalize(RGB_resized, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
                     Frame.append(RGB_normalized)
                     Y_Noun.append((int)(Noun[frame_indices[count]]))
             else:
@@ -52,7 +52,7 @@ class LoadData():
                 RGB_resized = cv2.resize(src=RGB[j],dsize=self.input_shape)
                 #RGB_normalized = np.zeros(self.input_shape)
                 #print(RGB_normalized)
-                RGB_normalized = cv2.normalize(RGB_resized, None, alpha=-1, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+                RGB_normalized = cv2.normalize(RGB_resized, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
                 #RGB_normalized = cv2.normalize(RGB_resized, RGB_normalized,-1,1,cv2.NORM_MINMAX)
                 #print(RGB_normalized)
                 Frame.append(RGB_normalized)
