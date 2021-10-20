@@ -193,7 +193,7 @@ class PreProcessing():
     def save_as_file(self,df,videoName,frames_removed):
 
         RGB = np.array(df["RGB"])[0][frames_removed:-frames_removed]
-        Action = np.array(df["Action"])[0][frames_removed:-frames_removed]
+        Action = np.array(df["Action"])[frames_removed:-frames_removed]
         Magnitude = np.array(df["Magnitude"])[0][frames_removed:-frames_removed]
         Noun = np.array(df["Noun"])[0][frames_removed:-frames_removed]
         Verb = np.array(df["Verb"])[0][frames_removed:-frames_removed]
