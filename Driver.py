@@ -8,7 +8,7 @@ from MessageLogging import StoreLogs
 config_file = open("config.json")
 config_values = json.load(config_file)["Configuration Values"]
 
-try:
+if True:
     if config_values["setannotation"]["runValue"]==True:
         base_path = input("Enter path to annotations folder. \n(For default path, enter DEFAULT \n (default path - current_dir/action_annotation/): ")
         SA = SetAnnotations()

@@ -9,7 +9,8 @@ from MessageLogging import StoreLogs
 class SetAnnotations():
 
     def __init__(self):
-        self.base = "action_annotation/"
+        self.root="data/"
+        self.base = self.root+"action_annotation/"
         self.totCombs=3
    
     def getXY(self,Data):
@@ -36,10 +37,10 @@ class SetAnnotations():
         AllFiles=[]
         
         try:
-            os.scandir("Splits/")
+            os.scandir(self.root + "Splits/")
         except FileNotFoundError:
             print("Directory not found, creating directory")
-            os.mkdir(os.path.join(os.getcwd(),"Splits"))
+            os.mkdir(os.path.join(os.getcwd(),self.root + "Splits"))
             
         
         for i in range(self.totCombs):
@@ -49,7 +50,7 @@ class SetAnnotations():
                 
             Split = pd.DataFrame(list(zip(X_dash,Y_dash1,Y_dash2,Y_dash3,Batch)))
             Split.columns=["FileName","Action","Verb","Noun","Batch_No"]    
-            Split.to_csv("Splits/train_split"+(str)(i+1)+".csv",index=False)
+            Split.to_csv(self.root + "Splits/train_split"+(str)(i+1)+".csv",index=False)
             
             AllFiles.append(X_dash)
             
@@ -58,7 +59,7 @@ class SetAnnotations():
             
             Split = pd.DataFrame(list(zip(X_dash,Y_dash1,Y_dash2,Y_dash3,Batch)))
             Split.columns=["FileName","Action","Verb","Noun","Batch_No"]
-            Split.to_csv("Splits/test_split"+(str)(i+1)+".csv",index=False) 
+            Split.to_csv(self.root+"Splits/test_split"+(str)(i+1)+".csv",index=False) 
     
     def run(self):
         self.txtToCSV()
@@ -66,12 +67,13 @@ class SetAnnotations():
 
 class PreProcessing():
     def __init__(self):
-        self.Split_path="Splits/"
+        self.root="data/"
+        self.Split_path = self.root + "Splits/"
         self.totCombs = 3
-        self.video_root_path="video_clips"
+        self.video_root_path = self.root + "video_clips"
         self.batch_size=15
         self.tiers=3
-        self.preprocess_save_path="preprocessed_data/"
+        self.preprocess_save_path = self.root + "preprocessed_data/"
         self.ext=".npz"
     
     def FindLabels(self,videoName,train,test):
@@ -207,16 +209,16 @@ class PreProcessing():
                     "Action": Action,
                     "Verb": Verb}  
             
-            sio.savemat("preprocessed_data/RGB/"+videoName+self.ext, mdic_RGB)
-            sio.savemat("preprocessed_data/OF/"+videoName+self.ext, mdic_OF)
+            sio.savemat(self.root+"preprocessed_data/RGB/"+videoName+self.ext, mdic_RGB)
+            sio.savemat(self.root+"preprocessed_data/OF/"+videoName+self.ext, mdic_OF)
         
         else:
-            np.savez("preprocessed_data/RGB/"+videoName+self.ext,
+            np.savez(self.root+"preprocessed_data/RGB/"+videoName+self.ext,
             a = RGB,
             b = Action,
             c = Noun)
 
-            np.savez("preprocessed_data/OF/"+videoName+self.ext,
+            np.savez(self.root+"preprocessed_data/OF/"+videoName+self.ext,
             a = Magnitude,
             b = Angle,
             c = Action,
@@ -226,9 +228,9 @@ class PreProcessing():
     def preProcess(self,train,test):
         Old_Files_Read_Complete=False
         try:
-            os.scandir("preprocessed_data/")
+            os.scandir(self.root+"preprocessed_data/")
         except FileNotFoundError:
-            os.mkdir("preprocessed_data")
+            os.mkdir(self.root+"preprocessed_data")
         
         df = pd.DataFrame()
         
