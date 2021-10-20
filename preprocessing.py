@@ -72,6 +72,7 @@ class PreProcessing():
         self.batch_size=15
         self.tiers=3
         self.preprocess_save_path="preprocessed_data/"
+        self.ext=".npz"
     
     def FindLabels(self,videoName,train,test):
         File_found_flag = False
@@ -169,6 +170,7 @@ class PreProcessing():
         
         cap.release()
         cap = cv2.VideoCapture(file_path)
+        frames_removed = (int)(0.1*len(RGB))
         df = pd.DataFrame()
         df["FileName"]=Name
         df["RGB"]=RGB
@@ -177,14 +179,49 @@ class PreProcessing():
         df["Action"]=np.array(Action)
         df["Verb"]=np.array(Verb)
         df["Noun"]=np.array(Noun)
-        return df
+        return df,frames_removed
     
     def searchFileExists(self,videoName):
-        value = videoName + ".mat"        
+        value = videoName + self.ext        
         if value in os.listdir(self.preprocess_save_path):
             return True
         else:
             return False
+
+    def save_as_file(self,df,videoName,frames_removed):
+
+        RGB = np.array(df["RGB"])[0][frames_removed:-frames_removed]
+        Action = np.array(df["Action"])[0][frames_removed:-frames_removed]
+        Magnitude = np.array(df["Magnitude"])[0][frames_removed:-frames_removed]
+        Noun = np.array(df["Noun"])[0][frames_removed:-frames_removed]
+        Verb = np.array(df["Verb"])[0][frames_removed:-frames_removed]
+        Angle = np.array(df["Angle"])[0][frames_removed:-frames_removed]
+
+        if self.ext==".mat":
+            mdic_RGB = {"RGB": RGB,
+                    "Action": Action,
+                    "Noun": Noun}
+
+            mdic_OF = {"Magnitude": Magnitude,
+                    "Angle": Angle,
+                    "Action": Action,
+                    "Verb": Verb}  
+            
+            sio.savemat("preprocessed_data/RGB/"+videoName+self.ext, mdic_RGB)
+            sio.savemat("preprocessed_data/OF/"+videoName+self.ext, mdic_OF)
+        
+        else:
+            np.savez("preprocessed_data/RGB/"+videoName+self.ext,
+            a = RGB,
+            b = Action,
+            c = Noun)
+
+            np.savez("preprocessed_data/OF/"+videoName+self.ext,
+            a = Magnitude,
+            b = Angle,
+            c = Action,
+            d = Verb)
+        
 
     def preProcess(self,train,test):
         Old_Files_Read_Complete=False
@@ -208,31 +245,15 @@ class PreProcessing():
                     
                     if File_Found == True: 
                         if Old_Files_Read_Complete:
-                            df = self.storeData(videoName,file_path,Y)
-                            mdic = {"FileName": np.array(df["FileName"]),
-                                    "RGB": np.array(df["RGB"]),
-                                    "Magnitude": np.array(df["Magnitude"]),
-                                    "Angle": np.array(df["Angle"]),
-                                    "Action": np.array(df["Action"]),
-                                    "Verb": np.array(df["Verb"]),
-                                    "Noun": np.array(df["Noun"])}  
-                                
-                            sio.savemat("preprocessed_data/"+videoName+".mat", mdic)
+                            df,frames_removed = self.storeData(videoName,file_path,Y)
+                            save_as_file(df,videoName,frames_removed)
                         else:
                             if self.searchFileExists(videoName)==False:
                                 print("Old Files read successful, will now begin saving new files.")
-                                print("Last file read: "+videoName+".mat")
+                                print("Last file read: "+videoName+self.ext)
                                 Old_Files_Read_Complete=True
-                                df = self.storeData(videoName,file_path,Y)
-                                mdic = {"FileName": np.array(df["FileName"]),
-                                        "RGB": np.array(df["RGB"]),
-                                        "Magnitude": np.array(df["Magnitude"]),
-                                        "Angle": np.array(df["Angle"]),
-                                        "Action": np.array(df["Action"]),
-                                        "Verb": np.array(df["Verb"]),
-                                        "Noun": np.array(df["Noun"])}  
-                                    
-                                sio.savemat("preprocessed_data/"+videoName+".mat", mdic)
+                                df,frames_removed = self.storeData(videoName,file_path,Y)
+                                save_as_file(df,videoName,frames_removed)
                     else:
                         pass    
                             

@@ -6,7 +6,7 @@
         "base_path":"data/"
     },    
     "preprocess" : {
-        "run_value": false
+        "run_value": true
     },    
     "visualize" : {
         "run_value": false,
