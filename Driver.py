@@ -7,7 +7,7 @@ from MessageLogging import StoreLogs
 
 config_file = open("config.json")
 config_values = json.load(config_file)["Configuration Values"]
-
+data_root = "data/"
 #try:
 if config_values["setannotation"]["run_value"]==True:
     base_path = input("Enter path to annotations folder. \n(For default path, enter DEFAULT \n (default path - current_dir/action_annotation/): ")
@@ -24,8 +24,8 @@ if config_values["preprocess"]["run_value"]==True:
     test = []
 
     for i in range(3):
-        train.append(pd.read_csv("Splits/train_split" + (str)(i+1) +".csv"))
-        test.append(pd.read_csv("Splits/test_split" + (str)(i+1) +".csv"))
+        train.append(pd.read_csv(data_root+"Splits/train_split" + (str)(i+1) +".csv"))
+        test.append(pd.read_csv(data_root+"Splits/test_split" + (str)(i+1) +".csv"))
     preProcessed_Data = PreProcessing()
     preProcessed_Data.preProcess(train,test)    
     preProcessed_Data.batch_size = 15
