@@ -248,14 +248,14 @@ class PreProcessing():
                     if File_Found == True: 
                         if Old_Files_Read_Complete:
                             df,frames_removed = self.storeData(videoName,file_path,Y)
-                            save_as_file(df,videoName,frames_removed)
+                            self.save_as_file(df,videoName,frames_removed)
                         else:
                             if self.searchFileExists(videoName)==False:
                                 print("Old Files read successful, will now begin saving new files.")
                                 print("Last file read: "+videoName+self.ext)
                                 Old_Files_Read_Complete=True
                                 df,frames_removed = self.storeData(videoName,file_path,Y)
-                                save_as_file(df,videoName,frames_removed)
+                                self.save_as_file(df,videoName,frames_removed)
                     else:
                         pass    
                             
