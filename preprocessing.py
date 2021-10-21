@@ -184,9 +184,9 @@ class PreProcessing():
         return df,frames_removed
     
     def searchFileExists(self,videoName):
-        value = videoName + self.ext        
-        print("Searching in ",self.preprocess_save_path)
-        if value in os.listdir(self.preprocess_save_path):
+        value = videoName + self.ext 
+        if value in os.listdir(self.preprocess_save_path+"RGB/") and value in os.listdir(self.preprocess_save_path+"OF/"):
+            print("File found")
             return True
         else:
             return False
