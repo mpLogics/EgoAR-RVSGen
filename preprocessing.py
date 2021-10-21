@@ -185,6 +185,7 @@ class PreProcessing():
     
     def searchFileExists(self,videoName):
         value = videoName + self.ext        
+        print("Searching in ",self.preprocess_save_path)
         if value in os.listdir(self.preprocess_save_path):
             return True
         else:
