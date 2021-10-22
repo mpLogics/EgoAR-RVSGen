@@ -19,6 +19,7 @@ class LoadData():
     
     def load_file(self,i,modality):
         file_path = "data/preprocessed_data/" + modality + self.train["FileName"][i] + ".npz"
+        print(filepath)
         RGB = np.load(file_path)["RGB"][0]
         Noun = np.load(file_path)["Noun"][0]    
         #num_frames = (int)(len(RGB)*(self.sample_rate)) + 1
