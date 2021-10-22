@@ -18,12 +18,12 @@ class LoadData():
 
     
     def load_file(self,i,modality):
-        file_path = "data/preprocessed_data/" + modality + self.train["FileName"][i] + ".npz"
-        RGB = np.load(file_path)["RGB"][0]
-        Noun = np.load(file_path)["Noun"][0]    
+        file_path = "data/preprocessed_data/" + modality + "/" + self.train["FileName"][i] + ".npz"
+        modal = np.load(file_path)["RGB"][0]
+        Annotation = np.load(file_path)["Noun"][0]    
         #num_frames = (int)(len(RGB)*(self.sample_rate)) + 1
         #interval_size = round((int)(len(RGB)/num_frames))
-        return RGB,Noun #num_frames,interval_size
+        return modal,Annotation #num_frames,interval_size
 
     
     def random_frame_load(self,diff,max_batch_size,crt_batch,Frame,Y_Noun,RGB,Noun,num_frames,frame_indices):
