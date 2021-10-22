@@ -19,8 +19,8 @@ class LoadData():
     
     def load_file(self,i,modality):
         file_path = "data/preprocessed_data/" + modality + "/" + self.train["FileName"][i] + ".npz"
-        modal = np.load(file_path)["RGB"][0]
-        Annotation = np.load(file_path)["Noun"][0]    
+        modal = np.load(file_path,allow_pickle=True)["a"][0]
+        Annotation = np.load(file_path,allow_pickle=True)["c"][0]    
         #num_frames = (int)(len(RGB)*(self.sample_rate)) + 1
         #interval_size = round((int)(len(RGB)/num_frames))
         return modal,Annotation #num_frames,interval_size
