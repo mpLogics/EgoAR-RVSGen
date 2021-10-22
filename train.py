@@ -119,10 +119,9 @@ class Train():
             while i<totalSamples-1:
                 if diff==0:
                     i+=1
-                    RGB,Noun = L1.load_file(access_order[i])
                     try:
                         #RGB,Noun,num_frames,interval_size = L1.load_file(access_order[i])
-                        RGB,Noun = L1.load_file(access_order[i])
+                        RGB,Noun = L1.load_file(access_order[i],modality="RGB")
                         frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
                     except Exception:
                         print("File index" + (str)(i) + " could not be read.")
