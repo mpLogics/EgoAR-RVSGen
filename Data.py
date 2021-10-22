@@ -17,10 +17,10 @@ class LoadData():
         self.sample_rate = 0.1
 
     
-    def load_file(self,i):
-        file_path = "data/preprocessed_data/" + self.train["FileName"][i] + ".mat"
-        RGB = sio.loadmat(file_path)["RGB"][0]
-        Noun = sio.loadmat(file_path)["Noun"][0]    
+    def load_file(self,i,modality):
+        file_path = "data/preprocessed_data/" + modality + self.train["FileName"][i] + ".npz"
+        RGB = np.load(file_path)["RGB"][0]
+        Noun = np.load(file_path)["Noun"][0]    
         #num_frames = (int)(len(RGB)*(self.sample_rate)) + 1
         #interval_size = round((int)(len(RGB)/num_frames))
         return RGB,Noun #num_frames,interval_size
