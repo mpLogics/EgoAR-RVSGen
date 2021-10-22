@@ -119,6 +119,7 @@ class Train():
             while i<totalSamples-1:
                 if diff==0:
                     i+=1
+                    RGB,Noun = L1.load_file(access_order[i])
                     try:
                         #RGB,Noun,num_frames,interval_size = L1.load_file(access_order[i])
                         RGB,Noun = L1.load_file(access_order[i])
