@@ -15,7 +15,7 @@ import datetime
 class Model():
     def __init__(self):
         self.input_shape = (120,160,3)
-        self.classes = np.count_nonzero(GVS().getNounSet())
+        self.classes = 51
         self.base_trainable = False
         self.include_top = False
         self.modelWeights = "imagenet"
@@ -83,6 +83,17 @@ class Train():
         self.model = "None"
 
     
+    def getCorrected(Y):
+        Y_corrected = np.copy(Y)
+        for i in range(Y.shape[0]):
+            if Y[i]<=15:
+                Y_corrected[i]-=1
+            elif Y[i]>15 and Y[i]<=43:
+                Y_corrected[i]-=2
+            else:
+                Y_corrected[i]-=3
+        return Y_corrected
+
     def custom_train_model(self,loss_func,optimizer):
         L1 = LoadData()
         L1.train_test_splitNo = self.train_test_split 
@@ -130,7 +141,8 @@ class Train():
                     print("\nClasses covered in batch: ",np.count_nonzero(np.unique(np.array(Y_Noun))))
                     num_batches+=1
                     X = np.array(Frame)
-                    Y = tf.convert_to_tensor(np.array(Y_Noun)-1)
+                    Y_corrected = getCorrected(np.array(Y_Noun))
+                    Y = tf.convert_to_tensor(Y_corrected)
                     print("Epoch",epochs,": Batch(es) read: ",num_batches)
                     print("Epoch",epochs,": Files read = ",i)                   
                     
