@@ -124,6 +124,8 @@ class Train():
                         #RGB,Noun,num_frames,interval_size = L1.load_file(access_order[i])
                         RGB,Noun = L1.load_file(access_order[i],modality="RGB")
                         frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
+                        print(frame_indices)
+                        print(Noun)
                     except Exception:
                         print("File index" + (str)(i) + " could not be read.")
                         i+=1
