@@ -83,7 +83,7 @@ class Train():
         self.model = "None"
 
     
-    def getCorrected(Y):
+    def getCorrected(self,Y):
         Y_corrected = np.copy(Y)
         for i in range(Y.shape[0]):
             if Y[i]<=15:
