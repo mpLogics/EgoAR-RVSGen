@@ -124,10 +124,10 @@ class Train():
                         #RGB,Noun,num_frames,interval_size = L1.load_file(access_order[i])
                         RGB,Noun = L1.load_file(access_order[i],modality="RGB")
                         frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
-                        print("Length of RGB: ",len(RGB))
-                        print("Length of Noun: ",len(Noun))
-                        print("Frame indices: ",frame_indices)
-                        print("Noun: ",Noun)
+                        #print("Length of RGB: ",len(RGB))
+                        #print("Length of Noun: ",len(Noun))
+                        #print("Frame indices: ",frame_indices)
+                        #print("Noun: ",Noun)
                     except Exception:
                         print("File index" + (str)(i) + " could not be read.")
                         i+=1
@@ -146,7 +146,7 @@ class Train():
                     print("\nClasses covered in batch: ",np.count_nonzero(np.unique(np.array(Y_Noun))))
                     num_batches+=1
                     X = np.array(Frame)
-                    Y_corrected = getCorrected(np.array(Y_Noun))
+                    Y_corrected = self.getCorrected(np.array(Y_Noun))
                     Y = tf.convert_to_tensor(Y_corrected)
                     print("Epoch",epochs,": Batch(es) read: ",num_batches)
                     print("Epoch",epochs,": Files read = ",i)                   
