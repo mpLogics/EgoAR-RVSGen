@@ -230,7 +230,7 @@ class Train():
                 if np.isnan(Frame).any():
                     print("Nan encountered. at file index",i)
 
-                L1.read_frames(i)
+                Frame,Y_Noun = L1.read_frames(i)
                 i+=self.num_classes_total
                 if crt_batch == self.batch_preprocess_size  or i == totalSamples-1 or True:
                     print("\nClasses covered in batch: ",np.count_nonzero(np.unique(np.array(Y_Noun))))
