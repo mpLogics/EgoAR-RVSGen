@@ -83,7 +83,7 @@ class Data_Access():
             index-=3
         return index
 
-    def get_index_lists(self):
+    def get_index_lists(self,df):
 
         num_samples_list = []
         IndexLists = []
