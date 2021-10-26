@@ -67,7 +67,7 @@ class Filter():
 
 class Data_Access():
     def __init__(self):
-        self.df = pd.read_csv("Splits/train_split1.csv")
+        self.df = pd.read_csv("data/Splits/train_split1.csv")
         self.range_classes = 53
         self.random_flag = True
         self.num_classes_total = 51
