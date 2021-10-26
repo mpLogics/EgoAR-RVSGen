@@ -30,7 +30,7 @@ class LoadData():
     
     def read_frames(self,i,access_order,num_classes_total):    
         for j in range(i,i+num_classes_total):
-            RGB,Noun = L1.load_file(access_order[j],modality="RGB")
+            RGB,Noun = self.load_file(access_order[j],modality="RGB")
             frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
             for k in range(self.fix_frames):
                 RGB_resized = cv2.resize(src=RGB[frame_indices[count]],dsize=self.input_shape)
