@@ -107,7 +107,7 @@ class Data_Access():
 
     def get_access_order(self,IndexLists,sorted_indices,sorted_classes):
         print("Obtaining access order")
-        print("Random generation - Flag: ",random_flag)
+        print("Random generation - Flag: ",self.random_flag)
         access_order=[]
         marked_indices = []
         if random_flag:
