@@ -131,7 +131,7 @@ class Data_Access():
     def build_order(self):
         df1 = pd.read_csv("data/Splits/train_split1.csv")
         df2 = df1.groupby(by="Noun")
-        num_samples_list,IndexLists = get_index_lists(df2)
+        num_samples_list,IndexLists = self.get_index_lists(df2)
         num_samples=[]
         class_samples=[]
         
