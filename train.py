@@ -235,7 +235,7 @@ class Train():
                 
                 i+=self.num_classes_total
                 if crt_batch == self.batch_preprocess_size  or i == totalSamples-1 or True:
-                    print("\nClasses covered in batch: ",np.count_nonzero(np.unique(np.array(Y_Noun))))
+                    print("\nClasses covered in batch: ",(np.unique(np.array(Y_Noun))).shape[0])
                     num_batches+=1
                     X = np.array(Frame)
                     Y_corrected = self.getCorrected(np.array(Y_Noun))
@@ -244,7 +244,7 @@ class Train():
                     print("Epoch",epochs,": Files read = ",i)                   
                     
                     self.model.fit(X,Y,epochs=self.Epochs)
-                    
+                    """
                     with tf.GradientTape() as Tape:
                         y_pred = self.model(X,training=True)
                         loss = loss_func(Y,y_pred)
@@ -259,7 +259,7 @@ class Train():
                     print("Epoch",epochs,": Avg Loss: ",np.mean(np.array(Loss)))
                     print("Epoch",epochs,": Length of loss = ",len(Loss))
                     print("Epoch",epochs,": Accuracy: ",(np.sum(Prediction_values==Y)/self.batch_preprocess_size)*100)
-                    
+                    """
                     Frame=[]
                     Y_Noun=[]
                     crt_batch=0
