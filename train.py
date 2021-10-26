@@ -65,6 +65,91 @@ class Filter():
     #    GVS.RVSGen(self.P_Noun_Verb,self.P_Noun,self.P_Verb,V,Noun_Pred,K_Value,self.Verb)
     #self.Noun = pd.read_csv
 
+class Data_Access():
+    def __init__(self):
+        self.df = pd.read_csv("Splits/train_split1.csv")
+        self.range_classes = 53
+        self.random_flag = True
+        self.num_classes_total = 51
+    
+    def get_corrected(self,index):
+        if index==16 or index==44:
+            return -1
+        elif index <=15:
+            index-=1
+        elif index >15 and index<=43:
+            index-=2
+        else:
+            index-=3
+        return index
+
+    def get_index_lists(self):
+
+        num_samples_list = []
+        IndexLists = []
+        IgnoreSet = [16,44]
+        
+        for i in range(1,54):
+            if i in IgnoreSet:
+                pass
+            else:
+                num_samples_list.append((i,len(list(self.df.get_group(i).index))))
+                IndexLists.append(list(self.df.get_group(i).index))
+        
+        return num_samples_list,IndexLists
+
+    def shuffle_indices(self,IndexLists):
+        
+        for i in range(len(IndexLists)):
+            random.shuffle(IndexLists[i])
+        
+        return IndexLists
+
+    def get_access_order(self,IndexLists,sorted_indices,sorted_classes):
+        print("Obtaining access order")
+        print("Random generation - Flag: ",random_flag)
+        access_order=[]
+        marked_indices = []
+        if random_flag:
+            index_lists = shuffle_indices(IndexLists)
+        else:
+            index_lists = IndexLists
+            
+        old_min_samples=0
+        for k in range(sorted_indices.shape[0]):
+            min_samples = sorted_indices[k]
+            for j in range(old_min_samples,min_samples):
+                for i in range(1,self.range_classes+1):
+                    if i not in marked_indices:
+                        corrected_sample_value = get_corrected(i)
+                        if corrected_sample_value!=-1:
+                            access_order.append(index_lists[corrected_sample_value][j])
+            marked_indices.append(sorted_classes[k])
+            old_min_samples=min_samples
+        return access_order
+    
+    def build_order(self):
+        df1 = pd.read_csv("data/Splits/train_split1.csv")
+        df2 = df1.groupby(by="Noun")
+        num_samples_list,IndexLists = get_index_lists(df2)
+        num_samples=[]
+        class_samples=[]
+        
+        for i in range(len(num_samples_list)):
+            num_samples.append(num_samples_list[i][1])
+            class_samples.append(num_samples_list[i][0])
+            
+        dtype = [('class', int), ('num_frames', int)]
+        values = [num_samples_list]
+        class_sample_pairs = np.array(values, dtype=dtype)
+        sorted_class_sample_pairs = np.sort(class_sample_pairs,order='num_frames')
+        sorted_indices = np.array([sorted_class_sample_pairs[0][i][1] for i in range(len(values[0]))])
+        sorted_classes = np.array([sorted_class_sample_pairs[0][i][0] for i in range(len(values[0]))])
+        
+        return self.get_access_order(IndexLists,sorted_indices,sorted_classes)
+
+
+
 class Train():
     def __init__(self):
         self.train_test_split = (("1","1"))
@@ -81,7 +166,6 @@ class Train():
         self.inputTensor = None
         self.fix_frames = 15
         self.model = "None"
-
     
     def getCorrected(self,Y):
         Y_corrected = np.copy(Y)
@@ -93,6 +177,7 @@ class Train():
             else:
                 Y_corrected[i]-=3
         return Y_corrected
+    
 
     def custom_train_model(self,loss_func,optimizer):
         L1 = LoadData()
@@ -111,12 +196,14 @@ class Train():
             Frame=[]
             Y_Noun=[]
             diff=0
-            access_order = [i for i in range(8299)]
-            random.shuffle(access_order)
+            #access_order = [i for i in range(8299)]
+            #random.shuffle(access_order)
+            access_order = Data_Access().build_order()
             plotter_flag = False
             Loss=[]
 
             while i<totalSamples-1:
+                """
                 if diff==0:
                     i+=1
                     RGB,Noun = L1.load_file(access_order[i],modality="RGB")
@@ -139,10 +226,13 @@ class Train():
                                                             len(frame_indices),
                                                             frame_indices)
                 
+                """
                 if np.isnan(Frame).any():
                     print("Nan encountered. at file index",i)
 
-                if crt_batch == self.batch_preprocess_size  or i == totalSamples-1:
+                L1.read_frames(i)
+                i+=self.num_classes_total
+                if crt_batch == self.batch_preprocess_size  or i == totalSamples-1 or True:
                     print("\nClasses covered in batch: ",np.count_nonzero(np.unique(np.array(Y_Noun))))
                     num_batches+=1
                     X = np.array(Frame)

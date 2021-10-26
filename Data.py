@@ -5,6 +5,7 @@ import cv2
 import os
 
 class LoadData():
+    
     def __init__(self):
         self.base_input_path = "data/preprocessed_data/"
         self.train_test_splitNo = (("1","1"))
@@ -15,8 +16,10 @@ class LoadData():
         self.test = pd.read_csv(self.test_split)
         self.input_shape = (299,299)
         self.sample_rate = 0.1
+        self.fix_frames = 10
+        self.num_classes_total = 51
 
-    
+
     def load_file(self,i,modality):
         file_path = "data/preprocessed_data/" + modality + "/" + self.train["FileName"][i] + ".npz"
         modal = np.load(file_path,allow_pickle=True)["a"]
@@ -24,6 +27,17 @@ class LoadData():
         #num_frames = (int)(len(RGB)*(self.sample_rate)) + 1
         #interval_size = round((int)(len(RGB)/num_frames))
         return modal,Annotation #num_frames,interval_size
+    
+    def read_frames(self,i,access_order,frame_indices,num_classes_total):    
+        for j in range(i,i+num_classes_total):
+            RGB,Noun = L1.load_file(access_order[j],modality="RGB")
+            frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
+            for k in range(self.fix_frames):
+                RGB_resized = cv2.resize(src=RGB[frame_indices[count]],dsize=self.input_shape)
+                RGB_normalized = cv2.normalize(RGB_resized, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+                Frame.append(RGB_normalized)
+                Y_Noun.append((int)(Noun[frame_indices[count]]))
+        return Frame, Y_Noun
 
     
     def random_frame_load(self,diff,max_batch_size,crt_batch,Frame,Y_Noun,RGB,Noun,num_frames,frame_indices):
