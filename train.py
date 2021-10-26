@@ -44,7 +44,7 @@ class Model():
         print("Total classes = ",self.classes)
         model = keras.Model(inputs,outputs)
         loss_func = keras.losses.SparseCategoricalCrossentropy()
-        optimizer = keras.optimizers.Adam(learning_rate=0.001)
+        optimizer = keras.optimizers.Adam(learning_rate=0.00001)
         model.compile(optimizer,loss_func)
         model.summary()
         return model,loss_func,optimizer
