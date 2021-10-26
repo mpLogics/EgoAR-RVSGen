@@ -33,7 +33,7 @@ class LoadData():
         for j in range(i,i+num_classes_total):
             RGB,Noun = self.load_file(access_order[j],modality="RGB")
             frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
-            for k in range(self.fix_frames):
+            for count in range(self.fix_frames):
                 RGB_resized = cv2.resize(src=RGB[frame_indices[count]],dsize=self.input_shape)
                 RGB_normalized = cv2.normalize(RGB_resized, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
                 Frame.append(RGB_normalized)
