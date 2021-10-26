@@ -110,7 +110,7 @@ class Data_Access():
         print("Random generation - Flag: ",self.random_flag)
         access_order=[]
         marked_indices = []
-        if random_flag:
+        if self.random_flag:
             index_lists = shuffle_indices(IndexLists)
         else:
             index_lists = IndexLists
