@@ -166,6 +166,7 @@ class Train():
         self.inputTensor = None
         self.fix_frames = 15
         self.model = "None"
+        self.num_classes_total = 51
     
     def getCorrected(self,Y):
         Y_corrected = np.copy(Y)
