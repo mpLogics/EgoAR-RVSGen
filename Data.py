@@ -28,7 +28,7 @@ class LoadData():
         #interval_size = round((int)(len(RGB)/num_frames))
         return modal,Annotation #num_frames,interval_size
     
-    def read_frames(self,i,access_order,frame_indices,num_classes_total):    
+    def read_frames(self,i,access_order,num_classes_total):    
         for j in range(i,i+num_classes_total):
             RGB,Noun = L1.load_file(access_order[j],modality="RGB")
             frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
