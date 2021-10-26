@@ -111,7 +111,7 @@ class Data_Access():
         access_order=[]
         marked_indices = []
         if self.random_flag:
-            index_lists = shuffle_indices(IndexLists)
+            index_lists = self.shuffle_indices(IndexLists)
         else:
             index_lists = IndexLists
             
@@ -121,7 +121,7 @@ class Data_Access():
             for j in range(old_min_samples,min_samples):
                 for i in range(1,self.range_classes+1):
                     if i not in marked_indices:
-                        corrected_sample_value = get_corrected(i)
+                        corrected_sample_value = self.get_corrected(i)
                         if corrected_sample_value!=-1:
                             access_order.append(index_lists[corrected_sample_value][j])
             marked_indices.append(sorted_classes[k])
