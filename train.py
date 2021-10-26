@@ -93,8 +93,8 @@ class Data_Access():
             if i in IgnoreSet:
                 pass
             else:
-                num_samples_list.append((i,len(list(self.df.get_group(i).index))))
-                IndexLists.append(list(self.df.get_group(i).index))
+                num_samples_list.append((i,len(list(df.get_group(i).index))))
+                IndexLists.append(list(df.get_group(i).index))
         
         return num_samples_list,IndexLists
 
