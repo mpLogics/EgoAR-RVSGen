@@ -30,6 +30,8 @@ class LoadData():
         return modal,Annotation #num_frames,interval_size
     
     def read_frames(self,i,access_order,num_classes_total):    
+        Frame=[]
+        Y_Noun=[]
         for j in range(i,i+num_classes_total):
             RGB,Noun = self.load_file(access_order[j],modality="RGB")
             frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
