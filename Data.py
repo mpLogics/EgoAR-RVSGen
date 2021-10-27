@@ -25,7 +25,7 @@ class LoadData():
         file_path = "data/preprocessed_data/" + modality + "/" + self.train["FileName"][i] + ".npz"
         modal = np.load(file_path,allow_pickle=True)["a"]
         Annotation = np.load(file_path,allow_pickle=True)["c"]
-        print("File Name": self.train["FileName"][i])
+        print("File Name: ",self.train["FileName"][i])
         print(modal.shape)
         print(modal[0].shape)
         print(Annotation)
