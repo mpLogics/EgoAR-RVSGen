@@ -35,6 +35,7 @@ class Model():
         inputs = keras.Input(shape=self.input_shape)
         x = base_model(inputs)
         x = keras.layers.GlobalAveragePooling2D()(x)
+        x = keras.layers.Flatten()(x)
         outputs = keras.layers.Dense(units=self.classes,
                                      name="Predictions",
                                      kernel_regularizer=keras.regularizers.l1_l2(l1=1e-5,l2=1e-4),

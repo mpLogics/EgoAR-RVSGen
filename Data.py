@@ -25,10 +25,6 @@ class LoadData():
         file_path = "data/preprocessed_data/" + modality + "/" + self.train["FileName"][i] + ".npz"
         modal = np.load(file_path,allow_pickle=True)["a"]
         Annotation = np.load(file_path,allow_pickle=True)["c"]
-        print("File Name: ",self.train["FileName"][i])
-        print(modal.shape)
-        print(modal[0].shape)
-        print(Annotation)
         return modal,Annotation
     
     def read_frames(self,i,access_order,num_classes_total):    
@@ -40,8 +36,6 @@ class LoadData():
             for count in range(self.fix_frames):
                 RGB_resized = cv2.resize(src=RGB[frame_indices[count]],dsize=self.input_shape)
                 RGB_normalized = cv2.normalize(RGB_resized, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
-                print(RGB_normalized)
-                print(Noun[frame_indices[count]])
                 Frame.append(RGB_normalized)
                 Y_Noun.append((int)(Noun[frame_indices[count]]))
         return Frame, Y_Noun
