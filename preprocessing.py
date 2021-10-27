@@ -99,35 +99,6 @@ class PreProcessing():
                 File_found_flag = True
         return yVals,File_found_flag
     
-    """
-    def alotBatch(self,videoName,batch_no,train,test):
-        File_found_flag = False
-        yVals = np.zeros((1,3))
-        for i in range(self.totCombs):  
-            if np.count_nonzero(train[i]["FileName"]==videoName) == 0:
-                if np.count_nonzero(test[i]["FileName"]==videoName) == 0:
-                    break
-                else:
-                    test[i].loc[test[i]["FileName"].str.contains(videoName),['Batch_No']] = batch_no
-                    df = test[i].loc[test[i]["FileName"].str.contains(videoName)]
-                    df = df.reset_index()
-                    yVals[0][0] = df['Action'][0]
-                    yVals[0][1] = df['Verb'][0]
-                    yVals[0][2] = df['Noun'][0]
-                    File_found_flag = True
-            else:
-                train[i].loc[train[i]["FileName"].str.contains(videoName),['Batch_No']] = batch_no
-                df = train[i].loc[train[i]["FileName"].str.contains(videoName)]
-                df = df.reset_index()
-                yVals[0][0] = df['Action'][0]
-                yVals[0][1] = df['Verb'][0]
-                yVals[0][2] = df['Noun'][0]
-                File_found_flag = True
-                    #df_train.to_csv("Splits/train_split"+(str)(j+1)+".csv",index=False)
-        return train,test,yVals,File_found_flag 
-    """
-    
-
     def obtainOpticalFlow(self,frame,prev_gray):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         flow = cv2.calcOpticalFlowFarneback(prev_gray, gray,None,0.5, 3, 15, 3, 5, 1.2, 0)
