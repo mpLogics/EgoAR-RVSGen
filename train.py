@@ -188,7 +188,8 @@ class Train():
         Loss_per_epoch=[]
         access_order = Data_Access().build_order()
         
-        
+        print(self.model.summary())
+
         for epochs in range(1,self.Epochs+1):    
             print("Epoch: ",epochs)
             i = 0
@@ -199,36 +200,16 @@ class Train():
             diff=0
             plotter_flag = False
             Loss=[]
-            print(self.model.summary())
+            Accuracy=[]
+            Val_Loss=[]
+            Val_Acc=[]
             while i<totalSamples-1:
-                """
-                if diff==0:
-                    i+=1
-                    RGB,Noun = L1.load_file(access_order[i],modality="RGB")
-                    try:
-                        #RGB,Noun,num_frames,interval_size = L1.load_file(access_order[i])
-                        RGB,Noun = L1.load_file(access_order[i],modality="RGB")
-                        frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
-                        #print("Length of RGB: ",len(RGB))
-                        #print("Length of Noun: ",len(Noun))
-                        #print("Frame indices: ",frame_indices)
-                        #print("Noun: ",Noun)
-                    except Exception:
-                        print("File index" + (str)(i) + " could not be read.")
-                        i+=1
-
-                diff,crt_batch,Frame,Y_Noun = L1.random_frame_load(diff,self.batch_preprocess_size,
-                                                            crt_batch,
-                                                            Frame,Y_Noun,
-                                                            RGB,Noun,
-                                                            len(frame_indices),
-                                                            frame_indices)
-                
-                """
                 if np.isnan(Frame).any():
                     print("Nan encountered. at file index",i)
-
-                Frame,Y_Noun = L1.read_frames(i,access_order,self.num_classes_total)
+                try:
+                    Frame,Y_Noun = L1.read_frames(i,access_order,self.num_classes_total)
+                except Exception:
+                    print("Error reading files from index: ",i)
                 
                 i+=self.num_classes_total
                 if crt_batch == self.batch_preprocess_size  or i == totalSamples-1 or True:
@@ -240,40 +221,42 @@ class Train():
                     print("Batch(es) read: ",num_batches)
                     print("Files read = ",i)                   
                     
-                    self.model.fit(X,Y,epochs=1,validation_split=0.1)
-                    """
-                    with tf.GradientTape() as Tape:
-                        y_pred = self.model(X,training=True)
-                        loss = loss_func(Y,y_pred)
-                    gradients = Tape.gradient(loss,self.model.trainable_weights)
-                    optimizer.apply_gradients(zip(gradients, self.model.trainable_weights))  
-                    plotter_flag=False
-                    Loss.append(loss)
-                    Prediction_values = np.argmax(y_pred,axis=1)
-                    #Printing logs
-                    print("Epoch",epochs,": Batch ",num_batches," training complete.")
-                    print("Epoch",epochs,": Loss Value: ",loss)
-                    print("Epoch",epochs,": Avg Loss: ",np.mean(np.array(Loss)))
-                    print("Epoch",epochs,": Length of loss = ",len(Loss))
-                    print("Epoch",epochs,": Accuracy: ",(np.sum(Prediction_values==Y)/self.batch_preprocess_size)*100)
-                    """
+                    history = self.model.fit(X,Y,epochs=1,validation_split=0.1)
+                    try:
+                        model.save("Noun_Predictor")
+                        print("Model save successful (within epoch)!")
+                    except Exception:
+                        print("Model save unsuccessful")
+                    
+                    #Storing Metrics
+                    Loss.append(history['loss'])
+                    Accuracy.append(history['acc'])
+                    Val_Loss.append(history['val_loss'])
+                    Val_Acc.append(history['val_acc'])
+                    
+                    #Displaying Metrics
+                    print("Average Loss: ",np.mean(np.array(Loss)))
+                    print("Average Accuracy: ",np.mean(np.array(Accuracy)))
+                    print("Average Validation Loss: ",np.mean(np.array(Val_Loss)))
+                    print("Average Validation Accuracy: ",np.mean(np.array(Val_Acc)))
+                    
                     Frame=[]
                     Y_Noun=[]
                     crt_batch=0
-                
-                if (num_batches+1)%30==0 and plotter_flag==False:
-                    Visualizer.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
-                    print((str)(i) + " examples trained")
-                    plotter_flag=True
+                try:
+                    if (num_batches+1)%30==0 and plotter_flag==False:
+                        Visualizer.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
+                        print((str)(i) + " examples trained")
+                        plotter_flag=True
+                except Exception:
+                    print("Plot saving unsuccessful!")
                 
             Loss_per_epoch.append(np.mean(np.array(Loss)))
-            
-            if epochs%2==0:
-                try:
-                    filename = "model_checkpoints/RGB_"+(str)(epochs)+".h5"
-                    model.save(filename)
-                except Exception:
-                    print("Model Checkpoint save unsuccessful!")
+            try:
+                model.save("Noun_Predictor")
+                print("Model save successful!")
+            except Exception:
+                print("Model save unsuccessful")
         
         Visualizer.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
         try:
