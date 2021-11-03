@@ -223,7 +223,7 @@ class Train():
                     
                     history = self.model.fit(X,Y,epochs=1,validation_split=0.1)
                     print(history.history)
-                    model.save("Noun_Predictor")
+                    self.model.save("Noun_Predictor")
                     print("Model save successful (within epoch)!")
                     
                     #Storing Metrics
