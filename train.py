@@ -31,8 +31,7 @@ class Model():
         
         base_model.trainable = self.base_trainable
         inputs = keras.Input(shape=self.input_shape)
-        print(base_model.output)
-        x = base_model.output
+        x = base_model.output(inputs)
         x = keras.layers.GlobalAveragePooling2D()(x)
         outputs = keras.layers.Dense(units=self.classes,name="Predictions",activation="softmax")(x)
         #outputs = keras.layers.Dense(units=self.classes,
