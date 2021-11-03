@@ -46,7 +46,7 @@ class Model():
         model = keras.Model(inputs,outputs)
         loss_func = keras.losses.SparseCategoricalCrossentropy()
         optimizer = keras.optimizers.Adam(learning_rate=0.0001)
-        model.compile(optimizer,loss_func)
+        model.compile(optimizer,loss_func,metrics=["accuracy"])
         model.summary()
         return model,loss_func,optimizer
 
@@ -187,23 +187,21 @@ class Train():
         L1.batch_size = self.batch_preprocess_size
         totalSamples = L1.getTotal()
         print("Total samples = ",totalSamples)
-        #print("Batch_size = ",self.batch_preprocess_size)
         Loss_per_epoch=[]
-
+        access_order = Data_Access().build_order()
+        
+        
         for epochs in range(1,self.Epochs+1):    
-            
             i = 0
             num_batches=0
             crt_batch = 0
             Frame=[]
             Y_Noun=[]
             diff=0
-            #access_order = [i for i in range(8299)]
-            #random.shuffle(access_order)
-            access_order = Data_Access().build_order()
+            print(access_order)
             plotter_flag = False
             Loss=[]
-
+            
             while i<totalSamples-1:
                 """
                 if diff==0:
