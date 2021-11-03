@@ -26,12 +26,12 @@ class Model():
     def buildModel(self):
         base_model = keras.applications.InceptionV3(
             include_top=self.include_top,weights=self.modelWeights,
-            input_tensor=self.inputTensor,input_shape=self.input_shape,
+            input_tensor=Input(shape=(self.input_shape)),input_shape=self.input_shape,
             pooling=self.pooling,classes=self.classes)
         
         base_model.trainable = self.base_trainable
-        inputs = keras.Input(shape=self.input_shape)
-        x = base_model.output(inputs)
+        #inputs = keras.Input(shape=self.input_shape)
+        x = base_model.output
         x = keras.layers.GlobalAveragePooling2D()(x)
         outputs = keras.layers.Dense(units=self.classes,name="Predictions",activation="softmax")(x)
         #outputs = keras.layers.Dense(units=self.classes,
@@ -42,7 +42,7 @@ class Model():
         #                             activity_regularizer=keras.regularizers.l2(1e-5))(x)
     
         print("Total classes = ",self.classes)
-        model = keras.Model(inputs,outputs)
+        model = keras.Model(base_model.input,outputs)
         loss_func = keras.losses.SparseCategoricalCrossentropy()
         optimizer = keras.optimizers.Adam(learning_rate=0.0001)
         model.compile(optimizer,loss_func,metrics=["accuracy"])
