@@ -240,8 +240,8 @@ class Train():
                     print("Epoch",epochs,": Batch(es) read: ",num_batches)
                     print("Epoch",epochs,": Files read = ",i)                   
                     
-                    self.model.fit(X,Y,epochs=self.Epochs,validation_split=0.2)
-                    """
+                    #self.model.fit(X,Y,epochs=self.Epochs,validation_split=0.2)
+                    
                     with tf.GradientTape() as Tape:
                         y_pred = self.model(X,training=True)
                         loss = loss_func(Y,y_pred)
@@ -256,7 +256,6 @@ class Train():
                     print("Epoch",epochs,": Avg Loss: ",np.mean(np.array(Loss)))
                     print("Epoch",epochs,": Length of loss = ",len(Loss))
                     print("Epoch",epochs,": Accuracy: ",(np.sum(Prediction_values==Y)/self.batch_preprocess_size)*100)
-                    """
                     Frame=[]
                     Y_Noun=[]
                     crt_batch=0
