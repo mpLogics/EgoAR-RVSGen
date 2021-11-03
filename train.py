@@ -191,7 +191,7 @@ class Train():
         Val_Acc_per_epoch=[]
         access_order = Data_Access().build_order()
         #print(self.model.summary())
-
+        train_succ=False
         for epochs in range(1,self.Epochs+1):    
             print("Epoch:",epochs)
             i = 0
@@ -232,19 +232,25 @@ class Train():
                 
                 
                 # Training batch
-                history = self.model.fit(X,Y,epochs=1,validation_split=0.1)
+                try:
+                    history = self.model.fit(X,Y,epochs=1,validation_split=0.1)
+                    train_succ=True
+                except Exception:
+                    print("Unsuccessful training for",i)
+                    train_succ=False
                 
-                # Storing Metrics
-                Loss.append(history.history['loss'])
-                Accuracy.append(history.history['accuracy'])
-                Val_Loss.append(history.history['val_loss'])
-                Val_Acc.append(history.history['val_accuracy'])
+                if train_succ==True:
+                    # Collecting Metrics
+                    Loss.append(history.history['loss'])
+                    Accuracy.append(history.history['accuracy'])
+                    Val_Loss.append(history.history['val_loss'])
+                    Val_Acc.append(history.history['val_accuracy'])
                 
-                # Displaying Metrics
-                print("Average Loss: ",np.mean(np.array(Loss)))
-                print("Average Accuracy: ",np.mean(np.array(Accuracy)))
-                print("Average Validation Loss: ",np.mean(np.array(Val_Loss)))
-                print("Average Validation Accuracy: ",np.mean(np.array(Val_Acc)))
+                    # Displaying Metrics
+                    print("Average Loss: ",np.mean(np.array(Loss)))
+                    print("Average Accuracy: ",np.mean(np.array(Accuracy)))
+                    print("Average Validation Loss: ",np.mean(np.array(Val_Loss)))
+                    print("Average Validation Accuracy: ",np.mean(np.array(Val_Acc)))
                 
                 Frame=[]
                 Y_Noun=[]
