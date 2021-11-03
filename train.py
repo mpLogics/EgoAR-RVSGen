@@ -190,6 +190,7 @@ class Train():
         
         
         for epochs in range(1,self.Epochs+1):    
+            print("Epoch: ",epochs)
             i = 0
             num_batches=0
             crt_batch = 0
@@ -235,10 +236,9 @@ class Train():
                     num_batches+=1
                     X = np.array(Frame)
                     Y_corrected = self.getCorrected(np.array(Y_Noun))
-                    print(Y_corrected)
                     Y = tf.convert_to_tensor(Y_corrected)
-                    print("Epoch",epochs,": Batch(es) read: ",num_batches)
-                    print("Epoch",epochs,": Files read = ",i)                   
+                    print("Batch(es) read: ",num_batches)
+                    print("Files read = ",i)                   
                     
                     self.model.fit(X,Y,epochs=1,validation_split=0.1)
                     """
