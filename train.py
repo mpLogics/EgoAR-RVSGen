@@ -27,20 +27,19 @@ class Model():
         base_model = keras.applications.InceptionV3(
             include_top=self.include_top,weights=self.modelWeights,
             input_tensor=self.inputTensor,input_shape=self.input_shape,
-            pooling=self.pooling,classes=self.classes,
-            classifier_activation="softmax",
-        )
+            pooling=self.pooling,classes=self.classes)
         
         base_model.trainable = self.base_trainable
         inputs = keras.Input(shape=self.input_shape)
-        x = base_model(inputs)
+        x = base_model.output
         x = keras.layers.GlobalAveragePooling2D()(x)
-        x = keras.layers.Flatten()(x)
-        outputs = keras.layers.Dense(units=self.classes,
-                                     name="Predictions",
-                                     kernel_regularizer=keras.regularizers.l1_l2(l1=1e-5,l2=1e-4),
-                                     bias_regularizer=keras.regularizers.l2(1e-4),
-                                     activity_regularizer=keras.regularizers.l2(1e-5))(x)
+        outputs = keras.layers.Dense(units=self.classes,name="Predictions",activation="softmax")
+        #outputs = keras.layers.Dense(units=self.classes,
+        #                             name="Predictions",
+        #                             activation = "softmax",
+        #                             kernel_regularizer=keras.regularizers.l1_l2(l1=1e-5,l2=1e-4),
+        #                             bias_regularizer=keras.regularizers.l2(1e-4),
+        #                             activity_regularizer=keras.regularizers.l2(1e-5))(x)
     
         print("Total classes = ",self.classes)
         model = keras.Model(inputs,outputs)
@@ -241,7 +240,7 @@ class Train():
                     print("Epoch",epochs,": Batch(es) read: ",num_batches)
                     print("Epoch",epochs,": Files read = ",i)                   
                     
-                    self.model.fit(X,Y,epochs=self.Epochs)
+                    self.model.fit(X,Y,epochs=self.Epochs,validation_split=0.2)
                     """
                     with tf.GradientTape() as Tape:
                         y_pred = self.model(X,training=True)
