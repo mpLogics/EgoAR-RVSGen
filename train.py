@@ -14,7 +14,7 @@ import datetime
 
 class Model():
     def __init__(self):
-        self.input_shape = (120,160,3)
+        self.input_shape = (299,299,3)
         self.classes = 51
         self.base_trainable = False
         self.include_top = False
@@ -47,7 +47,6 @@ class Model():
         loss_func = keras.losses.SparseCategoricalCrossentropy()
         optimizer = keras.optimizers.Adam(learning_rate=0.0001)
         model.compile(optimizer,loss_func,metrics=["accuracy"])
-        model.summary()
         return model,loss_func,optimizer
 
 class Filter():
@@ -198,10 +197,9 @@ class Train():
             Frame=[]
             Y_Noun=[]
             diff=0
-            print(access_order)
             plotter_flag = False
             Loss=[]
-            
+            print(self.model.summary())
             while i<totalSamples-1:
                 """
                 if diff==0:
@@ -238,6 +236,7 @@ class Train():
                     num_batches+=1
                     X = np.array(Frame)
                     Y_corrected = self.getCorrected(np.array(Y_Noun))
+                    print(Y_corrected)
                     Y = tf.convert_to_tensor(Y_corrected)
                     print("Epoch",epochs,": Batch(es) read: ",num_batches)
                     print("Epoch",epochs,": Files read = ",i)                   
