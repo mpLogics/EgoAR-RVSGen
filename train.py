@@ -26,7 +26,7 @@ class Model():
     def buildModel(self):
         base_model = keras.applications.InceptionV3(
             include_top=self.include_top,weights=self.modelWeights,
-            input_tensor=Input(shape=(self.input_shape)),input_shape=self.input_shape,
+            input_tensor=self.inputTensor,input_shape=self.input_shape,
             pooling=self.pooling,classes=self.classes)
         
         base_model.trainable = self.base_trainable
