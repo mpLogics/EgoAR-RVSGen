@@ -186,9 +186,11 @@ class Train():
         totalSamples = L1.getTotal()
         print("Total samples = ",totalSamples)
         Loss_per_epoch=[]
+        Accuracy_per_epoch=[]
+        Val_Loss_per_epoch=[]
+        Val_Acc_per_epoch=[]
         access_order = Data_Access().build_order()
-        
-        print(self.model.summary())
+        #print(self.model.summary())
 
         for epochs in range(1,self.Epochs+1):    
             print("Epoch:",epochs)
@@ -203,6 +205,7 @@ class Train():
             Accuracy=[]
             Val_Loss=[]
             Val_Acc=[]
+            
             while i<totalSamples-1:
                 if np.isnan(Frame).any():
                     print("Nan encountered. at file index",i)
@@ -212,35 +215,40 @@ class Train():
                     print("Error reading files from index: ",i)
                 
                 i+=self.num_classes_total
-                if crt_batch == self.batch_preprocess_size  or i == totalSamples-1 or True:
-                    print("\nClasses covered in batch: ",(np.unique(np.array(Y_Noun))).shape[0])
-                    num_batches+=1
-                    X = np.array(Frame)
-                    Y_corrected = self.getCorrected(np.array(Y_Noun))
-                    Y = tf.convert_to_tensor(Y_corrected)
-                    print("Batch(es) read: ",num_batches)
-                    print("Files read = ",i)                   
-                    
-                    history = self.model.fit(X,Y,epochs=1,validation_split=0.1)
-                    print(history.history)
-                    self.model.save("Noun_Predictor")
-                    print("Model save successful (within epoch)!")
-                    
-                    #Storing Metrics
-                    Loss.append(history.history['loss'])
-                    Accuracy.append(history.history['acc'])
-                    Val_Loss.append(history.history['val_loss'])
-                    Val_Acc.append(history.history['val_acc'])
-                    
-                    #Displaying Metrics
-                    print("Average Loss: ",np.mean(np.array(Loss)))
-                    print("Average Accuracy: ",np.mean(np.array(Accuracy)))
-                    print("Average Validation Loss: ",np.mean(np.array(Val_Loss)))
-                    print("Average Validation Accuracy: ",np.mean(np.array(Val_Acc)))
-                    
-                    Frame=[]
-                    Y_Noun=[]
-                    crt_batch=0
+
+                #if crt_batch == self.batch_preprocess_size  or i == totalSamples-1 or True:
+                
+                # Logs
+                print("\nClasses covered in batch: ",(np.unique(np.array(Y_Noun))).shape[0])
+                print("Batch(es) read: ",num_batches)
+                print("Files read = ",i)                   
+
+                num_batches+=1
+                
+                # Setting X and Y for training
+                X = np.array(Frame)
+                Y_corrected = self.getCorrected(np.array(Y_Noun))
+                Y = tf.convert_to_tensor(Y_corrected)
+                
+                
+                # Training batch
+                history = self.model.fit(X,Y,epochs=1,validation_split=0.1)
+                
+                # Storing Metrics
+                Loss.append(history.history['loss'])
+                Accuracy.append(history.history['accuracy'])
+                Val_Loss.append(history.history['val_loss'])
+                Val_Acc.append(history.history['val_accuracy'])
+                
+                # Displaying Metrics
+                print("Average Loss: ",np.mean(np.array(Loss)))
+                print("Average Accuracy: ",np.mean(np.array(Accuracy)))
+                print("Average Validation Loss: ",np.mean(np.array(Val_Loss)))
+                print("Average Validation Accuracy: ",np.mean(np.array(Val_Acc)))
+                
+                Frame=[]
+                Y_Noun=[]
+                crt_batch=0
                 try:
                     if (num_batches+1)%30==0 and plotter_flag==False:
                         Visualizer.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
@@ -250,11 +258,16 @@ class Train():
                     print("Plot saving unsuccessful!")
                 
             Loss_per_epoch.append(np.mean(np.array(Loss)))
-            try:
-                model.save("Noun_Predictor")
-                print("Model save successful!")
-            except Exception:
-                print("Model save unsuccessful")
+            Accuracy_per_epoch.append(np.mean(np.array(Accuracy)))
+            Val_Loss_per_epoch.append(np.mean(np.array(Val_Loss)))
+            Val_Acc_per_epoch.append(np.mean(np.array(Val_Acc)))
+            
+            np.savez("data/performance_metrics/Metrics.npz",
+            a = Loss_per_epoch,b=Accuracy_per_epoch,
+            c = Val_Loss_per_epoch,d=Val_Acc_per_epoch)
+
+            self.model.save("Noun_Predictor")
+            print("Model save successful!")
         
         Visualizer.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
         try:
