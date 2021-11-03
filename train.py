@@ -191,7 +191,7 @@ class Train():
         print(self.model.summary())
 
         for epochs in range(1,self.Epochs+1):    
-            print("Epoch: ",epochs)
+            print("Epoch:",epochs)
             i = 0
             num_batches=0
             crt_batch = 0
@@ -222,11 +222,9 @@ class Train():
                     print("Files read = ",i)                   
                     
                     history = self.model.fit(X,Y,epochs=1,validation_split=0.1)
-                    try:
-                        model.save("Noun_Predictor")
-                        print("Model save successful (within epoch)!")
-                    except Exception:
-                        print("Model save unsuccessful")
+                    print(history.history)
+                    model.save("Noun_Predictor")
+                    print("Model save successful (within epoch)!")
                     
                     #Storing Metrics
                     Loss.append(history.history['loss'])
