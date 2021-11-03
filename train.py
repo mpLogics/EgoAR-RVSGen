@@ -229,10 +229,10 @@ class Train():
                         print("Model save unsuccessful")
                     
                     #Storing Metrics
-                    Loss.append(history['loss'])
-                    Accuracy.append(history['acc'])
-                    Val_Loss.append(history['val_loss'])
-                    Val_Acc.append(history['val_acc'])
+                    Loss.append(history.history['loss'])
+                    Accuracy.append(history.history['acc'])
+                    Val_Loss.append(history.history['val_loss'])
+                    Val_Acc.append(history.history['val_acc'])
                     
                     #Displaying Metrics
                     print("Average Loss: ",np.mean(np.array(Loss)))
