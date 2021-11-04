@@ -9,7 +9,7 @@ class Visualizer():
         self.file_path = "video_clips/cropped_clips/OP01-R01-PastaSalad/OP01-R01-PastaSalad-66680-68130-F001597-F001639.mp4"
         self.metric_path = "data/performance_metrics/Metrics.npz"
 
-    def makePlot(xVal,yVal = None, caption = "Data",l = 15, b = 10,sloc=None,xlab=None,ylab=None):
+    def makePlot(self,xVal,yVal = None, caption = "Data",l = 15, b = 10,sloc=None,xlab=None,ylab=None):
         plt.figure(figsize=(l,b))        
         plt.title(caption) 
         

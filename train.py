@@ -166,6 +166,7 @@ class Train():
         self.fix_frames = 15
         self.model = "None"
         self.num_classes_total = 51
+        self.plot_makker = Visualizer()
     
     def getCorrected(self,Y):
         Y_corrected = np.copy(Y)
@@ -225,7 +226,7 @@ class Train():
         print("Epochs completed =",epochs_completed)
         
         for epochs in range(epochs_completed+1,self.Epochs+1):    
-            Visualizer.plot_metrics(m_path="data/performance_metrics/Metrics.npz",Epoch=epochs)
+            self.plot_makker.plot_metrics(m_path="data/performance_metrics/Metrics.npz",Epoch=epochs)
             print("\nEpoch:",epochs)
             i = 0
             num_batches=0
@@ -290,7 +291,7 @@ class Train():
                 crt_batch=0
                 try:
                     if (num_batches+1)%30==0 and plotter_flag==False:
-                        Visualizer.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
+                        self.plot_makker.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
                         print((str)(i) + " examples trained")
                         plotter_flag=True
                 except Exception:
@@ -308,7 +309,7 @@ class Train():
             self.model.save("Noun_Predictor")
             print("Model save successful!")
         
-        Visualizer.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
+        self.plot_makker.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
         try:
             model.save('model_checkpoints/RGB_Noun.h5')
             print("Model trained successfully")
