@@ -182,12 +182,14 @@ class Train():
     def check_prev_trainings(self):
         
         try:
-            performance_metrics = np.load("data/peformance_metrics/Metrics.npz")
+            performance_metrics = np.load("data/performance_metrics/Metrics.npz")
             self.model = keras.models.load_model("Noun_Predictor")
         except Exception:
             print("Saved model could not be read.")
             return 1,[],[],[],[]
         
+        #performance_metrics = np.load("data/performance_metrics/Metrics.npz")
+        #self.model = keras.models.load_model("Noun_Predictor")
         
         epochs_completed = performance_metrics['a'].shape[0]
         Loss_per_epoch=[]
