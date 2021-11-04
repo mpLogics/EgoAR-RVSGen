@@ -179,6 +179,29 @@ class Train():
         return Y_corrected
     
 
+    def check_prev_trainings(self):
+        try:
+            performance_metrics = np.load("data/peformance_metrics/Metrics.npz")
+        except Exception:
+            print("Saved model could not be read.")
+            return 1,[],[],[],[]
+        
+        epochs_completed = performance_metrics['a'].shape[0]
+        Loss_per_epoch=[]
+        Accuracy_per_epoch=[]
+        Val_Loss_per_epoch=[]
+        Val_Acc_per_epoch=[]
+
+        for i in range(performance_metrics['a'].shape[0]):
+            Loss_per_epoch.append(performance_metrics['a'][i])
+            Accuracy_per_epoch.append(performance_metrics['b'][i])
+            Val_Loss_per_epoch.append(performance_metrics['c'][i])
+            Val_Acc_per_epoch.append(performance_metrics['d'][i])
+        
+        self.model = keras.models.load_model("Noun_Predictor")
+
+        return epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch
+
     def custom_train_model(self,loss_func,optimizer):
         L1 = LoadData()
         L1.train_test_splitNo = self.train_test_split 
@@ -192,7 +215,11 @@ class Train():
         access_order = Data_Access().build_order()
         #print(self.model.summary())
         train_succ=False
-        for epochs in range(1,self.Epochs+1):    
+        epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings()
+        
+        print(epochs_completed)
+        
+        for epochs in range(epochs_completed,self.Epochs+1):    
             print("Epoch:",epochs)
             i = 0
             num_batches=0
