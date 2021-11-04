@@ -13,7 +13,7 @@ class Visualizer():
         plt.figure(figsize=(l,b))        
         plt.title(caption) 
         
-        if yVal==None:
+        if yVal.any()==None:
             plt.plot(xVal)
         else:
             plt.plot(xVal,yVal)
