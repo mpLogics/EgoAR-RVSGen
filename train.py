@@ -222,9 +222,9 @@ class Train():
         train_succ=False
         epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings()
         
-        print(epochs_completed)
+        print("Epochs_Completed =",epochs_completed)
         
-        for epochs in range(epochs_completed,self.Epochs+1):    
+        for epochs in range(epochs_completed+1,self.Epochs+1):    
             print("Epoch:",epochs)
             i = 0
             num_batches=0
