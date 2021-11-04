@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 class Visualizer():
     def __init__(self):
         self.file_path = "video_clips/cropped_clips/OP01-R01-PastaSalad/OP01-R01-PastaSalad-66680-68130-F001597-F001639.mp4"
+        self.metric_path = "data/performance_metrics/Metrics.npz"
 
     def makePlot(xVal,yVal = None, caption = "Data",l = 15, b = 10,sloc=None,xlab=None,ylab=None):
         plt.figure(figsize=(l,b))        
@@ -27,6 +28,28 @@ class Visualizer():
             plt.show()
         else:
             plt.savefig(sloc)
+
+    def plot_metrics(self,m_path,Epoch):
+        try:
+            Metrics = np.load(m_path)
+        except Exception:
+            print("While printing metrics, file read unsuccessful")
+            print("Getting metrics using default path")
+            Metrics=np.load(self.metric_path)
+        
+        i = [i for i in range(Metrics['a'].shape[0])]
+        
+        self.makePlot(xVal=i,yVal=Metrics['a'],caption="Training Loss vs Epochs",
+        xlab="Epochs",ylab="Training Loss",sloc="data/performance_metrics/graphs/Train_Loss_" +(str)(Epoch)+".png")
+        
+        self.makePlot(xVal=i,yVal=Metrics['b'],caption="Training Accuracy vs Epochs",
+        xlab="Epochs",ylab="Training Accuracy",sloc="data/performance_metrics/graphs/Train_Acc_" +(str)(Epoch)+".png")
+
+        self.makePlot(xVal=i,yVal=Metrics['c'],caption="Validation Loss vs Epochs",
+        xlab="Epochs",ylab="Validation Loss",sloc="data/performance_metrics/graphs/Val_Loss_" +(str)(Epoch)+".png")
+
+        self.makePlot(xVal=i,yVal=Metrics['d'],caption="Validation Accuracy vs Epochs",
+        xlab="Epochs",ylab="Validation Accuracy",sloc="data/performance_metrics/graphs/Val_Acc_" +(str)(Epoch)+".png")
 
     def ExtractFrames(self):
         

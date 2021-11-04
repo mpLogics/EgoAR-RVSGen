@@ -183,7 +183,7 @@ class Train():
         
         try:
             performance_metrics = np.load("data/performance_metrics/Metrics.npz")
-            self.model = keras.models.load_model("Noun_Predictor")
+            saved_model = keras.models.load_model("Noun_Predictor")
         except Exception:
             print("Saved model could not be read.")
             return 1,[],[],[],[]
@@ -205,7 +205,7 @@ class Train():
         
         #self.model = keras.models.load_model("Noun_Predictor")
 
-        return epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch
+        return saved_model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch
 
     def custom_train_model(self,loss_func,optimizer):
         L1 = LoadData()
@@ -220,12 +220,13 @@ class Train():
         access_order = Data_Access().build_order()
         #print(self.model.summary())
         train_succ=False
-        epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings()
+        self.model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings()
         
-        print("Epochs_Completed =",epochs_completed)
+        print("Epochs completed =",epochs_completed)
         
         for epochs in range(epochs_completed+1,self.Epochs+1):    
-            print("Epoch:",epochs)
+            Visualizer.plot_metrics(m_path="data/performance_metrics/Metrics.npz",Epoch=epochs)
+            print("\nEpoch:",epochs)
             i = 0
             num_batches=0
             crt_batch = 0
