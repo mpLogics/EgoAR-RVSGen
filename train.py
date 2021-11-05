@@ -11,7 +11,6 @@ import os
 import random
 from visualization import Visualizer
 import datetime
-import math
 
 class Model():
     def __init__(self):

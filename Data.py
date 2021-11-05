@@ -4,7 +4,7 @@ import pandas as pd
 import cv2
 import random
 import os
-import random
+import math
 
 class LoadData():
     
