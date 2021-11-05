@@ -247,6 +247,7 @@ class Train():
             while i<totalSamples-1:
                 if np.isnan(Frame).any():
                     print("Nan encountered. at file index",i)
+                Frame,Y_Noun,Val_Frame,Val_Noun = L1.read_frames(i,access_order,self.num_classes_total,val_set_indices)
                 try:
                     Frame,Y_Noun,Val_Frame,Val_Noun = L1.read_frames(i,access_order,self.num_classes_total,val_set_indices)
                 except Exception:
