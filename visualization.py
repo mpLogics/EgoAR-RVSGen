@@ -37,7 +37,7 @@ class Visualizer():
             print("Getting metrics using default path")
             Metrics=np.load(self.metric_path)
         
-        i = [i for i in range(Metrics['a'].shape[0])]
+        i = [i for i in range(1,Metrics['a'].shape[0]+1)]
         
         self.makePlot(xVal=i,yVal=Metrics['a'],caption="Training Loss vs Epochs",
         xlab="Epochs",ylab="Training Loss",sloc="data/performance_metrics/graphs/Train_Loss_" +(str)(Epoch)+".png")

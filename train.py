@@ -225,8 +225,10 @@ class Train():
         
         print("Epochs completed =",epochs_completed)
         
+        
+
         for epochs in range(epochs_completed+1,self.Epochs+1):    
-            self.plot_makker.plot_metrics(m_path="data/performance_metrics/Metrics.npz",Epoch=epochs)
+            self.plot_makker.plot_metrics(m_path="data/performance_metrics/Metrics.npz",Epoch=epochs-1)
             print("\nEpoch:",epochs)
             i = 0
             num_batches=0
@@ -239,12 +241,14 @@ class Train():
             Accuracy=[]
             Val_Loss=[]
             Val_Acc=[]
-            
+            Val_Noun=[]
+            Val_Frame=[]
+
             while i<totalSamples-1:
                 if np.isnan(Frame).any():
                     print("Nan encountered. at file index",i)
                 try:
-                    Frame,Y_Noun = L1.read_frames(i,access_order,self.num_classes_total)
+                    Frame,Y_Noun,Val_Frame,Val_Noun = L1.read_frames(i,access_order,self.num_classes_total,val_set_indices)
                 except Exception:
                     print("Error reading files from index: ",i)
                 
@@ -261,13 +265,18 @@ class Train():
                 
                 # Setting X and Y for training
                 X = np.array(Frame)
+                X_val = np.array(Val_Frame)
+
                 Y_corrected = self.getCorrected(np.array(Y_Noun))
                 Y = tf.convert_to_tensor(Y_corrected)
+                
+                Y_val_corrected = self.getCorrected(np.array(Val_Noun))
+                Y_val = tf.convert_to_tensor(Y_val_corrected)
                 
                 
                 # Training batch
                 try:
-                    history = self.model.fit(X,Y,epochs=1,validation_split=0.1)
+                    history = self.model.fit(X,Y,epochs=1,validation_data=(X_val,Y_val))
                     train_succ=True
                 except Exception:
                     print("Unsuccessful training for",i)
@@ -288,6 +297,8 @@ class Train():
                 
                 Frame=[]
                 Y_Noun=[]
+                Val_Noun=[]
+                Val_Frame=[]
                 crt_batch=0
                 try:
                     if (num_batches+1)%30==0 and plotter_flag==False:

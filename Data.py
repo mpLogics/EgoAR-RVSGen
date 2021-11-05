@@ -4,6 +4,7 @@ import pandas as pd
 import cv2
 import random
 import os
+import random
 
 class LoadData():
     
@@ -19,26 +20,47 @@ class LoadData():
         self.sample_rate = 0.1
         self.fix_frames = 10
         self.num_classes_total = 51
-
-
+        
     def load_file(self,i,modality):
         file_path = "data/preprocessed_data/" + modality + "/" + self.train["FileName"][i] + ".npz"
         modal = np.load(file_path,allow_pickle=True)["a"]
         Annotation = np.load(file_path,allow_pickle=True)["c"]
         return modal,Annotation
     
+    def get_frame_order(self,RGB):
+        interval_size = math.floor(len(RGB)/self.fix_frames)
+        j=0
+        frame_indices=[]
+        for i in range(self.fix_frames):
+            frame_indices.append(j)
+            j+=interval_size
+        return frame_indices
+    
     def read_frames(self,i,access_order,num_classes_total):    
+        #random.seed(a=2)
+        
         Frame=[]
         Y_Noun=[]
+        Val_Frame=[]
+        Val_Noun=[]
+        
         for j in range(i,i+num_classes_total):
             RGB,Noun = self.load_file(access_order[j],modality="RGB")
-            frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
+            #frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
+            frame_indices = self.get_frame_order(RGB)
             for count in range(self.fix_frames):
                 RGB_resized = cv2.resize(src=RGB[frame_indices[count]],dsize=self.input_shape)
                 RGB_normalized = cv2.normalize(RGB_resized, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
-                Frame.append(RGB_normalized)
-                Y_Noun.append((int)(Noun[frame_indices[count]]))
-        return Frame, Y_Noun
+                
+                if count==4:
+                    Val_Frame.append(RGB_normalized)
+                    Val_Noun.append(RGB_normalized)
+                
+                else:
+                    Frame.append(RGB_normalized)
+                    Y_Noun.append((int)(Noun[frame_indices[count]]))
+        
+        return Frame, Y_Noun,Val_Frame,Val_Noun
 
     def getTotal(self):
         return self.train.shape[0]
