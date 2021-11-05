@@ -268,13 +268,10 @@ class Train():
                 # Setting X and Y for training
                 X = np.array(Frame)
                 X_val = np.array(Val_Frame)
-                print(X_val.shape)
-                print(len(Val_Noun))
-                print(Val_Noun)
+                
 
                 Y_corrected = self.getCorrected(np.array(Y_Noun))
                 Y = tf.convert_to_tensor(Y_corrected)
-                print(len(Val_Noun))
                 
                 Y_val_corrected = self.getCorrected(np.array(Val_Noun))
                 Y_val = tf.convert_to_tensor(Y_val_corrected)

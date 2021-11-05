@@ -54,7 +54,7 @@ class LoadData():
                 
                 if count==4:
                     Val_Frame.append(RGB_normalized)
-                    Val_Noun.append(RGB_normalized)
+                    Val_Noun.append((int)(Noun[frame_indices[count]]))
                 
                 else:
                     Frame.append(RGB_normalized)
