@@ -254,8 +254,8 @@ class Train():
                     print("Error reading files from index: ",i)
                 
                 i+=self.num_classes_total
-                print(Val_Frame.shape)
-                print(Val_Noun.shape)
+                
+                
                 #if crt_batch == self.batch_preprocess_size  or i == totalSamples-1 or True:
                 
                 # Logs
@@ -268,10 +268,14 @@ class Train():
                 # Setting X and Y for training
                 X = np.array(Frame)
                 X_val = np.array(Val_Frame)
-
+                print(X_val.shape)
+                print(len(Val_Noun))
+                print(Y_Noun)
+                
                 Y_corrected = self.getCorrected(np.array(Y_Noun))
                 Y = tf.convert_to_tensor(Y_corrected)
-                
+                print(len(Val_Noun))
+                print(Y_Noun)
                 Y_val_corrected = self.getCorrected(np.array(Val_Noun))
                 Y_val = tf.convert_to_tensor(Y_val_corrected)
                 
