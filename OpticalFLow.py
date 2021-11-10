@@ -206,9 +206,9 @@ class learn_optical_flow():
                     print("Average Validation Loss: ",np.mean(np.array(Val_Loss)))
                     print("Average Validation Accuracy: ",np.mean(np.array(Val_Acc)))
                 
-                Frame=[]
-                Y_Noun=[]
-                Val_Noun=[]
+                X_Value=[]
+                Y_Value=[]
+                Val_Verb=[]
                 Val_Frame=[]
                 crt_batch=0
                 try:
@@ -228,7 +228,7 @@ class learn_optical_flow():
             a = Loss_per_epoch,b=Accuracy_per_epoch,
             c = Val_Loss_per_epoch,d=Val_Acc_per_epoch)
 
-            self.model.save("Noun_Predictor")
+            self.model.save("Verb_Predictor")
             print("Model save successful!")
         
         self.plot_makker.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
