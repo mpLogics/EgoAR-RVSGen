@@ -6,6 +6,7 @@ from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 from train import Model,Train
 import json
+from OpticalFlow import learn_optical_flow
 
 def getMinFrameValue():
     min_value = 10000
@@ -33,7 +34,7 @@ def getMinFrameValue():
 config_file = open("config.json")
 config_values = json.load(config_file)["Configuration Values"]
 
-
+"""
 m1 = Model()
 m1.input_shape = (config_values["train"]["input_shape_x"],
                 config_values["train"]["input_shape_y"],
@@ -61,5 +62,14 @@ print("Epochs: ",t1.Epochs)
 print("Batch Preprocess size: ",t1.batch_preprocess_size)
 
 t1.custom_train_model(loss_func=loss_func,optimizer=optimizer)
+"""
+config = ConfigProto()
+config.gpu_options.allow_growth = True
+session = InteractiveSession(config=config)
+
+m1 = learn_optical_flow()
+m1.build_temporal_model()
+m1.train()
+
 
 session.close()

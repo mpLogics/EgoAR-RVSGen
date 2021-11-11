@@ -78,20 +78,20 @@ class Data_Access():
         
 class learn_optical_flow():
     def __init__(self):
-        self.A=1
         self.input_shape = None
         self.num_classes_total = 19
+        self.temporal_extractor = None
     
-    def build_temporal_model():
-        temporal_extractor = Sequential()
-        temporal_extractor.add(CuDNNLSTM(10,input_shape=(480,640),return_sequences=True))
-        temporal_extractor.add(Dropout(0.2))
-        temporal_extractor.add(Flatten())
-        temporal_extractor.add(Dense(4,activation="softmax"))
-        temporal_extractor.compile( loss='sparse_categorical_crossentropy',
+    def build_temporal_model(self):
+        self.temporal_extractor = Sequential()
+        self.temporal_extractor.add(CuDNNLSTM(10,input_shape=(480,640),return_sequences=True))
+        self.temporal_extractor.add(Dropout(0.2))
+        self.temporal_extractor.add(Flatten())
+        self.temporal_extractor.add(Dense(4,activation="softmax"))
+        self.temporal_extractor.compile( loss='sparse_categorical_crossentropy',
                 optimizer=keras.optimizers.Adam(learning_rate=0.001, decay=1e-6),
                 metrics=['accuracy'] )
-        temporal_extractor.summary()
+        self.temporal_extractor.summary()
     
     def check_prev_trainings(self,model_name,modality):
         try:
@@ -118,8 +118,7 @@ class learn_optical_flow():
 
         return saved_model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch
 
-    def train():
-        
+    def train(self):
         L1 = LoadData()
         modality="OF"
         L1.train_test_splitNo = self.train_test_split 
@@ -133,7 +132,7 @@ class learn_optical_flow():
         access_order = Data_Access().build_order()
         print(self.model.summary())
         train_succ=False
-        self.model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings(modality="OF",model_name="Verb_Predictor")
+        self.temporal_extractor,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings(modality="OF",model_name="Verb_Predictor")
         
         print("Epochs completed =",epochs_completed)
 
@@ -145,7 +144,7 @@ class learn_optical_flow():
             num_batches=0
             crt_batch = 0
             X_Value=[]
-            Y_Noun=[]
+            Y_Value=[]
             diff=0
             plotter_flag = False
             Loss=[]
@@ -187,7 +186,7 @@ class learn_optical_flow():
                 
                 # Training batch
                 try:
-                    history = self.model.fit(X,Y,epochs=1,validation_data=(X_val,Y_val))
+                    history = self.temporal_extractor.fit(X,Y,epochs=1,validation_data=(X_val,Y_val))
                     train_succ=True
                 except Exception:
                     print("Unsuccessful training for",i)
@@ -224,19 +223,14 @@ class learn_optical_flow():
             Val_Loss_per_epoch.append(np.mean(np.array(Val_Loss)))
             Val_Acc_per_epoch.append(np.mean(np.array(Val_Acc)))
             
-            np.savez("data/performance_metrics/Metrics.npz",
+            np.savez("data/performance_metrics/" + modality + "/Metrics.npz",
             a = Loss_per_epoch,b=Accuracy_per_epoch,
             c = Val_Loss_per_epoch,d=Val_Acc_per_epoch)
 
-            self.model.save("Verb_Predictor")
+            self.temporal_extractor.save("Verb_Predictor")
             print("Model save successful!")
         
         self.plot_makker.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
-        try:
-            model.save('model_checkpoints/RGB_Noun.h5')
-            print("Model trained successfully")
-        except Exception:
-            print("Model save unsuccessful")
 
         
 
