@@ -1,10 +1,17 @@
 import tensorflow as tf
-from tensorflow import keras
 import numpy as np
 import os
+from Data import LoadData
+
+import keras
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, CuDNNLSTM, BatchNormalization
+from keras.callbacks import TensorBoard
+from keras.callbacks import ModelCheckpoint
+from keras.optimizers import adam
+
 from tf.compat.v1 import ConfigProto
 from tf.compat.v1 import InteractiveSession
-from Data import LoadData
 
 class Data_Access():
     def __init__(self):
@@ -81,15 +88,15 @@ class learn_optical_flow():
         self.temporal_extractor = None
     
     def build_temporal_model(self):
-        base = keras.layers.CuDNNLSTM(10,input_shape=(480,640),return_sequences=True)
-        x = keras.layers.Dropout(0.2)(base)
-        x = keras.layers.Flatten()(x)
-        outputs = keras.layers.Dense(19,activation="softmax")(x)
+        base = CuDNNLSTM(10,input_shape=(480,640),return_sequences=True)
+        x = Dropout(0.2)(base)
+        x = Flatten()(x)
+        outputs = Dense(19,activation="softmax")(x)
 
         loss_func = keras.losses.SparseCategoricalCrossentropy()
-        optimizer = keras.optimizers.Adam(learning_rate=0.001)
+        optimizer = adam(learning_rate=0.001,decay_rate)
         self.temporal_extractor = keras.Model(base.input,outputs)
-        self.temporal_extractor.compile(optimizer,loss_func,metrics=["accuracy"])
+        self.temporal_extractor.compile(optimizer = optimizer,loss = loss_func,metrics=["accuracy"])
 
 
         #self.temporal_extractor = Sequential()
