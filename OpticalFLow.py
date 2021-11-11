@@ -87,9 +87,11 @@ class learn_optical_flow():
         outputs = keras.layers.Dense(19,activation="softmax")(x)
 
         loss_func = keras.losses.SparseCategoricalCrossentropy()
-        optimizer = keras.optimizers.Adam(learning_rate=0.001, decay=1e-6)
+        optimizer = keras.optimizers.Adam(learning_rate=0.001)
         self.temporal_extractor = keras.Model(base.input,outputs)
         self.temporal_extractor.compile(optimizer,loss_func,metrics=["accuracy"])
+
+
         #self.temporal_extractor = Sequential()
         #self.temporal_extractor.add(CuDNNLSTM(10,input_shape=(480,640),return_sequences=True))
         #self.temporal_extractor.add(Dropout(0.2))
