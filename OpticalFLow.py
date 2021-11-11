@@ -88,7 +88,7 @@ class learn_optical_flow():
         self.temporal_extractor.add(Dropout(0.2))
         self.temporal_extractor.add(Flatten())
         self.temporal_extractor.add(Dense(4,activation="softmax"))
-        self.temporal_extractor.compile( loss='sparse_categorical_crossentropy',
+        self.temporal_extractor.compile(loss='sparse_categorical_crossentropy',
                 optimizer=keras.optimizers.Adam(learning_rate=0.001, decay=1e-6),
                 metrics=['accuracy'] )
         self.temporal_extractor.summary()
