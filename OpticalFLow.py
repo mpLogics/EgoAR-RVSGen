@@ -1,7 +1,5 @@
 import tensorflow as tf
 from tensorflow import keras
-from tf.python.keras.models import Sequential
-from tf.python.keras.layers import CuDNNLSTM,Dense,Dropout, LSTM,Flatten
 import numpy as np
 import os
 from tf.compat.v1 import ConfigProto
@@ -83,14 +81,23 @@ class learn_optical_flow():
         self.temporal_extractor = None
     
     def build_temporal_model(self):
-        self.temporal_extractor = Sequential()
-        self.temporal_extractor.add(CuDNNLSTM(10,input_shape=(480,640),return_sequences=True))
-        self.temporal_extractor.add(Dropout(0.2))
-        self.temporal_extractor.add(Flatten())
-        self.temporal_extractor.add(Dense(4,activation="softmax"))
-        self.temporal_extractor.compile(loss='sparse_categorical_crossentropy',
-                optimizer=tf.python.keras.optimizers.Adam(learning_rate=0.001, decay=1e-6),
-                metrics=['accuracy'] )
+        base = keras.layers.CuDNNLSTM(10,input_shape=(480,640),return_sequences=True)
+        x = keras.layers.Dropout(0.2)(base)
+        x = keras.layers.Flatten()(x)
+        outputs = keras.layers.Dense(19,activation="softmax")(x)
+
+        loss_func = keras.losses.SparseCategoricalCrossentropy()
+        optimizer = keras.optimizers.Adam(learning_rate=0.001, decay=1e-6)
+        self.temporal_extractor = keras.Model(base.input,outputs)
+        self.temporal_extractor.compile(optimizer,loss_func,metrics=["accuracy"])
+        #self.temporal_extractor = Sequential()
+        #self.temporal_extractor.add(CuDNNLSTM(10,input_shape=(480,640),return_sequences=True))
+        #self.temporal_extractor.add(Dropout(0.2))
+        #self.temporal_extractor.add(Flatten())
+        #self.temporal_extractor.add(Dense(4,activation="softmax"))
+        #self.temporal_extractor.compile(loss='sparse_categorical_crossentropy',
+        #        optimizer=tf.python.keras.optimizers.Adam(learning_rate=0.001, decay=1e-6),
+        #        metrics=['accuracy'] )
         self.temporal_extractor.summary()
     
     def check_prev_trainings(self,model_name,modality):
