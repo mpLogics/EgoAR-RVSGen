@@ -210,8 +210,7 @@ class learn_optical_flow():
             Val_Frame=[]
 
             while i<totalSamples-1:
-                if np.isnan(Frame).any():
-                    print("Nan encountered. at file index",i)
+                
                 
                 try:
                     X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_frames(i,access_order,self.num_classes_total,modality="OF")
