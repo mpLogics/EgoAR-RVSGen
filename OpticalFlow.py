@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import os
 from Data import LoadData
+import pandas as pd
 
 #import keras
 #from keras.models import Sequential
