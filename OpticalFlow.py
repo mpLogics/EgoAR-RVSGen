@@ -54,7 +54,7 @@ class Data_Access():
             index_lists = self.shuffle_indices(IndexLists)
         else:
             index_lists = IndexLists
-            
+        print(len(index_lists))
         old_min_samples=0
         for k in range(sorted_indices.shape[0]):
             min_samples = sorted_indices[k]
