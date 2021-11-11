@@ -3,12 +3,12 @@ import numpy as np
 import os
 from Data import LoadData
 
-import keras
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, CuDNNLSTM, BatchNormalization
-from keras.callbacks import TensorBoard
-from keras.callbacks import ModelCheckpoint
-from keras.optimizers import adam
+#import keras
+#from keras.models import Sequential
+#from keras.layers import Dense, Dropout, CuDNNLSTM, BatchNormalization
+#from keras.callbacks import TensorBoard
+#from keras.callbacks import ModelCheckpoint
+#from keras.optimizers import adam
 
 from tf.compat.v1 import ConfigProto
 from tf.compat.v1 import InteractiveSession
@@ -88,6 +88,31 @@ class learn_optical_flow():
         self.temporal_extractor = None
     
     def build_temporal_model(self):
+
+        from keras.models import Sequential
+        from keras.layers import Dense, Dropout, CUDNNLSTM, BatchNormalization
+        from keras.callbacks import TensorBoard
+        from keras.callbacks import ModelCheckpoint
+        from keras.optimizers import adam
+
+        # Set Model
+        model = Sequential()
+        model.add(LSTM(10, input_shape=(480,640), return_sequences=True))
+        model.add(Dropout(0.2))
+        model.add(Flatten())
+        model.add(Dense(19,activation="softmax"))
+
+        # Set Optimizer
+        opt = adam(lr=0.001, decay=1e-6)
+
+        # Compile model
+        model.compile(
+            loss='sparse_categorical_crossentropy',
+            optimizer=opt,
+            metrics=['accuracy']
+        )
+        model.summary()
+        """
         base = CuDNNLSTM(10,input_shape=(480,640),return_sequences=True)
         x = Dropout(0.2)(base)
         x = Flatten()(x)
@@ -108,7 +133,7 @@ class learn_optical_flow():
         #        optimizer=tf.python.keras.optimizers.Adam(learning_rate=0.001, decay=1e-6),
         #        metrics=['accuracy'] )
         self.temporal_extractor.summary()
-    
+        """
     def check_prev_trainings(self,model_name,modality):
         try:
             performance_metrics = np.load("data/performance_metrics/" + modality + "/Metrics.npz")
