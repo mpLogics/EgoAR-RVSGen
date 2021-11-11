@@ -174,6 +174,15 @@ class learn_optical_flow():
 
         return saved_model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch
 
+      def getCorrected(self,Y):
+        Y_corrected = np.copy(Y)
+        for i in range(Y.shape[0]):
+            if Y[i]<=15:
+                Y_corrected[i]-=1
+            else:
+                Y_corrected[i]-=2
+        return Y_corrected
+
     def train(self):
         L1 = LoadData()
         modality="OF"
@@ -211,7 +220,7 @@ class learn_optical_flow():
 
             while i<totalSamples-1:
                 
-                
+                X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_frames(i,access_order,self.num_classes_total,modality="OF")
                 try:
                     X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_frames(i,access_order,self.num_classes_total,modality="OF")
                 except Exception:
@@ -231,11 +240,11 @@ class learn_optical_flow():
                 X_val = np.array(Val_Frame)
                 
 
-                #Y_corrected = self.getCorrected(np.array(Y_Noun))
+                Y_corrected = self.getCorrected(np.array(Y_Value))
                 Y = tf.convert_to_tensor(Y_Value)
                 
-                #Y_val_corrected = self.getCorrected(np.array(Val_Noun))
-                Y_val = tf.convert_to_tensor(Val_Verb)
+                Y_val_corrected = self.getCorrected(np.array(Val_Verb))
+                Y_val = tf.convert_to_tensor(Y_val_corrected)
                 
                 
                 # Training batch
