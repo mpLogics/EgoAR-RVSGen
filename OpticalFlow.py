@@ -10,8 +10,8 @@ from Data import LoadData
 #from keras.callbacks import ModelCheckpoint
 #from keras.optimizers import adam
 
-from tf.compat.v1 import ConfigProto
-from tf.compat.v1 import InteractiveSession
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
 
 class Data_Access():
     def __init__(self):
