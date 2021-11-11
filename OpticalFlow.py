@@ -36,6 +36,7 @@ class Data_Access():
             num_samples_list.append((i,len(list(df.get_group(i).index))))
             IndexLists.append(list(df.get_group(i).index))
         print(num_samples_list)
+        print(IndexLists)
         print(len(num_samples_list),len(IndexLists))
         return num_samples_list,IndexLists
 
