@@ -105,7 +105,7 @@ class learn_optical_flow():
         # Compile model
         model.compile(
             loss='sparse_categorical_crossentropy',
-            optimizer=optimizer,
+            optimizer='adam',
             metrics=['accuracy']
         )
         model.summary()
