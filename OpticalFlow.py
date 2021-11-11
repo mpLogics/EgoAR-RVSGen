@@ -86,7 +86,7 @@ class learn_optical_flow():
         self.input_shape = None
         self.num_classes_total = 19
         self.temporal_extractor = None
-    
+        self.train_test_split = (("1","1"))
     def build_temporal_model(self,optimizer,loss_func):
         #import si
         from keras.models import Sequential
