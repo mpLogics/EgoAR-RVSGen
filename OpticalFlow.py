@@ -26,6 +26,14 @@ class Data_Access():
         self.random_flag = True
         self.num_classes_total = 19
     
+    def get_corrected_OF(self,index):
+        if index==16:
+            return -1
+        elif index >=16:
+            return index-2
+        else:
+            return index-1
+
     def get_index_lists(self,df):
 
         num_samples_list = []
@@ -51,19 +59,19 @@ class Data_Access():
         print("Obtaining access order")
         print("Random generation - Flag: ",self.random_flag)
         access_order=[]
-        marked_indices = []
+        marked_indices = [16]
         if self.random_flag:
             index_lists = self.shuffle_indices(IndexLists)
         else:
             index_lists = IndexLists
-        print(len(index_lists))
         old_min_samples=0
+        
         for k in range(sorted_indices.shape[0]):
             min_samples = sorted_indices[k]
             for j in range(old_min_samples,min_samples):
                 for i in range(1,self.range_classes+1):
                     if i not in marked_indices:
-                        corrected_sample_value = i#self.get_corrected(i)
+                        corrected_sample_value = self.get_corrected_OF(i)
                         if corrected_sample_value!=-1:
                             access_order.append(index_lists[corrected_sample_value][j])
             marked_indices.append(sorted_classes[k])
