@@ -35,7 +35,7 @@ class Data_Access():
         for i in range(1,20):
             num_samples_list.append((i,len(list(df.get_group(i).index))))
             IndexLists.append(list(df.get_group(i).index))
-        
+        print(len(num_samples_list),len(IndexLists))
         return num_samples_list,IndexLists
 
     def shuffle_indices(self,IndexLists):
