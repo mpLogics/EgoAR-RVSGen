@@ -1,11 +1,11 @@
 import tensorflow as tf
 from tensorflow import keras
-from keras.models import Sequential
-from keras.layers import CuDNNLSTM,Dense,Dropout, LSTM,Flatten
+from tf.python.keras.models import Sequential
+from tf.python.keras.layers import CuDNNLSTM,Dense,Dropout, LSTM,Flatten
 import numpy as np
 import os
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
+from tf.compat.v1 import ConfigProto
+from tf.compat.v1 import InteractiveSession
 from Data import LoadData
 
 class Data_Access():
@@ -89,7 +89,7 @@ class learn_optical_flow():
         self.temporal_extractor.add(Flatten())
         self.temporal_extractor.add(Dense(4,activation="softmax"))
         self.temporal_extractor.compile(loss='sparse_categorical_crossentropy',
-                optimizer=keras.optimizers.Adam(learning_rate=0.001, decay=1e-6),
+                optimizer=tf.python.keras.optimizers.Adam(learning_rate=0.001, decay=1e-6),
                 metrics=['accuracy'] )
         self.temporal_extractor.summary()
     
