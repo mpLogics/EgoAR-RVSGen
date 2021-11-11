@@ -174,7 +174,7 @@ class learn_optical_flow():
 
         return saved_model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch
 
-      def getCorrected(self,Y):
+    def getCorrected(self,Y):
         Y_corrected = np.copy(Y)
         for i in range(Y.shape[0]):
             if Y[i]<=15:
