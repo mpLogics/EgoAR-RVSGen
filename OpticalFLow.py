@@ -87,7 +87,7 @@ class learn_optical_flow():
         self.num_classes_total = 19
         self.temporal_extractor = None
     
-    def build_temporal_model(self):
+    def build_temporal_model(self,optimizer,loss_func):
 
         from keras.models import Sequential
         from keras.layers import Dense, Dropout, CUDNNLSTM, BatchNormalization
@@ -103,12 +103,12 @@ class learn_optical_flow():
         model.add(Dense(19,activation="softmax"))
 
         # Set Optimizer
-        opt = adam(lr=0.001, decay=1e-6)
+        #opt = adam(lr=0.001, decay=1e-6)
 
         # Compile model
         model.compile(
             loss='sparse_categorical_crossentropy',
-            optimizer=opt,
+            optimizer=optimizer,
             metrics=['accuracy']
         )
         model.summary()
