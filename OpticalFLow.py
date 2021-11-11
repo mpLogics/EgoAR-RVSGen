@@ -88,7 +88,7 @@ class learn_optical_flow():
         self.temporal_extractor = None
     
     def build_temporal_model(self,optimizer,loss_func):
-        #import
+        #import si
         from keras.models import Sequential
         from keras.layers import Dense, Dropout, CUDNNLSTM, BatchNormalization
         from keras.callbacks import TensorBoard
