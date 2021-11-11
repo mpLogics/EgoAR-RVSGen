@@ -90,7 +90,7 @@ class learn_optical_flow():
     def build_temporal_model(self,optimizer,loss_func):
         #import si
         from keras.models import Sequential
-        from keras.layers import Dense, Dropout, CUDNNLSTM, BatchNormalization
+        from keras.layers import Dense, Dropout, CuDNNLSTM, BatchNormalization
         from keras.callbacks import TensorBoard
         from keras.callbacks import ModelCheckpoint
         from keras.optimizers import adam
