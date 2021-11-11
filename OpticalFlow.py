@@ -102,6 +102,7 @@ class learn_optical_flow():
         self.temporal_extractor = None
         self.train_test_split = (("1","1"))
         self.batch_preprocess_size = 510
+        self.Epochs=60
     
     def build_temporal_model(self,optimizer,loss_func):
         #import si
