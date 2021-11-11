@@ -43,9 +43,7 @@ class Data_Access():
         for i in range(1,20):
             num_samples_list.append((i,len(list(df.get_group(i).index))))
             IndexLists.append(list(df.get_group(i).index))
-        print(num_samples_list)
-        print(IndexLists)
-        print(len(num_samples_list),len(IndexLists))
+    
         return num_samples_list,IndexLists
 
     def shuffle_indices(self,IndexLists):
@@ -187,7 +185,6 @@ class learn_optical_flow():
         Val_Loss_per_epoch=[]
         Val_Acc_per_epoch=[]
         access_order = Data_Access().build_order()
-        print(self.model.summary())
         train_succ=False
         self.temporal_extractor,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings(modality="OF",model_name="Verb_Predictor")
         
