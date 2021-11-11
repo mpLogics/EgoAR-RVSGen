@@ -91,9 +91,6 @@ class learn_optical_flow():
         #import si
         from keras.models import Sequential
         from keras.layers import Dense, Dropout, CuDNNLSTM, BatchNormalization
-        from keras.callbacks import TensorBoard
-        from keras.callbacks import ModelCheckpoint
-        from keras.optimizers import Adam
 
         # Set Model
         model = Sequential()
