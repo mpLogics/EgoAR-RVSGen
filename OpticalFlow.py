@@ -154,7 +154,7 @@ class learn_optical_flow():
             saved_model = keras.models.load_model("model_name")
         except Exception:
             print("Saved model could not be read.")
-            return 0,[],[],[],[]
+            return None,0,[],[],[],[]
         
         #performance_metrics = np.load("data/performance_metrics/Metrics.npz")
         #self.model = keras.models.load_model("Noun_Predictor")
