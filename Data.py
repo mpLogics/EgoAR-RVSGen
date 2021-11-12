@@ -44,7 +44,7 @@ class LoadData():
             #s3 = modal_mag[0].shape[1]
             #modal_mag = np.resize(modal_mag,(s1,s2,s3))
             #modal_ang = np.resize(modal_ang,(s1,s2,s3))
-
+            print(modal_mag.shape)
             modal = np.zeros((s1,s2,s3*2))
             modal[:,:,:s3] = modal_mag
             modal[:,:,s3:] = modal_ang
