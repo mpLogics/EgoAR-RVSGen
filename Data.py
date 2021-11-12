@@ -68,13 +68,19 @@ class Data_Access():
         print("Obtaining access order")
         print("Random generation - Flag: ",self.random_flag)
         access_order=[]
-        marked_indices = []
+        
+        if self.modality=="RGB":
+            marked_indices = [16,44]
+        else:
+            marked_indices = []
+
         if self.random_flag:
             index_lists = self.shuffle_indices(IndexLists)
         else:
             index_lists = IndexLists
             
         old_min_samples=0
+        
         for k in range(sorted_indices.shape[0]):
             min_samples = sorted_indices[k]
             for j in range(old_min_samples,min_samples):
