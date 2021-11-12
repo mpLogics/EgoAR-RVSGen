@@ -157,7 +157,7 @@ class LoadData():
         interval_size = math.floor(length/self.fix_frames)
         j=0
         frame_indices=[]
-        for i in range(self.fix_frames+1):
+        for i in range(self.fix_frames):
             frame_indices.append(j)
             j+=interval_size
         return frame_indices
@@ -172,6 +172,7 @@ class LoadData():
             Modal,Annotation = self.load_file(access_order[j],modality="OF")
             #frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
             frame_indices = self.get_frame_order(Modal,modality="OF")
+            print(frame_indices)
             for count in range(self.fix_frames+1):
                 #RGB_resized = cv2.resize(src=Modal[frame_indices[count]],dsize=self.input_shape)
                 #RGB_normalized = cv2.normalize(RGB_resized, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
@@ -184,7 +185,7 @@ class LoadData():
                     Frames.append(Modal[frame_indices[count]])
                     Y.append((int)(Annotation[frame_indices[count]]))
         
-        return Frames, Y,Val_Frame,Val_Noun
+        return Frames, Y, Val_Frame, Val_Noun
 
     def read_frames(self,i,access_order,num_classes_total):    
         #random.seed(a=2)
