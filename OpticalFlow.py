@@ -150,11 +150,13 @@ class learn_optical_flow():
         L1.batch_size = self.batch_preprocess_size
         totalSamples = L1.getTotal()
         print("Total samples = ",totalSamples)
+        accessor = Data_Access()
+        accessor.modality="OF"
         Loss_per_epoch=[]
         Accuracy_per_epoch=[]
         Val_Loss_per_epoch=[]
         Val_Acc_per_epoch=[]
-        access_order = Data_Access().build_order()
+        access_order = accessor.build_order()
         train_succ=False
         saved,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings(modality="OF",model_name="Verb_Predictor")
         if saved==None:
@@ -212,7 +214,7 @@ class learn_optical_flow():
                 # Training batch
                 print(Y)
                 print(Y_Value)
-                history = self.temporal_extractor.fit(X,Y,epochs=60,validation_data=(X_val,Y_val))
+                history = self.temporal_extractor.fit(X,Y,epochs=30,validation_data=(X_val,Y_val))
                 train_succ=True
             
                 #print("Unsuccessful training for",i)
