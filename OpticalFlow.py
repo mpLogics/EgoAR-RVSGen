@@ -46,7 +46,6 @@ class Data_Access():
         print("Obtaining access order")
         print("Random generation - Flag: ",self.random_flag)
         access_order=[]
-        marked_indices = [16]
         if self.random_flag:
             index_lists = self.shuffle_indices(IndexLists)
         else:

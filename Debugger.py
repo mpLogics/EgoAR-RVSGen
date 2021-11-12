@@ -74,4 +74,4 @@ m2.debug()
 #m2.train()
 
 
-session.close()
+#session.close()
