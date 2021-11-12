@@ -29,7 +29,7 @@ class Data_Access():
     def get_corrected_OF(self,index):
         if index==16:
             return -1
-        elif index >=16:
+        elif index >16:
             return index-2
         else:
             return index-1
@@ -111,17 +111,11 @@ class learn_optical_flow():
 
         # Set Model
         classifier = Sequential()
-        classifier.add(CuDNNLSTM(10,input_shape=(480,640*2),return_sequences=True))
+        classifier.add(CuDNNLSTM(128,input_shape=(480,640*2),return_sequences=True))
         classifier.add(Dropout(0.2))
         classifier.add(Flatten())
         classifier.add(Dense(18,activation="softmax"))
-        #model.add(CuDNNLSTM(128, input_shape=(480,640*2), return_sequences=True))
-        #model.add(Dropout(0.2))
-        #model.add(Flatten())
-        #model.add(Dense(19,activation="softmax"))
 
-        # Set Optimizer
-        #opt = adam(lr=0.001, decay=1e-6)
 
         # Compile model
         classifier.compile(
@@ -131,28 +125,7 @@ class learn_optical_flow():
         )
         classifier.summary()
         self.temporal_extractor = classifier
-        """
-        base = CuDNNLSTM(10,input_shape=(480,640),return_sequences=True)
-        x = Dropout(0.2)(base)
-        x = Flatten()(x)
-        outputs = Dense(19,activation="softmax")(x)
 
-        loss_func = keras.losses.SparseCategoricalCrossentropy()
-        optimizer = adam(learning_rate=0.001,decay_rate)
-        self.temporal_extractor = keras.Model(base.input,outputs)
-        self.temporal_extractor.compile(optimizer = optimizer,loss = loss_func,metrics=["accuracy"])
-
-
-        #self.temporal_extractor = Sequential()
-        #self.temporal_extractor.add(CuDNNLSTM(10,input_shape=(480,640),return_sequences=True))
-        #self.temporal_extractor.add(Dropout(0.2))
-        #self.temporal_extractor.add(Flatten())
-        #self.temporal_extractor.add(Dense(4,activation="softmax"))
-        #self.temporal_extractor.compile(loss='sparse_categorical_crossentropy',
-        #        optimizer=tf.python.keras.optimizers.Adam(learning_rate=0.001, decay=1e-6),
-        #        metrics=['accuracy'] )
-        self.temporal_extractor.summary()
-        """
     def check_prev_trainings(self,model_name,modality):
         try:
             performance_metrics = np.load("data/performance_metrics/" + modality + "/Metrics.npz")
@@ -248,7 +221,7 @@ class learn_optical_flow():
                 
 
                 Y_corrected = self.getCorrected(np.array(Y_Value))
-                Y = tf.convert_to_tensor(Y_Value)
+                Y = tf.convert_to_tensor(Y_corrected)
                 
                 Y_val_corrected = self.getCorrected(np.array(Val_Verb))
                 Y_val = tf.convert_to_tensor(Y_val_corrected)
