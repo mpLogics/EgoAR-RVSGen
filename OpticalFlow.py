@@ -220,9 +220,9 @@ class learn_optical_flow():
 
             while i<totalSamples-1:
                 
-                X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
+                
                 try:
-                    X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_frames(i,access_order,self.num_classes_total,modality="OF")
+                    X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
                 except Exception:
                     print("Error reading files from index: ",i)
                 
@@ -248,12 +248,12 @@ class learn_optical_flow():
                 
                 
                 # Training batch
-                try:
-                    history = self.temporal_extractor.fit(X,Y,epochs=1,validation_data=(X_val,Y_val))
-                    train_succ=True
-                except Exception:
-                    print("Unsuccessful training for",i)
-                    train_succ=False
+                
+                history = self.temporal_extractor.fit(X,Y,epochs=1,validation_data=(X_val,Y_val))
+                train_succ=True
+            
+                #print("Unsuccessful training for",i)
+                #train_succ=False
                 
                 if train_succ==True:
                     # Collecting Metrics
