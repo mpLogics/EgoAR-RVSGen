@@ -110,12 +110,11 @@ class learn_optical_flow():
         from keras.layers import Dense, Dropout, CuDNNLSTM, Flatten
 
         # Set Model
-        model = Sequential()
-        base = CuDNNLSTM(128, input_shape=(480,640*2))
-        x = Dropout(0.2)(base)
-        x = Flatten()(x)
-        outputs = Dense(19,activation="softmax")
-        model = keras.Model(base.input,outputs)
+        classifier = Sequential()
+        classifier.add(CuDNNLSTM(10,input_shape=(480,640*2),return_sequences=True))
+        classifier.add(Dropout(0.2))
+        classifier.add(Flatten())
+        classifier.add(Dense(18,activation="softmax"))
         #model.add(CuDNNLSTM(128, input_shape=(480,640*2), return_sequences=True))
         #model.add(Dropout(0.2))
         #model.add(Flatten())
@@ -125,13 +124,13 @@ class learn_optical_flow():
         #opt = adam(lr=0.001, decay=1e-6)
 
         # Compile model
-        model.compile(
+        classifier.compile(
             loss='sparse_categorical_crossentropy',
             optimizer='adam',
             metrics=['accuracy']
         )
-        model.summary()
-        self.temporal_extractor = model
+        classifier.summary()
+        self.temporal_extractor = classifier
         """
         base = CuDNNLSTM(10,input_shape=(480,640),return_sequences=True)
         x = Dropout(0.2)(base)

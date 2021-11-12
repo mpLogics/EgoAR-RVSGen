@@ -45,7 +45,7 @@ m1.pooling = config_values["train"]["pooling"]
 m1.modelWeights = config_values["train"]["modelWeights"]
 m1.activation = config_values["train"]["activation"]
 m1.include_top = config_values["train"]["include_top"]
-model,loss_func,optimizer = m1.buildModel()
+#model,loss_func,optimizer = m1.buildModel()
 """
 t1 = Train()
 t1.fix_frames = config_values["train"]["frames_to_be_extracted"]
