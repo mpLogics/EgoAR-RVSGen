@@ -28,14 +28,22 @@ class LoadData():
             modal = np.load(file_path,allow_pickle=True)["a"]
             Annotation = np.load(file_path,allow_pickle=True)["c"]
         else:
-            modal_mag = np.load(file_path,allow_pickle=True)["a"]
-            modal_ang = np.load(file_path,allow_pickle=True)["b"]
+            file_in = np.load(file_path,allow_pickle=True)
+            s1 = file_in['a'].shape[0]
+            s2 = file_in['a'][0].shape[0]
+            s3 = file_in['a'][0].shape[1]
 
-            s1 = modal_mag.shape[0]
-            s2 = modal_mag[0].shape[0]
-            s3 = modal_mag[0].shape[1]
-            modal_mag = np.resize(modal_mag,(s1,s2,s3))
-            modal_ang = np.resize(modal_ang,(s1,s2,s3))
+            print((s1,s2,s3))
+
+            modal_mag = np.resize(file_in['a'],(s1,s2,s3))
+            modal_ang = np.resize(file_in['b'],(s1,s2,s3))
+            #modal_ang = np.load(file_path,allow_pickle=True)["b"]
+
+            #s1 = modal_mag.shape[0]
+            #s2 = modal_mag[0].shape[0]
+            #s3 = modal_mag[0].shape[1]
+            #modal_mag = np.resize(modal_mag,(s1,s2,s3))
+            #modal_ang = np.resize(modal_ang,(s1,s2,s3))
 
             modal = np.zeros((s1,s2,s3*2))
             modal[:,:,:s3] = modal_mag
