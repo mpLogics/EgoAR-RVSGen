@@ -153,11 +153,11 @@ class LoadData():
         if modality=="OF":
             length = frames.shape[0]
         else:
-            lenth = len(frames)
+            length = len(frames)
         interval_size = math.floor(length/self.fix_frames)
         j=0
         frame_indices=[]
-        for i in range(self.fix_frames):
+        for i in range(self.fix_frames+1):
             frame_indices.append(j)
             j+=interval_size
         return frame_indices
