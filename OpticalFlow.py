@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import os
-from Data import LoadData
+from Data import LoadData,Data_Access
 import pandas as pd
 import random
 from visualization import Visualizer
@@ -9,11 +9,10 @@ from tensorflow import keras
 from RVSGen import GenVerbSpace as GVS
 import datetime
 
-
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 
-class Data_Access():
+class Data_Access2():
 
     def __init__(self):
         self.df = pd.read_csv("data/Splits/train_split1.csv")

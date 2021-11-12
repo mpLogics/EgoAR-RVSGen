@@ -173,15 +173,10 @@ class LoadData():
         Y=[]
         Val_Frame=[]
         Val_Noun=[]
-        print(i)
         for j in range(i,i+num_classes_total):
             Modal,Annotation = self.load_file(access_order[j],modality="OF")
-            #frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
             frame_indices = self.get_frame_order(Modal,modality="OF")
             for count in range(self.fix_frames):
-                #RGB_resized = cv2.resize(src=Modal[frame_indices[count]],dsize=self.input_shape)
-                #RGB_normalized = cv2.normalize(RGB_resized, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
-                
                 if count==4:
                     Val_Frame.append(Modal[frame_indices[count]])
                     Val_Noun.append((int)(Annotation[frame_indices[count]]))
@@ -193,8 +188,6 @@ class LoadData():
         return Frames, Y, Val_Frame, Val_Noun
 
     def read_frames(self,i,access_order,num_classes_total):    
-        #random.seed(a=2)
-        
         Frame=[]
         Y_Noun=[]
         Val_Frame=[]
@@ -202,7 +195,6 @@ class LoadData():
         
         for j in range(i,i+num_classes_total):
             RGB,Noun = self.load_file(access_order[j],modality="RGB")
-            #frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
             frame_indices = self.get_frame_order(RGB)
             for count in range(self.fix_frames):
                 RGB_resized = cv2.resize(src=RGB[frame_indices[count]],dsize=self.input_shape)
