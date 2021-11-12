@@ -24,7 +24,7 @@ class Data_Access():
         self.df = pd.read_csv("data/Splits/train_split1.csv")
         self.range_classes = 19
         self.random_flag = True
-        self.num_classes_total = 19
+        self.num_classes_total = 18
     
     def get_corrected_OF(self,index):
         if index==16:
@@ -98,7 +98,7 @@ class Data_Access():
 class learn_optical_flow():
     def __init__(self):
         self.input_shape = None
-        self.num_classes_total = 19
+        self.num_classes_total = 18
         self.temporal_extractor = None
         self.train_test_split = (("1","1"))
         self.batch_preprocess_size = 510
