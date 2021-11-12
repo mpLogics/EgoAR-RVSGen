@@ -9,17 +9,12 @@ from tensorflow import keras
 from RVSGen import GenVerbSpace as GVS
 import datetime
 
-#import keras
-#from keras.models import Sequential
-#from keras.layers import Dense, Dropout, CuDNNLSTM, BatchNormalization
-#from keras.callbacks import TensorBoard
-#from keras.callbacks import ModelCheckpoint
-#from keras.optimizers import adam
 
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 
 class Data_Access():
+
     def __init__(self):
         self.df = pd.read_csv("data/Splits/train_split1.csv")
         self.range_classes = 19
@@ -33,9 +28,8 @@ class Data_Access():
 
         num_samples_list = []
         IndexLists = []
-        #IgnoreSet = [16,44]
         
-        for i in range(1,20):
+        for i in range(1,self.range_classes+1):
             num_samples_list.append((i,len(list(df.get_group(i).index))))
             IndexLists.append(list(df.get_group(i).index))
     
