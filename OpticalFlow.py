@@ -196,8 +196,11 @@ class learn_optical_flow():
         Val_Acc_per_epoch=[]
         access_order = Data_Access().build_order()
         train_succ=False
-        self.temporal_extractor,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings(modality="OF",model_name="Verb_Predictor")
-        
+        saved,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings(modality="OF",model_name="Verb_Predictor")
+        if saved==None:
+            pass
+        else:
+            self.temporal_extractor = saved
         print("Epochs completed =",epochs_completed)
 
         for epochs in range(epochs_completed+1,self.Epochs+1):    
