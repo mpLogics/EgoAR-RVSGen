@@ -59,7 +59,7 @@ class LoadData():
     
     def read_flow(self,i,access_order,num_classes_total):
         Frames=[]
-        Annotation=[]
+        Y=[]
         Val_Frame=[]
         Val_Noun=[]
         
@@ -77,9 +77,9 @@ class LoadData():
                 
                 else:
                     Frames.append(Modal[frame_indices[count]])
-                    Annotation.append((int)(Annotation[frame_indices[count]]))
+                    Y.append((int)(Annotation[frame_indices[count]]))
         
-        return Frames, Annotation,Val_Frame,Val_Noun
+        return Frames, Y,Val_Frame,Val_Noun
 
     def read_frames(self,i,access_order,num_classes_total):    
         #random.seed(a=2)
