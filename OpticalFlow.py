@@ -111,10 +111,15 @@ class learn_optical_flow():
 
         # Set Model
         model = Sequential()
-        model.add(CuDNNLSTM(128, input_shape=(480,640*2), return_sequences=True))
-        model.add(Dropout(0.2))
-        model.add(Flatten())
-        model.add(Dense(19,activation="softmax"))
+        base = CuDNNLSTM(128, input_shape=(480,640*2), return_sequences=True)
+        x = Dropout(0.2)(base)
+        x = Flatten()(x)
+        outputs = Dense(19,activation="softmax")
+        model = keras.Model(base.input,outputs)
+        #model.add(CuDNNLSTM(128, input_shape=(480,640*2), return_sequences=True))
+        #model.add(Dropout(0.2))
+        #model.add(Flatten())
+        #model.add(Dense(19,activation="softmax"))
 
         # Set Optimizer
         #opt = adam(lr=0.001, decay=1e-6)
