@@ -46,7 +46,7 @@ class LoadData():
     
     def get_frame_order(self,frames,modality):
         if modality=="OF":
-            length = frame.shape[0]
+            length = frames.shape[0]
         else:
             lenth = len(frames)
         interval_size = math.floor(length/self.fix_frames)
