@@ -220,7 +220,7 @@ class learn_optical_flow():
 
             while i<totalSamples-1:
                 
-                X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_frames(i,access_order,self.num_classes_total,modality="OF")
+                X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
                 try:
                     X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_frames(i,access_order,self.num_classes_total,modality="OF")
                 except Exception:
