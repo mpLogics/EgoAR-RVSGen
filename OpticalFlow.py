@@ -25,11 +25,11 @@ class learn_optical_flow():
     def build_temporal_model(self):
         #import si
         from keras.models import Sequential
-        from keras.layers import Dense, Dropout, CuDNNLSTM, Flatten
+        from keras.layers import Dense, Dropout, LSTM, Flatten
 
         # Set Model
         classifier = Sequential()
-        classifier.add(CuDNNLSTM(128,input_shape=(480,640*2)))
+        classifier.add(LSTM(10,input_shape=(480,640*2)))
         classifier.add(Dropout(0.2))
         classifier.add(Flatten())
         classifier.add(Dense(19,activation="softmax"))
