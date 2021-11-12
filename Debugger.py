@@ -34,7 +34,7 @@ def getMinFrameValue():
 config_file = open("config.json")
 config_values = json.load(config_file)["Configuration Values"]
 
-
+"""
 m1 = Model()
 m1.input_shape = (config_values["train"]["input_shape_x"],
                 config_values["train"]["input_shape_y"],
@@ -45,8 +45,8 @@ m1.pooling = config_values["train"]["pooling"]
 m1.modelWeights = config_values["train"]["modelWeights"]
 m1.activation = config_values["train"]["activation"]
 m1.include_top = config_values["train"]["include_top"]
-#model,loss_func,optimizer = m1.buildModel()
-"""
+model,loss_func,optimizer = m1.buildModel()
+
 t1 = Train()
 t1.fix_frames = config_values["train"]["frames_to_be_extracted"]
 t1.batch_preprocess_size = config_values["train"]["batch_preprocess_size"]
@@ -64,13 +64,14 @@ print("Batch Preprocess size: ",t1.batch_preprocess_size)
 t1.custom_train_model(loss_func=loss_func,optimizer=optimizer)
 """
 
-config = ConfigProto()
-config.gpu_options.allow_growth = True
-session = InteractiveSession(config=config)
+#config = ConfigProto()
+#config.gpu_options.allow_growth = True
+#session = InteractiveSession(config=config)
 
 m2 = learn_optical_flow()
-m2.build_temporal_model()
-m2.train()
+#m2.build_temporal_model()
+m2.debug()
+#m2.train()
 
 
 session.close()

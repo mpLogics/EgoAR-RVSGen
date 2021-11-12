@@ -143,6 +143,12 @@ class learn_optical_flow():
     def getCorrected(self,Y):
         Y_corrected = np.copy(Y)
         return Y_corrected-1
+    
+    def debug(self):
+        access_order = Data_Access().build_order()
+        df = pd.read_csv("data/Splits/train_split1.csv")
+        for i in range(19):
+            print(df["Verb"][access_order[i]])
 
     def train(self):
         L1 = LoadData()
