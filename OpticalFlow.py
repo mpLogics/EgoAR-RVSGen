@@ -12,77 +12,7 @@ import datetime
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 
-class Data_Access2():
 
-    def __init__(self):
-        self.df = pd.read_csv("data/Splits/train_split1.csv")
-        self.range_classes = 19
-        self.random_flag = True
-        self.num_classes_total = 19
-    
-    def get_corrected_OF(self,index):
-        return index-1
-
-    def get_index_lists(self,df):
-
-        num_samples_list = []
-        IndexLists = []
-        
-        for i in range(1,self.range_classes+1):
-            num_samples_list.append((i,len(list(df.get_group(i).index))))
-            IndexLists.append(list(df.get_group(i).index))
-    
-        return num_samples_list,IndexLists
-
-    def shuffle_indices(self,IndexLists):
-        
-        for i in range(len(IndexLists)):
-            random.shuffle(IndexLists[i])
-        
-        return IndexLists
-
-    def get_access_order(self,IndexLists,sorted_indices,sorted_classes):
-        print("Obtaining access order")
-        print("Random generation - Flag: ",self.random_flag)
-        access_order=[]
-        marked_indices = []
-        if self.random_flag:
-            index_lists = self.shuffle_indices(IndexLists)
-        else:
-            index_lists = IndexLists
-        old_min_samples=0
-        
-        for k in range(sorted_indices.shape[0]):
-            min_samples = sorted_indices[k]
-            for j in range(old_min_samples,min_samples):
-                for i in range(1,self.range_classes+1):
-                    if i not in marked_indices:
-                        corrected_sample_value = self.get_corrected_OF(i)
-                        if corrected_sample_value!=-1:
-                            access_order.append(index_lists[corrected_sample_value][j])
-            marked_indices.append(sorted_classes[k])
-            old_min_samples=min_samples
-        return access_order
-    
-    def build_order(self):
-        df1 = pd.read_csv("data/Splits/train_split1.csv")
-        df2 = df1.groupby(by="Verb")
-        num_samples_list,IndexLists = self.get_index_lists(df2)
-        num_samples=[]
-        class_samples=[]
-        
-        for i in range(len(num_samples_list)):
-            num_samples.append(num_samples_list[i][1])
-            class_samples.append(num_samples_list[i][0])
-            
-        dtype = [('class', int), ('num_frames', int)]
-        values = [num_samples_list]
-        class_sample_pairs = np.array(values, dtype=dtype)
-        sorted_class_sample_pairs = np.sort(class_sample_pairs,order='num_frames')
-        sorted_indices = np.array([sorted_class_sample_pairs[0][i][1] for i in range(len(values[0]))])
-        sorted_classes = np.array([sorted_class_sample_pairs[0][i][0] for i in range(len(values[0]))])
-        return self.get_access_order(IndexLists,sorted_indices,sorted_classes)
-        
 class learn_optical_flow():
     def __init__(self):
         self.input_shape = None
@@ -99,7 +29,7 @@ class learn_optical_flow():
 
         # Set Model
         classifier = Sequential()
-        classifier.add(CuDNNLSTM(128,input_shape=(480,640*2),return_sequences=True))
+        classifier.add(CuDNNLSTM(128,input_shape=(480,640*2)))
         classifier.add(Dropout(0.2))
         classifier.add(Flatten())
         classifier.add(Dense(19,activation="softmax"))
