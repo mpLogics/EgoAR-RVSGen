@@ -64,14 +64,14 @@ print("Batch Preprocess size: ",t1.batch_preprocess_size)
 t1.custom_train_model(loss_func=loss_func,optimizer=optimizer)
 """
 
-#config = ConfigProto()
-#config.gpu_options.allow_growth = True
-#session = InteractiveSession(config=config)
+config = ConfigProto()
+config.gpu_options.allow_growth = True
+session = InteractiveSession(config=config)
 
 m2 = learn_optical_flow()
-#m2.build_temporal_model()
-m2.debug()
-#m2.train()
+m2.build_temporal_model()
+#m2.debug()
+m2.train()
 
 
-#session.close()
+session.close()
