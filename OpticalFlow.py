@@ -24,15 +24,10 @@ class Data_Access():
         self.df = pd.read_csv("data/Splits/train_split1.csv")
         self.range_classes = 19
         self.random_flag = True
-        self.num_classes_total = 18
+        self.num_classes_total = 19
     
     def get_corrected_OF(self,index):
-        if index==16:
-            return -1
-        elif index >16:
-            return index-2
-        else:
-            return index-1
+        return index-1
 
     def get_index_lists(self,df):
 
@@ -98,7 +93,7 @@ class Data_Access():
 class learn_optical_flow():
     def __init__(self):
         self.input_shape = None
-        self.num_classes_total = 18
+        self.num_classes_total = 19
         self.temporal_extractor = None
         self.train_test_split = (("1","1"))
         self.batch_preprocess_size = 510
@@ -114,7 +109,7 @@ class learn_optical_flow():
         classifier.add(CuDNNLSTM(128,input_shape=(480,640*2),return_sequences=True))
         classifier.add(Dropout(0.2))
         classifier.add(Flatten())
-        classifier.add(Dense(18,activation="softmax"))
+        classifier.add(Dense(19,activation="softmax"))
 
 
         # Compile model
@@ -153,12 +148,7 @@ class learn_optical_flow():
 
     def getCorrected(self,Y):
         Y_corrected = np.copy(Y)
-        for i in range(Y.shape[0]):
-            if Y[i]<=15:
-                Y_corrected[i]-=1
-            else:
-                Y_corrected[i]-=2
-        return Y_corrected
+        return Y_corrected-1
 
     def train(self):
         L1 = LoadData()
