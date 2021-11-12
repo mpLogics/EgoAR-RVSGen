@@ -231,6 +231,7 @@ class learn_optical_flow():
                 print(X.shape)
                 print(Y.shape)
                 print(Y)
+                print(Y_Value)
                 history = self.temporal_extractor.fit(X,Y,epochs=1,validation_data=(X_val,Y_val))
                 train_succ=True
             
