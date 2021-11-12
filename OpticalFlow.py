@@ -111,7 +111,7 @@ class learn_optical_flow():
 
         # Set Model
         model = Sequential()
-        model.add(CuDNNLSTM(10, input_shape=(480,640), return_sequences=True))
+        model.add(CuDNNLSTM(10, input_shape=(480,640*2), return_sequences=True))
         model.add(Dropout(0.2))
         model.add(Flatten())
         model.add(Dense(19,activation="softmax"))
