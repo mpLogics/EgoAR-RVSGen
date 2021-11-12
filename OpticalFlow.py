@@ -57,6 +57,7 @@ class Data_Access():
         print("Obtaining access order")
         print("Random generation - Flag: ",self.random_flag)
         access_order=[]
+        Checker=[]
         marked_indices = [16]
         if self.random_flag:
             index_lists = self.shuffle_indices(IndexLists)
@@ -70,11 +71,12 @@ class Data_Access():
                 for i in range(1,self.range_classes+1):
                     if i not in marked_indices:
                         corrected_sample_value = self.get_corrected_OF(i)
-                        print((i,corrected_sample_value))
+                        Checker.append((i,corrected_sample_value))
                         if corrected_sample_value!=-1:
                             access_order.append(index_lists[corrected_sample_value][j])
             marked_indices.append(sorted_classes[k])
             old_min_samples=min_samples
+        print(Checker)
         return access_order
     
     def build_order(self):
