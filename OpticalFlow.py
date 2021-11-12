@@ -70,6 +70,7 @@ class Data_Access():
                 for i in range(1,self.range_classes+1):
                     if i not in marked_indices:
                         corrected_sample_value = self.get_corrected_OF(i)
+                        print(get_corrected_OF)
                         if corrected_sample_value!=-1:
                             access_order.append(index_lists[corrected_sample_value][j])
             marked_indices.append(sorted_classes[k])
@@ -200,7 +201,6 @@ class learn_optical_flow():
 
             while i<totalSamples-1:
                 
-                
                 try:
                     X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
                 except Exception:
@@ -228,8 +228,6 @@ class learn_optical_flow():
                 
                 
                 # Training batch
-                print(X.shape)
-                print(Y.shape)
                 print(Y)
                 print(Y_Value)
                 history = self.temporal_extractor.fit(X,Y,epochs=1,validation_data=(X_val,Y_val))
@@ -257,7 +255,7 @@ class learn_optical_flow():
                 Val_Frame=[]
                 crt_batch=0
                 try:
-                    if (num_batches+1)%30==0 and plotter_flag==False:
+                    if (num_batches+1)%30 == 0 and plotter_flag == False:
                         self.plot_makker.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
                         print((str)(i) + " examples trained")
                         plotter_flag=True
@@ -277,49 +275,3 @@ class learn_optical_flow():
             print("Model save successful!")
         
         self.plot_makker.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
-
-        
-
-
-"""
-classifier = Sequential()
-classifier.add(CuDNNLSTM(64,input_shape=(480,640),return_sequences=True))
-classifier.add(Dropout(0.2))
-classifier.add(Flatten())
-classifier.add(Dense(4,activation="softmax"))
-classifier.compile( loss='sparse_categorical_crossentropy',
-        optimizer=keras.optimizers.Adam(learning_rate=0.001, decay=1e-6),
-        metrics=['accuracy'] )
-classifier.summary()
-
-session.close()
-config = ConfigProto()
-config.gpu_options.allow_growth = True
-session = InteractiveSession(config=config)
-
-classifier.fit(x=X,y=Y,epochs=10)
-session.close()
-
-
-class learn_optical_flow():
-    def __init__(self):
-        self.A=1
-        self.input_shape=None
-    
-    def model():
-        classifier = Sequential()
-        classifier.add(CuDNNLSTM(128,input_shape=self.input_shape),return_sequences=True)
-        classifier.add(Dropout(0.2))
-        classifier.add(CuDNNLSTM(128))
-        classifier.add(Dense(64,activation="relu"))
-        classifier.add(Dropout(0.2))
-        classifier.add(Dense(19,activation="softmax"))
-        classifier.compile( loss='sparse_categorical_crossentropy',
-              optimizer=Adam(lr=0.001, decay=1e-6),
-              metrics=['accuracy'] )
-        classifier.summary()
-
-    def train():
-    
-
-"""
