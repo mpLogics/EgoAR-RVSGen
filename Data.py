@@ -72,11 +72,11 @@ class LoadData():
                 #RGB_normalized = cv2.normalize(RGB_resized, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
                 
                 if count==4:
-                    Val_Frame.append(RGB_normalized)
+                    Val_Frame.append(Modal[frame_indices[count]])
                     Val_Noun.append((int)(Annotation[frame_indices[count]]))
                 
                 else:
-                    Frames.append(RGB_normalized)
+                    Frames.append(Modal[frame_indices[count]])
                     Annotation.append((int)(Annotation[frame_indices[count]]))
         
         return Frames, Annotation,Val_Frame,Val_Noun
