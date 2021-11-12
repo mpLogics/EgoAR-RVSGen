@@ -71,9 +71,11 @@ class Data_Access():
         
         if self.modality=="RGB":
             marked_indices = [16,44]
+            range_classes = self.range_classes_noun
         else:
             marked_indices = []
-
+            range_classes = self.range_classes_verb
+        
         if self.random_flag:
             index_lists = self.shuffle_indices(IndexLists)
         else:
@@ -84,7 +86,7 @@ class Data_Access():
         for k in range(sorted_indices.shape[0]):
             min_samples = sorted_indices[k]
             for j in range(old_min_samples,min_samples):
-                for i in range(1,self.range_classes+1):
+                for i in range(1,range_classes+1):
                     if i not in marked_indices:
                         corrected_sample_value = self.get_corrected(i)
                         if corrected_sample_value!=-1:
