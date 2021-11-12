@@ -40,12 +40,16 @@ class LoadData():
             modal = np.zeros((s1,s2,s3*2))
             modal[:,:,:s3] = mag
             modal[:,:,s3:] = ang
-            
+
             Annotation = np.load(file_path,allow_pickle=True)["d"]
         return modal,Annotation
     
-    def get_frame_order(self,RGB):
-        interval_size = math.floor(len(RGB)/self.fix_frames)
+    def get_frame_order(self,frames,modality):
+        if modality=="OF":
+            length = frame.shape[0]
+        else:
+            lenth = len(frames)
+        interval_size = math.floor(length/self.fix_frames)
         j=0
         frame_indices=[]
         for i in range(self.fix_frames):
@@ -54,29 +58,28 @@ class LoadData():
         return frame_indices
     
     def read_flow(self,i,access_order,num_classes_total):
-        Magnitude=[]
-        Angle=[]
-        Y_Noun=[]
+        Modal=[]
+        Annotation=[]
         Val_Frame=[]
         Val_Noun=[]
         
         for j in range(i,i+num_classes_total):
-            Magnitude,Angle,Noun = self.load_file(access_order[j],modality="OF")
+            Modal,Annotation = self.load_file(access_order[j],modality="OF")
             #frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
-            frame_indices = self.get_frame_order(RGB)
+            frame_indices = self.get_frame_order(Modal,modality="OF")
             for count in range(self.fix_frames):
-                RGB_resized = cv2.resize(src=RGB[frame_indices[count]],dsize=self.input_shape)
-                RGB_normalized = cv2.normalize(RGB_resized, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+                #RGB_resized = cv2.resize(src=Modal[frame_indices[count]],dsize=self.input_shape)
+                #RGB_normalized = cv2.normalize(RGB_resized, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
                 
                 if count==4:
                     Val_Frame.append(RGB_normalized)
-                    Val_Noun.append((int)(Noun[frame_indices[count]]))
+                    Val_Noun.append((int)(Annotation[frame_indices[count]]))
                 
                 else:
-                    Frame.append(RGB_normalized)
-                    Y_Noun.append((int)(Noun[frame_indices[count]]))
+                    Modal.append(RGB_normalized)
+                    Annotation.append((int)(Annotation[frame_indices[count]]))
         
-        return Frame, Y_Noun,Val_Frame,Val_Noun
+        return Modal, Annotation,Val_Frame,Val_Noun
 
     def read_frames(self,i,access_order,num_classes_total):    
         #random.seed(a=2)
