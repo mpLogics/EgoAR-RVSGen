@@ -70,7 +70,7 @@ class Data_Access():
                 for i in range(1,self.range_classes+1):
                     if i not in marked_indices:
                         corrected_sample_value = self.get_corrected_OF(i)
-                        print(get_corrected_OF)
+                        print((i,corrected_sample_value))
                         if corrected_sample_value!=-1:
                             access_order.append(index_lists[corrected_sample_value][j])
             marked_indices.append(sorted_classes[k])
