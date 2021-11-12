@@ -175,7 +175,6 @@ class LoadData():
         Val_Noun=[]
         print(i)
         for j in range(i,i+num_classes_total):
-            print("J = ",j)
             Modal,Annotation = self.load_file(access_order[j],modality="OF")
             #frame_indices = random.sample(population=[i for i in range(len(RGB))],k=self.fix_frames)
             frame_indices = self.get_frame_order(Modal,modality="OF")
