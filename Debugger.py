@@ -68,9 +68,9 @@ config = ConfigProto()
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
 
-m1 = learn_optical_flow()
-m1.build_temporal_model(optimizer,loss_func)
-m1.train()
+m2 = learn_optical_flow()
+m2.build_temporal_model()
+m2.train()
 
 
 session.close()
