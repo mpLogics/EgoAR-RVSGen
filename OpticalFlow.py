@@ -3,6 +3,8 @@ from tensorflow import keras
 from keras import Input
 from keras.models import Sequential
 from keras.layers import CuDNNLSTM,Dense,Dropout,LSTM,Flatten,Conv2D,GlobalAveragePooling2D,TimeDistributed
+from keras.optimizers import Adam
+
 
 import numpy as np
 import os
@@ -37,8 +39,11 @@ class learn_optical_flow():
         model.add(Dropout(0.2))
         model.add(Flatten())
         model.add(Dense(3,activation="softmax"))
+        lr_schedule = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=1e-3, decay_rate=1e-6)
+        optimizer = Adam(learning_rate=lr_schedule)
+
         model.compile(loss='sparse_categorical_crossentropy',
-                optimizer=keras.optimizers.Adam(learning_rate=0.001, decay=1e-6),
+                optimizer=optimizer,
                 metrics=['accuracy'] )
         model.summary()
         self.temporal_extractor = model
