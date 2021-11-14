@@ -131,7 +131,7 @@ class LoadData():
         self.test = pd.read_csv(self.test_split)
         self.input_shape = (299,299)
         self.sample_rate = 0.1
-        self.fix_frames = 20
+        self.fix_frames = 10
         self.num_classes_total = 51
         
     def get_matrix(self,Mag,Angle,Encoding):
@@ -146,13 +146,15 @@ class LoadData():
         j+=interval_size
         
         for k in range(1,self.fix_frames):
-            if k % 4 ==0:
-                if k==4:
-                    pass
-                else:
-                    init_val = np.concatenate([Mag[j],Angle[j]],axis=1)
-                    temp_init_val = np.reshape(init_val,(1,init_val.shape[0],init_val.shape[1]))
-                    prev_val = np.concatenate([prev_val,temp_init_val])
+            if k==self.fix_frames+1:
+            #if k % 4 ==0:
+            #    if k==4:
+            #        pass
+            #    else:
+                init_val = np.concatenate([Mag[j],Angle[j]],axis=1)
+                temp_init_val = np.reshape(init_val,(1,init_val.shape[0],init_val.shape[1]))
+                prev_val = np.concatenate([prev_val,temp_init_val])
+
             else:
                 prev_matrix = np.concatenate([Mag[j],Angle[j]],axis=1)
                 temp = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
@@ -190,6 +192,7 @@ class LoadData():
     
 
     def get_frame_order(self,frames,modality):
+        
         if modality=="OF":
             length = frames.shape[0]
         else:
