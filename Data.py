@@ -209,6 +209,8 @@ class LoadData():
         Val_Noun=[]
         
         Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
+        print(i)
+        print(access_order[i])
         print(Encoding[0])
         prev_matrix,prev_Annot,prev_val,prev_val_annot = self.get_matrix(Mag,Ang,Encoding)
         final_matrix = np.reshape(prev_matrix,((1,prev_matrix.shape[0],prev_matrix.shape[1],prev_matrix.shape[2])))
