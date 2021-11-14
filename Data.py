@@ -134,6 +134,38 @@ class LoadData():
         self.fix_frames = 10
         self.num_classes_total = 51
         
+    def get_matrix(self,Mag,Angle,Encoding,first_flag):
+        interval_size = math.floor(len(Mag)/self.fix_frames)
+        Annotations=[]
+        j = 0
+        prev_matrix = np.concatenate([Mag[0],Angle[0]],axis=1)
+        init_matrix = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
+        j+=interval_size
+        
+        for k in range(1,self.fix_frames):
+            if k == (fix_frames/2)-1:
+                prev_val = np.concatenate([Mag[j],Angle[j]],axis=1)
+                temp_val = np.reshape(prev_val,(1,prev_val.shape[0],prev_val.shape[1]))
+                val_annot.append((int)(Encoding[0]))
+                
+                if first_flag:
+                    init_val = temp_val
+                else:
+                    init_val = np.concatenate([temp_val,init_val])
+            else:
+                prev_matrix = np.concatenate([Mag[j],Angle[j]],axis=1)
+                temp = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
+                init_matrix = np.concatenate([temp,init_matrix])
+                j+=interval_size 
+
+            #prev_matrix = np.concatenate([Mag[j],Angle[j]],axis=1)
+            #temp = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
+            #init_matrix = np.concatenate([temp,init_matrix])
+            #j+=interval_size    
+        Annotations.append((int(Encoding[0])))
+        return init_matrix,np.array(Annotations)
+    
+
     def load_file(self,i,modality):
         file_path = "data/preprocessed_data/" + modality + "/" + self.train["FileName"][i] + ".npz"
         
@@ -142,21 +174,17 @@ class LoadData():
             Annotation = np.load(file_path,allow_pickle=True)["c"]
         else:
             file_in = np.load(file_path,allow_pickle=True)
-            mag = np.array([element for (i,element) in enumerate(file_in['a'])]) 
-            ang = np.array([element for (i,element) in enumerate(file_in['b'])]) 
-            
-
-            s1 = mag.shape[0]
-            s2 = mag.shape[1]
-            s3 = mag.shape[2]
-
-            modal = np.zeros((s1,s2,s3*2))
-            modal[:,:,:s3] = mag
-            modal[:,:,s3:] = ang
-
-            Annotation = np.load(file_path,allow_pickle=True)["d"]
+            mag = file_in['a']
+            #ang = np.array([element for (i,element) in enumerate(file_in['b'])]) 
+            ang = file_in['b']
+            encoding = file_in['c']
+            return mag,ang,encoding
+            #modal = np.zeros((s1,s2,s3*2))
+            #modal[:,:,:s3] = mag
+            #modal[:,:,s3:] = ang
         return modal,Annotation
     
+
     def get_frame_order(self,frames,modality):
         if modality=="OF":
             length = frames.shape[0]
@@ -175,19 +203,36 @@ class LoadData():
         Y=[]
         Val_Frame=[]
         Val_Noun=[]
-        for j in range(i,i+num_classes_total):
-            Modal,Annotation = self.load_file(access_order[j],modality="OF")
-            frame_indices = self.get_frame_order(Modal,modality="OF")
-            for count in range(self.fix_frames):
-                if count==4:
-                    Val_Frame.append(Modal[frame_indices[count]])
-                    Val_Noun.append((int)(Annotation[frame_indices[count]]))
-                
-                else:
-                    Frames.append(Modal[frame_indices[count]])
-                    Y.append((int)(Annotation[frame_indices[count]]))
         
-        return Frames, Y, Val_Frame, Val_Noun
+        Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
+        prev_matrix,prev_Annot,prev_val,prev_val_annot = get_matrix(Mag,Ang,Encoding,None,[],first_flag = True)
+        final_matrix = np.reshape(prev_matrix,((1,prev_matrix.shape[0],prev_matrix.shape[1],prev_matrix.shape[2])))
+
+        for j in range(i+1,i+num_classes_total):
+            #Modal,Annotation = self.load_file(access_order[j],modality="OF")
+            #frame_indices = self.get_frame_order(Modal,modality="OF")
+            Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
+            init_matrix,init_Annot,prev_val,prev_val_annot = get_matrix(Mag,Ang,Encoding,prev_val,prev_val_annot,first_flag=False)
+            #init_matrix,init_Annot,val_matrix,val_annot = get_matrix(Mag,Ang,Encoding)
+            prev_matrix = np.reshape(init_matrix,((1,init_matrix.shape[0],init_matrix.shape[1],init_matrix.shape[2])))
+            final_matrix = np.concatenate([final_matrix,prev_matrix])
+            prev_Annot = np.concatenate([prev_Annot,init_Annot])
+            
+            #for count in range(self.fix_frames):
+            #    if count==4:
+            #        Val_Frame.append(Modal[frame_indices[count]])
+            #        Val_Noun.append((int)(Annotation[frame_indices[count]]))
+            #    
+            #    else:
+            #        Frames.append(Modal[frame_indices[count]])
+            #        Y.append((int)(Annotation[frame_indices[count]]))
+        
+        Frames = prev_matrix
+        Y = prev_Annot
+        Val_Frame = prev_val
+        Val_Annotation = prev_val_annot
+        
+        return Frames, Y, Val_Frame, Val_Annotation
 
     def read_frames(self,i,access_order,num_classes_total):    
         Frame=[]

@@ -1,13 +1,20 @@
 import tensorflow as tf
+from tensorflow import keras
+from keras import Input
+from keras.models import Sequential
+from keras.layers import CuDNNLSTM,Dense,Dropout,LSTM,Flatten,Conv2D,GlobalAveragePooling2D,TimeDistributed
+
 import numpy as np
 import os
-from Data import LoadData,Data_Access
+import math
 import pandas as pd
 import random
-from visualization import Visualizer
-from tensorflow import keras
-from RVSGen import GenVerbSpace as GVS
 import datetime
+
+
+from Data import LoadData,Data_Access
+from visualization import Visualizer
+from RVSGen import GenVerbSpace as GVS
 
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
@@ -23,14 +30,28 @@ class learn_optical_flow():
         self.Epochs=60
     
     def build_temporal_model(self):
+        model = Sequential()
+        model.add(TimeDistributed(Conv2D(64, (3,3), activation='relu'),input_shape=(10, 480, 1280, 1)))
+        model.add(TimeDistributed(GlobalAveragePooling2D()))
+        model.add(CuDNNLSTM(10))
+        model.add(Dropout(0.2))
+        model.add(Flatten())
+        model.add(Dense(3,activation="softmax"))
+        model.compile(loss='sparse_categorical_crossentropy',
+                optimizer=keras.optimizers.Adam(learning_rate=0.001, decay=1e-6),
+                metrics=['accuracy'] )
+        model.summary()
+        self.temporal_extractor = model
+
+    """
+    def build_temporal_model(self):
         #import si
         from keras.models import Sequential
         from keras.layers import Dense, Dropout, LSTM, Flatten
 
         # Set Model
         classifier = Sequential()
-        classifier.add(LSTM(10,input_shape=(480,640*2)))
-        classifier.add(Dropout(0.2))
+        classifier.add(LSTM(128,input_shape=(480,640*2)))
         classifier.add(Flatten())
         classifier.add(Dense(19,activation="softmax"))
 
@@ -43,7 +64,7 @@ class learn_optical_flow():
         )
         classifier.summary()
         self.temporal_extractor = classifier
-
+    """
     def check_prev_trainings(self,model_name,modality):
         try:
             performance_metrics = np.load("data/performance_metrics/" + modality + "/Metrics.npz")
@@ -114,9 +135,18 @@ class learn_optical_flow():
             Val_Frame=[]
 
             while i<totalSamples-1:
-                
+                X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
+                print(X_Value.shape)
+                print(Y_Value.shape)
+                print(Val_Frame.shape)
+                print(Val_Verb.shape)
+
                 try:
                     X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
+                    print(X_Value.shape)
+                    print(Y_Value.shape)
+                    print(Val_Frame.shape)
+                    print(Val_Verb.shape)
                 except Exception:
                     print("Error reading files from index: ",i)
                 
@@ -130,8 +160,10 @@ class learn_optical_flow():
                 num_batches+=1
                 
                 # Setting X and Y for training
-                X = np.array(X_Value)
-                X_val = np.array(Val_Frame)
+                #X = np.array(X_Value)
+                X = X_Value
+                #X_val = np.array(Val_Frame)
+                X_val = Val_Frame
                 
 
                 Y_corrected = self.getCorrected(np.array(Y_Value))
@@ -143,7 +175,6 @@ class learn_optical_flow():
                 
                 # Training batch
                 print(Y)
-                print(Y_Value)
                 history = self.temporal_extractor.fit(X,Y,epochs=30,validation_data=(X_val,Y_val))
                 train_succ=True
             
@@ -152,10 +183,10 @@ class learn_optical_flow():
                 
                 if train_succ==True:
                     # Collecting Metrics
-                    Loss.append(history.history['loss'])
-                    Accuracy.append(history.history['accuracy'])
-                    Val_Loss.append(history.history['val_loss'])
-                    Val_Acc.append(history.history['val_accuracy'])
+                    Loss.append(history.history['loss'][0])
+                    Accuracy.append(history.history['accuracy'][0])
+                    Val_Loss.append(history.history['val_loss'][0])
+                    Val_Acc.append(history.history['val_accuracy'][0])
                 
                     # Displaying Metrics
                     print("Average Loss: ",np.mean(np.array(Loss)))
