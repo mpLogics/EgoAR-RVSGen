@@ -35,15 +35,15 @@ class learn_optical_flow():
         model = Sequential()
         model.add(TimeDistributed(Conv2D(64, (3,3), activation='relu'),input_shape=(10, 480, 1280, 1)))
         model.add(TimeDistributed(GlobalAveragePooling2D()))
-        model.add(CuDNNLSTM(10))
+        model.add(CuDNNLSTM(128))
         model.add(Dropout(0.2))
         model.add(Flatten())
-        model.add(Dense(3,activation="softmax"))
-        lr_schedule = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=1e-3, decay_rate=1e-6)
-        optimizer = Adam(learning_rate=lr_schedule)
+        model.add(Dense(19,activation="softmax"))
+        #lr_schedule = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=1e-3, decay_rate=1e-6)
+        #optimizer = Adam(learning_rate=lr_schedule)
 
         model.compile(loss='sparse_categorical_crossentropy',
-                optimizer=optimizer,
+                optimizer='adam',
                 metrics=['accuracy'] )
         model.summary()
         self.temporal_extractor = model
