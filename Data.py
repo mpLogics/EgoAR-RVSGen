@@ -205,19 +205,25 @@ class LoadData():
         Val_Noun=[]
         
         Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
-        prev_matrix,prev_Annot,prev_val,prev_val_annot = self.get_matrix(Mag,Ang,Encoding,None,[],first_flag = True)
+        
+        prev_matrix,prev_Annot,prev_val,prev_val_annot = self.get_matrix(Mag,Ang,Encoding)
         final_matrix = np.reshape(prev_matrix,((1,prev_matrix.shape[0],prev_matrix.shape[1],prev_matrix.shape[2])))
+        final_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
 
         for j in range(i+1,i+num_classes_total):
             #Modal,Annotation = self.load_file(access_order[j],modality="OF")
             #frame_indices = self.get_frame_order(Modal,modality="OF")
+        
             Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
-            init_matrix,init_Annot,prev_val,prev_val_annot = self.get_matrix(Mag,Ang,Encoding,prev_val,prev_val_annot,first_flag=False)
+            init_matrix,init_Annot,prev_val,prev_val_annot = self.get_matrix(Mag,Ang,Encoding)
+            init_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
+            final_val = np.concatenate([final_val,init_val])
+            
             #init_matrix,init_Annot,val_matrix,val_annot = get_matrix(Mag,Ang,Encoding)
             prev_matrix = np.reshape(init_matrix,((1,init_matrix.shape[0],init_matrix.shape[1],init_matrix.shape[2])))
             final_matrix = np.concatenate([final_matrix,prev_matrix])
             prev_Annot = np.concatenate([prev_Annot,init_Annot])
-            
+
             #for count in range(self.fix_frames):
             #    if count==4:
             #        Val_Frame.append(Modal[frame_indices[count]])
@@ -227,10 +233,10 @@ class LoadData():
             #        Frames.append(Modal[frame_indices[count]])
             #        Y.append((int)(Annotation[frame_indices[count]]))
         
-        Frames = prev_matrix
+        Frames = final_matrix
         Y = prev_Annot
         Val_Frame = prev_val
-        Val_Annotation = prev_val_annot
+        Val_Annotation = np.array(prev_val_annot)
         
         return Frames, Y, Val_Frame, Val_Annotation
 
