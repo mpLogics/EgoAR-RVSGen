@@ -175,8 +175,8 @@ class learn_optical_flow():
                 
                 
                 # Training batch
-                X = np.resize(X_Value,(self.num_classes_total,self.fix_frames,480,1280,1))
-                X_val = np.resize(Val_Frame,(self.num_classes_total,4,480,1280,1))
+                X = np.reshape(X_Value,(self.num_classes_total,self.fix_frames-self.val_seq_size,480,1280,1))
+                X_val = np.reshape(Val_Frame,(self.num_classes_total,self.val_seq_size,480,1280,1))
                 
                 print(Y)
                 print(Y_Value)

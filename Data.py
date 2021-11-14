@@ -209,7 +209,7 @@ class LoadData():
         Val_Noun=[]
         
         Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
-        
+        print(Encoding[0])
         prev_matrix,prev_Annot,prev_val,prev_val_annot = self.get_matrix(Mag,Ang,Encoding)
         final_matrix = np.reshape(prev_matrix,((1,prev_matrix.shape[0],prev_matrix.shape[1],prev_matrix.shape[2])))
         final_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
@@ -219,6 +219,7 @@ class LoadData():
             #frame_indices = self.get_frame_order(Modal,modality="OF")
         
             Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
+            print(Encoding[0])
             init_matrix,init_Annot,prev_val,init_val_annot = self.get_matrix(Mag,Ang,Encoding)
             init_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
             final_val = np.concatenate([final_val,init_val])
