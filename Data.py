@@ -131,7 +131,7 @@ class LoadData():
         self.test = pd.read_csv(self.test_split)
         self.input_shape = (299,299)
         self.sample_rate = 0.1
-        self.fix_frames = 10
+        self.fix_frames = 20
         self.num_classes_total = 51
         
     def get_matrix(self,Mag,Angle,Encoding):
@@ -140,30 +140,34 @@ class LoadData():
         j = 0
         prev_matrix = np.concatenate([Mag[0],Angle[0]],axis=1)
         init_matrix = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
+        
+        prev_val = np.concatenate([Mag[4],Angle[4]],axis=1)
+        prev_val = np.reshape(prev_val,(1,prev_val.shape[0],prev_val.shape[1]))
         j+=interval_size
         
         for k in range(1,self.fix_frames):
-            if k == (self.fix_frames/2)-1:
-                prev_val = np.concatenate([Mag[j],Angle[j]],axis=1)
-                temp_val = np.reshape(prev_val,(1,prev_val.shape[0],prev_val.shape[1]))
-                val_annot.append((int)(Encoding[0]))
-                
-                if first_flag:
-                    init_val = temp_val
+            if k % 4 ==0:
+                if k==4:
+                    pass
                 else:
-                    init_val = np.concatenate([temp_val,init_val])
+                    init_val = np.concatenate([Mag[j],Angle[j]],axis=1)
+                    temp_init_val = np.reshape(init_val,(1,init_val.shape[0],init_val.shape[1]))
+                    prev_val = np.concatenate([prev_val,temp_init_val])
             else:
                 prev_matrix = np.concatenate([Mag[j],Angle[j]],axis=1)
                 temp = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
                 init_matrix = np.concatenate([temp,init_matrix])
-                j+=interval_size 
+                j+=interval_size    
+        
+        Annotations.append((int)(Encoding[0]))
+        return init_matrix,np.array(Annotations),prev_val,np.array([(int)(Encoding[0])])
 
             #prev_matrix = np.concatenate([Mag[j],Angle[j]],axis=1)
             #temp = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
             #init_matrix = np.concatenate([temp,init_matrix])
             #j+=interval_size    
-        Annotations.append((int(Encoding[0])))
-        return init_matrix,np.array(Annotations),init_val,val_annot
+        #Annotations.append((int(Encoding[0])))
+        #return init_matrix,np.array(Annotations),init_val,val_annot
     
 
     def load_file(self,i,modality):
@@ -215,9 +219,10 @@ class LoadData():
             #frame_indices = self.get_frame_order(Modal,modality="OF")
         
             Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
-            init_matrix,init_Annot,prev_val,prev_val_annot = self.get_matrix(Mag,Ang,Encoding)
+            init_matrix,init_Annot,prev_val,init_val_annot = self.get_matrix(Mag,Ang,Encoding)
             init_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
             final_val = np.concatenate([final_val,init_val])
+            prev_val_annot = np.concatenate([prev_val_annot,init_val_annot])
             
             #init_matrix,init_Annot,val_matrix,val_annot = get_matrix(Mag,Ang,Encoding)
             prev_matrix = np.reshape(init_matrix,((1,init_matrix.shape[0],init_matrix.shape[1],init_matrix.shape[2])))
