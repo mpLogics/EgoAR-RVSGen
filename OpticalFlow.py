@@ -3,7 +3,6 @@ from tensorflow import keras
 from keras import Input
 from keras.models import Sequential
 from keras.layers import CuDNNLSTM,Dense,Dropout,LSTM,Flatten,Conv2D,GlobalAveragePooling2D,TimeDistributed
-from keras.optimizers import Adam
 
 
 import numpy as np
