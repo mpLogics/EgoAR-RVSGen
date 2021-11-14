@@ -146,14 +146,16 @@ class LoadData():
         j+=interval_size
         
         for k in range(1,self.fix_frames):
-            if k==self.fix_frames+1:
+            #if k==self.fix_frames+1:
             #if k % 4 ==0:
             #    if k==4:
             #        pass
             #    else:
-                init_val = np.concatenate([Mag[j],Angle[j]],axis=1)
-                temp_init_val = np.reshape(init_val,(1,init_val.shape[0],init_val.shape[1]))
-                prev_val = np.concatenate([prev_val,temp_init_val])
+            if k ==4:
+                pass
+                #init_val = np.concatenate([Mag[j],Angle[j]],axis=1)
+                #temp_init_val = np.reshape(init_val,(1,init_val.shape[0],init_val.shape[1]))
+                #prev_val = np.concatenate([prev_val,temp_init_val])
 
             else:
                 prev_matrix = np.concatenate([Mag[j],Angle[j]],axis=1)
