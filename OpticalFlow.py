@@ -139,12 +139,7 @@ class learn_optical_flow():
             Val_Frame=[]
 
             while i<totalSamples-1:
-                X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
-                print(X_Value.shape)
-                print(Y_Value.shape)
-                print(Val_Frame.shape)
-                print(Val_Verb.shape)
-                
+
                 try:
                     X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
                     print(X_Value.shape)
@@ -165,9 +160,9 @@ class learn_optical_flow():
                 
                 # Setting X and Y for training
                 #X = np.array(X_Value)
-                X = X_Value
+                #X = X_Value
                 #X_val = np.array(Val_Frame)
-                X_val = Val_Frame
+                #X_val = Val_Frame
                 
 
                 Y_corrected = self.getCorrected(np.array(Y_Value))
@@ -178,7 +173,12 @@ class learn_optical_flow():
                 
                 
                 # Training batch
+                X = np.resize(X_Value,(self.num_classes_total,self.fix_frames,480,1280,1))
+                X_val = np.resize(Val_Frame,(self.num_classes_total,4,480,1280,1))
+                
                 print(Y)
+                print(Y_Value)
+                print(Y_val)
                 history = self.temporal_extractor.fit(X,Y,epochs=30,validation_data=(X_val,Y_val))
                 train_succ=True
             

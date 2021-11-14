@@ -240,7 +240,7 @@ class LoadData():
         
         Frames = final_matrix
         Y = prev_Annot
-        Val_Frame = prev_val
+        Val_Frame = final_val
         Val_Annotation = np.array(prev_val_annot)
         
         return Frames, Y, Val_Frame, Val_Annotation
