@@ -34,9 +34,9 @@ class learn_optical_flow():
     
     def build_temporal_model(self):
         model = Sequential()
-        model.add(TimeDistributed(Conv2D(64, (3,3), activation='relu'),input_shape=(self.fix_frames-self.val_seq_size, 480, 1280, 1)))
+        model.add(TimeDistributed(Conv2D(32, (3,3), activation='relu'),input_shape=(self.fix_frames-self.val_seq_size, 480, 1280, 1)))
         model.add(TimeDistributed(GlobalAveragePooling2D()))
-        model.add(CuDNNLSTM(128))
+        model.add(CuDNNLSTM(32))
         model.add(Dropout(0.2))
         model.add(Flatten())
         model.add(Dense(19,activation="softmax"))
@@ -127,11 +127,11 @@ class learn_optical_flow():
                 self.plot_makker.plot_metrics(m_path="data/performance_metrics/"+ modality +"/Metrics.npz",Epoch=epochs-1)
             print("\nEpoch:",epochs)
             i = 0
-            num_batches=0
+            num_batches = 0
             crt_batch = 0
             X_Value=[]
             Y_Value=[]
-            diff=0
+            diff = 0
             plotter_flag = False
             Loss=[]
             Accuracy=[]
