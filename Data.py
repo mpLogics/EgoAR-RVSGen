@@ -163,7 +163,7 @@ class LoadData():
             #init_matrix = np.concatenate([temp,init_matrix])
             #j+=interval_size    
         Annotations.append((int(Encoding[0])))
-        return init_matrix,np.array(Annotations)
+        return init_matrix,np.array(Annotations),init_val,val_annot
     
 
     def load_file(self,i,modality):
