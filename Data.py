@@ -134,7 +134,7 @@ class LoadData():
         self.fix_frames = 10
         self.num_classes_total = 51
         
-    def get_matrix(self,Mag,Angle,Encoding,init_val,val_annot,first_flag):
+    def get_matrix(self,Mag,Angle,Encoding):
         interval_size = math.floor(len(Mag)/self.fix_frames)
         Annotations=[]
         j = 0
