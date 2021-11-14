@@ -143,7 +143,7 @@ class LoadData():
         j+=interval_size
         
         for k in range(1,self.fix_frames):
-            if k == (fix_frames/2)-1:
+            if k == (self.fix_frames/2)-1:
                 prev_val = np.concatenate([Mag[j],Angle[j]],axis=1)
                 temp_val = np.reshape(prev_val,(1,prev_val.shape[0],prev_val.shape[1]))
                 val_annot.append((int)(Encoding[0]))
