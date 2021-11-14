@@ -205,14 +205,14 @@ class LoadData():
         Val_Noun=[]
         
         Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
-        prev_matrix,prev_Annot,prev_val,prev_val_annot = get_matrix(Mag,Ang,Encoding,None,[],first_flag = True)
+        prev_matrix,prev_Annot,prev_val,prev_val_annot = self.get_matrix(Mag,Ang,Encoding,None,[],first_flag = True)
         final_matrix = np.reshape(prev_matrix,((1,prev_matrix.shape[0],prev_matrix.shape[1],prev_matrix.shape[2])))
 
         for j in range(i+1,i+num_classes_total):
             #Modal,Annotation = self.load_file(access_order[j],modality="OF")
             #frame_indices = self.get_frame_order(Modal,modality="OF")
             Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
-            init_matrix,init_Annot,prev_val,prev_val_annot = get_matrix(Mag,Ang,Encoding,prev_val,prev_val_annot,first_flag=False)
+            init_matrix,init_Annot,prev_val,prev_val_annot = self.get_matrix(Mag,Ang,Encoding,prev_val,prev_val_annot,first_flag=False)
             #init_matrix,init_Annot,val_matrix,val_annot = get_matrix(Mag,Ang,Encoding)
             prev_matrix = np.reshape(init_matrix,((1,init_matrix.shape[0],init_matrix.shape[1],init_matrix.shape[2])))
             final_matrix = np.concatenate([final_matrix,prev_matrix])
