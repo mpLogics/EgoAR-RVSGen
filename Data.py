@@ -181,7 +181,7 @@ class LoadData():
             mag = file_in['a']
             #ang = np.array([element for (i,element) in enumerate(file_in['b'])]) 
             ang = file_in['b']
-            encoding = file_in['c']
+            encoding = file_in['d']
             return mag,ang,encoding
             #modal = np.zeros((s1,s2,s3*2))
             #modal[:,:,:s3] = mag

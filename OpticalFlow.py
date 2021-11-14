@@ -34,7 +34,7 @@ class learn_optical_flow():
     
     def build_temporal_model(self):
         model = Sequential()
-        model.add(TimeDistributed(Conv2D(32, (3,3), activation='relu'),input_shape=(self.fix_frames-self.val_seq_size, 480, 1280, 1)))
+        model.add(TimeDistributed(Conv2D(64, (3,3), activation='relu'),input_shape=(self.fix_frames-self.val_seq_size, 480, 1280, 1)))
         model.add(TimeDistributed(GlobalAveragePooling2D()))
         model.add(CuDNNLSTM(32))
         model.add(Dropout(0.2))
