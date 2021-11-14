@@ -29,8 +29,8 @@ class learn_optical_flow():
         self.train_test_split = (("1","1"))
         self.batch_preprocess_size = 510
         self.Epochs=60
-        self.fix_frames = 10
-        self.val_seq_size = 1
+        self.fix_frames = 20
+        self.val_seq_size = 4
     
     def build_temporal_model(self):
         model = Sequential()
