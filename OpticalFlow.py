@@ -176,9 +176,10 @@ class learn_optical_flow():
                 Y_test = []
                 Y_corrected = self.getCorrected(np.array(Y_Value))
                 for i in range(Y_corrected.shape[0]):
-                    for j in range(self.val_seq_size):
-                        Y_test.append(Y_corrected[i])
-                        #Y_test.append((Y_corrected[i],Y_corrected[i],Y_corrected[i],Y_corrected[i],Y_corrected[i]))
+                    Y_test.append((Y_corrected[i],Y_corrected[i],Y_corrected[i],Y_corrected[i],Y_corrected[i]))
+                    #for j in range(self.val_seq_size):
+                        #Y_test.append(Y_corrected[i])
+                    
                 
                 Y_test = np.array(Y_test)
                 print(Y_test)
@@ -188,9 +189,10 @@ class learn_optical_flow():
                 
                 Y_val_test=[]
                 for i in range(Y_val_corrected.shape[0]):
-                    for j in range(self.val_seq_size):
-                        Y_val_test.append(Y_val_corrected[i])    
-                        #Y_val_test.append((Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i]))
+                    Y_val_test.append((Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i]))
+                    #for j in range(self.val_seq_size):
+                    #    Y_val_test.append(Y_val_corrected[i])    
+                        
 
                 
                 Y_val_test = np.array(Y_val_test)
