@@ -149,6 +149,7 @@ class learn_optical_flow():
                 print(Val_Frame.shape)
                 print(Val_Verb.shape)
 
+                """
                 try:
                     X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
                     print(X_Value.shape)
@@ -157,6 +158,7 @@ class learn_optical_flow():
                     print(Val_Verb.shape)
                 except Exception:
                     print("Error reading files from index: ",i)
+                """
                 
                 i+=self.num_classes_total
                 
@@ -182,7 +184,7 @@ class learn_optical_flow():
                     
                 
                 Y_test = np.array(Y_test)
-                print(Y_test)
+                print("Training set Y",Y_test.shape)
                 #Y = tf.convert_to_tensor(Y_corrected)
                 Y = tf.convert_to_tensor(Y_test)
                 Y_val_corrected = self.getCorrected(np.array(Val_Verb))
@@ -196,7 +198,7 @@ class learn_optical_flow():
 
                 
                 Y_val_test = np.array(Y_val_test)
-                print(Y_val_test)
+                print("Validation set Y",Y_val_test.shape)
                 
                 
                 #Y_val = tf.convert_to_tensor(Y_val_corrected)
