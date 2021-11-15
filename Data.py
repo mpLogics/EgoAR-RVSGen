@@ -250,9 +250,9 @@ class LoadData():
         for j in range(i+1,i+num_classes_total):
             #Modal,Annotation = self.load_file(access_order[j],modality="OF")
             #frame_indices = self.get_frame_order(Modal,modality="OF")
-        
-            Mag,Ang,Encoding = self.load_file(access_order[j],modality="OF")
-            init_matrix,init_Annot,prev_val,init_val_annot = self.get_matrix(Mag,Ang,Encoding)
+            print("Loading File index",access_order[j])
+            Mag2,Ang2,Encoding2 = self.load_file(access_order[j],modality="OF")
+            init_matrix,init_Annot,prev_val,init_val_annot = self.get_matrix(Mag2,Ang2,Encoding2)
             init_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
             final_val = np.concatenate([final_val,init_val])
             prev_val_annot = np.concatenate([prev_val_annot,init_val_annot])
