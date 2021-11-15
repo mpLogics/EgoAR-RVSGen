@@ -148,7 +148,6 @@ class LoadData():
         for k in range(2,self.fix_frames):
             #if k==self.fix_frames+1:
             if k % 2 !=0:
-                print(k)
                 init_val = np.concatenate([Mag[j],Angle[j]],axis=1)
                 temp_init_val = np.reshape(init_val,(1,init_val.shape[0],init_val.shape[1]))
                 prev_val = np.concatenate([prev_val,temp_init_val])
@@ -219,6 +218,8 @@ class LoadData():
         final_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
 
         for j in range(i+1,i+num_classes_total):
+            print(final_val.shape)
+            print(final_matrix.shape)
             #Modal,Annotation = self.load_file(access_order[j],modality="OF")
             #frame_indices = self.get_frame_order(Modal,modality="OF")
         
