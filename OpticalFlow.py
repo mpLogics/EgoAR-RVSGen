@@ -34,6 +34,7 @@ class learn_optical_flow():
     
     def build_temporal_model(self):
         input_shape_network = (self.fix_frames-self.val_seq_size, 240, 640, 1)
+        print(input_shape_network)
         model = Sequential()
         #model.add(Input(shape=(self.fix_frames-self.val_seq_size, 240, 640, 1)))
         model.add(TimeDistributed(Conv2D(16, (5,5)),input_shape=input_shape_network))
