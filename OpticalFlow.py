@@ -36,11 +36,11 @@ class learn_optical_flow():
         model = Sequential()
         model.add(TimeDistributed(Conv2D(16, (40,40),strides=(5,5)),input_shape=(self.fix_frames-self.val_seq_size, 240, 640, 1)))
         model.add(TimeDistributed(GlobalAveragePooling2D()))
-        #model.add(CuDNNLSTM(5))
-        #model.add(Dropout(0.2))
-        
-        model.add(Dense(19,activation="softmax"))
+        model.add(CuDNNLSTM(5))
+        model.add(Dropout(0.2))
         model.add(Flatten())
+        model.add(Dense(19,activation="softmax"))
+        
         #lr_schedule = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=1e-3, decay_rate=1e-6)
         #optimizer = Adam(learning_rate=lr_schedule)
 
@@ -185,24 +185,24 @@ class learn_optical_flow():
                 
                 Y_test = np.array(Y_test)
                 print("Training set Y",Y_test.shape)
-                #Y = tf.convert_to_tensor(Y_corrected)
-                Y = tf.convert_to_tensor(Y_test)
+                Y = tf.convert_to_tensor(Y_corrected)
+                #Y = tf.convert_to_tensor(Y_test)
                 Y_val_corrected = self.getCorrected(np.array(Val_Verb))
                 
+                """
                 Y_val_test=[]
                 for i in range(Y_val_corrected.shape[0]):
                     Y_val_test.append((Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i]))
                     #for j in range(self.val_seq_size):
                     #    Y_val_test.append(Y_val_corrected[i])    
-                        
-
                 
                 Y_val_test = np.array(Y_val_test)
                 print("Validation set Y",Y_val_test.shape)
+                """
                 
                 
-                #Y_val = tf.convert_to_tensor(Y_val_corrected)
-                Y_val = tf.convert_to_tensor(Y_val_test)
+                Y_val = tf.convert_to_tensor(Y_val_corrected)
+                #Y_val = tf.convert_to_tensor(Y_val_test)
                 
                 # Training batch
                 X = np.reshape(X_Value,(self.num_classes_total,self.fix_frames-self.val_seq_size,240,640,1))
