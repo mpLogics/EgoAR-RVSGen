@@ -139,7 +139,7 @@ class LoadData():
         Annotations=[]
         j = 0
         Mag[0] = Mag[0][120:360,160:480]
-        Ang[0] = Ang[0][120:360,160:480]
+        Angle[0] = Angle[0][120:360,160:480]
         prev_matrix = np.concatenate([Mag[0],Angle[0]],axis=1)
         init_matrix = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
         
@@ -149,7 +149,7 @@ class LoadData():
         
         for k in range(2,self.fix_frames):
             Mag[j] = Mag[j][120:360,160:480]
-            Ang[j] = Ang[j][120:360,160:480]
+            Angle[j] = Angle[j][120:360,160:480]
             #if k==self.fix_frames+1:
             if k % 2 !=0:
                 init_val = np.concatenate([Mag[j],Angle[j]],axis=1)
