@@ -131,7 +131,7 @@ class LoadData():
         self.test = pd.read_csv(self.test_split)
         self.input_shape = (299,299)
         self.sample_rate = 0.1
-        self.fix_frames = 20
+        self.fix_frames = 10
         self.num_classes_total = 51
         
     def get_matrix(self,Mag,Angle,Encoding):
@@ -218,8 +218,6 @@ class LoadData():
         final_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
 
         for j in range(i+1,i+num_classes_total):
-            print(final_val.shape)
-            print(final_matrix.shape)
             #Modal,Annotation = self.load_file(access_order[j],modality="OF")
             #frame_indices = self.get_frame_order(Modal,modality="OF")
         
