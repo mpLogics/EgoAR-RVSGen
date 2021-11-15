@@ -34,7 +34,7 @@ class learn_optical_flow():
     
     def build_temporal_model(self):
         model = Sequential()
-        model.add(TimeDistributed(Conv2D(16, (40,40),strides=(5,5)),input_shape=(self.fix_frames-self.val_seq_size, 480, 1280, 1)))
+        model.add(TimeDistributed(Conv2D(16, (40,40),strides=(5,5)),input_shape=(self.fix_frames-self.val_seq_size, 240, 640, 1)))
         model.add(TimeDistributed(GlobalAveragePooling2D()))
         #model.add(CuDNNLSTM(5))
         #model.add(Dropout(0.2))
@@ -189,8 +189,8 @@ class learn_optical_flow():
                 Y_val = tf.convert_to_tensor(Y_val_test)
                 
                 # Training batch
-                X = np.reshape(X_Value,(self.num_classes_total,self.fix_frames-self.val_seq_size,480,1280,1))
-                X_val = np.reshape(Val_Frame,(self.num_classes_total,self.val_seq_size,480,1280,1))
+                X = np.reshape(X_Value,(self.num_classes_total,self.fix_frames-self.val_seq_size,240,640,1))
+                X_val = np.reshape(Val_Frame,(self.num_classes_total,self.val_seq_size,240,640,1))
                 
                 print(Y)
                 #print(Y_Value)
