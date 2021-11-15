@@ -153,6 +153,7 @@ class LoadData():
         j+=interval_size
         
         for k in range(2,self.fix_frames):
+            print(k)
             print("Here Sanity Check",Mag[j].shape)
             print("Here Sanity Check",Angle[j].shape)
             Mag[j] = Mag[j][120:360,160:480]
