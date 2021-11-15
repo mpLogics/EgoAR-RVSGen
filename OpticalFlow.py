@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import Input
 from keras.models import Sequential
-from keras.layers import CuDNNLSTM,Dense,Dropout,LSTM,Flatten,Conv2D,GlobalAveragePooling2D,TimeDistributed
+from keras.layers import CuDNNLSTM,Dense,Dropout,LSTM,Flatten,Conv2D,GlobalAveragePooling2D,TimeDistributed,Input
 
 
 import numpy as np
@@ -34,7 +34,7 @@ class learn_optical_flow():
     
     def build_temporal_model(self):
         model = Sequential()
-        model.add(keras.Input(shape=(self.fix_frames-self.val_seq_size, 240, 640, 1)))
+        model.add(Input(shape=(self.fix_frames-self.val_seq_size, 240, 640, 1)))
         #model.add(TimeDistributed(Conv2D(16, (5,5),input_shape=(self.fix_frames-self.val_seq_size, 240, 640, 1)))
         model.add(TimeDistributed(Conv2D(16,(5,5))))
         model.add(TimeDistributed(GlobalAveragePooling2D()))
