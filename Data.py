@@ -159,9 +159,11 @@ class LoadData():
         prev_val = np.concatenate([Mag[1],Angle[1]],axis=1)
         prev_val = np.reshape(prev_val,(1,prev_val.shape[0],prev_val.shape[1]))
         j+=interval_size
+        print("Interval size = ",interval_size)
         
         for k in range(2,self.fix_frames):
             print("K = ",k)
+            print("J = ",j)
             #print("Here Sanity Check",Mag[j].shape)
             #print("Here Sanity Check",Angle[j].shape)
             Mag[j] = Mag[j][120:360,160:480]
