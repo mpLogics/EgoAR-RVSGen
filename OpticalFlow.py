@@ -184,7 +184,7 @@ class learn_optical_flow():
                     
                 
                 Y_test = np.array(Y_test)
-                print("Training set Y",Y_test.shape)
+                #print("Training set Y",Y_test.shape)
                 #Y = tf.convert_to_tensor(Y_corrected)
                 Y = Y_test
                 Y_val_corrected = self.getCorrected(np.array(Val_Verb))
@@ -197,7 +197,7 @@ class learn_optical_flow():
                     #    Y_val_test.append(Y_val_corrected[i])    
                 
                 Y_val_test = np.array(Y_val_test)
-                print("Validation set Y",Y_val_test.shape)
+                #print("Validation set Y",Y_val_test.shape)
                 
                 
                 
@@ -208,9 +208,9 @@ class learn_optical_flow():
                 X = np.reshape(X_Value,(self.num_classes_total,self.fix_frames-self.val_seq_size,240,640,1))
                 X_val = np.reshape(Val_Frame,(self.num_classes_total,self.val_seq_size,240,640,1))
                 
-                print(Y)
+                #print(Y)
                 #print(Y_Value)
-                print(Y_val)
+                #print(Y_val)
                 #print(Y_val_test)
                 #print(Y_test)
                 history = self.temporal_extractor.fit(X,Y,epochs=30,validation_data=(X_val,Y_val))
