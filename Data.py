@@ -163,7 +163,9 @@ class LoadData():
 
             else:
                 prev_matrix = np.concatenate([Mag[j],Angle[j]],axis=1)
-                print("Here 2",prev_matrix.shape)
+                print("Here 2",Mag[j].shape)
+                print("Here 3",Angle[j].shape)
+                print("Here 4",prev_matrix.shape)
                 temp = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
                 init_matrix = np.concatenate([init_matrix,temp])
                 j+=interval_size    
