@@ -159,9 +159,8 @@ class LoadData():
             Mag[j] = Mag[j][120:360,160:480]
             Angle[j] = Angle[j][120:360,160:480]
             #print("Here -1",Mag[j].shape)
-            #print("Here 0",Angle[j].shape
+            #print("Here 0",Angle[j].shape)
             
-            )
             #if k==self.fix_frames+1:
             if k % 2 !=0:
                 init_val = np.concatenate([Mag[j],Angle[j]],axis=1)
