@@ -36,9 +36,9 @@ class learn_optical_flow():
         model = Sequential()
         model.add(TimeDistributed(Conv2D(16, (40,40),strides=(5,5)),input_shape=(self.fix_frames-self.val_seq_size, 240, 640, 1)))
         model.add(TimeDistributed(GlobalAveragePooling2D()))
-        model.add(CuDNNLSTM(5))
-        model.add(Dropout(0.2))
-        model.add(Flatten())
+        #model.add(CuDNNLSTM(5))
+        #model.add(Dropout(0.2))
+        #model.add(Flatten())
         model.add(Dense(19,activation="softmax"))
         
         #lr_schedule = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=1e-3, decay_rate=1e-6)
