@@ -138,41 +138,41 @@ class LoadData():
         interval_size = math.floor(len(Mag)/self.fix_frames)
         Annotations=[]
         j = 0
-        print("Check before mag",Mag[0].shape)
-        print("Check before angle",Angle[0].shape)
+        #print("Check before mag",Mag[0].shape)
+        #print("Check before angle",Angle[0].shape)
 
         Mag[0] = Mag[0][120:360,160:480]
         Angle[0] = Angle[0][120:360,160:480]
         prev_matrix = np.concatenate([Mag[0],Angle[0]],axis=1)
         init_matrix = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
         
-        print("Check after mag",Mag[0].shape)
-        print("Check after angle",Angle[0].shape)
+        #print("Check after mag",Mag[0].shape)
+        #print("Check after angle",Angle[0].shape)
 
-        print("Check before mag(val)",Mag[1].shape)
-        print("Check before angle",Angle[1].shape)
+        #print("Check before mag(val)",Mag[1].shape)
+        #print("Check before angle",Angle[1].shape)
         Mag[1] = Mag[1][120:360,160:480]
         Angle[1] = Angle[1][120:360,160:480]
-        print("Check after mag(val)",Mag[1].shape)
-        print("Check after angle(val)",Angle[0].shape)
+        #print("Check after mag(val)",Mag[1].shape)
+        #print("Check after angle(val)",Angle[0].shape)
 
         prev_val = np.concatenate([Mag[1],Angle[1]],axis=1)
         prev_val = np.reshape(prev_val,(1,prev_val.shape[0],prev_val.shape[1]))
         j+=interval_size
-        print("Interval size = ",interval_size)
+        #print("Interval size = ",interval_size)
         
         for k in range(2,self.fix_frames):
             if j<=1:
                 j+=interval_size
-            print("K = ",k)
-            print("J = ",j)
+            #print("K = ",k)
+            #print("J = ",j)
             #print("Here Sanity Check",Mag[j].shape)
             #print("Here Sanity Check",Angle[j].shape)
             Mag[j] = Mag[j][120:360,160:480]
             Angle[j] = Angle[j][120:360,160:480]
             
-            print("Here -1",Mag[j].shape)
-            print("Here 0",Angle[j].shape)
+            #print("Here -1",Mag[j].shape)
+            #print("Here 0",Angle[j].shape)
             
             #if k==self.fix_frames+1:
             if k % 2 !=0:
@@ -241,9 +241,9 @@ class LoadData():
         Val_Noun=[]
         
         Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
-        print(i)
-        print(access_order[i])
-        print(Encoding[0])
+        #print(i)
+        #print(access_order[i])
+        #print(Encoding[0])
         
         prev_matrix,prev_Annot,prev_val,prev_val_annot = self.get_matrix(Mag,Ang,Encoding)
         final_matrix = np.reshape(prev_matrix,((1,prev_matrix.shape[0],prev_matrix.shape[1],prev_matrix.shape[2])))
@@ -252,9 +252,9 @@ class LoadData():
         for j in range(i+1,i+num_classes_total):
             #Modal,Annotation = self.load_file(access_order[j],modality="OF")
             #frame_indices = self.get_frame_order(Modal,modality="OF")
-            print("Loading File index",access_order[j])
-            Mag2,Ang2,Encoding2 = self.load_file(access_order[j],modality="OF")
-            init_matrix,init_Annot,prev_val,init_val_annot = self.get_matrix(Mag2,Ang2,Encoding2)
+            #print("Loading File index",access_order[j])
+            Mag,Ang,Encoding = self.load_file(access_order[j],modality="OF")
+            init_matrix,init_Annot,prev_val,init_val_annot = self.get_matrix(Mag,Ang,Encoding)
             init_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
             final_val = np.concatenate([final_val,init_val])
             prev_val_annot = np.concatenate([prev_val_annot,init_val_annot])
