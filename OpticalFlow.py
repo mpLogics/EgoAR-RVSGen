@@ -34,7 +34,7 @@ class learn_optical_flow():
     
     def build_temporal_model(self):
         model = Sequential()
-        model.add(TimeDistributed(Conv2D(16, (40,40),strides=(5,5)),input_shape=(self.fix_frames-self.val_seq_size, 240, 640, 1)))
+        model.add(TimeDistributed(Conv2D(16, (40,40),strides=(5,5)),input_shape=(self.fix_frames-self.val_seq_size, 240, 640, 1)).output)
         model.add(TimeDistributed(GlobalAveragePooling2D()))
         #model.add(CuDNNLSTM(5))
         #model.add(Dropout(0.2))
@@ -147,7 +147,7 @@ class learn_optical_flow():
                 print(Y_Value.shape)
                 print(Val_Frame.shape)
                 print(Val_Verb.shape)
-                
+
                 try:
                     X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
                     print(X_Value.shape)
