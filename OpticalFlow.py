@@ -185,11 +185,11 @@ class learn_optical_flow():
                 
                 Y_test = np.array(Y_test)
                 print("Training set Y",Y_test.shape)
-                Y = tf.convert_to_tensor(Y_corrected)
-                #Y = tf.convert_to_tensor(Y_test)
+                #Y = tf.convert_to_tensor(Y_corrected)
+                Y = Y_test
                 Y_val_corrected = self.getCorrected(np.array(Val_Verb))
                 
-                """
+                
                 Y_val_test=[]
                 for i in range(Y_val_corrected.shape[0]):
                     Y_val_test.append((Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i]))
@@ -198,11 +198,11 @@ class learn_optical_flow():
                 
                 Y_val_test = np.array(Y_val_test)
                 print("Validation set Y",Y_val_test.shape)
-                """
                 
                 
-                Y_val = tf.convert_to_tensor(Y_val_corrected)
-                #Y_val = tf.convert_to_tensor(Y_val_test)
+                
+                #Y_val = tf.convert_to_tensor(Y_val_corrected)
+                Y_val = Y_val_test
                 
                 # Training batch
                 X = np.reshape(X_Value,(self.num_classes_total,self.fix_frames-self.val_seq_size,240,640,1))
