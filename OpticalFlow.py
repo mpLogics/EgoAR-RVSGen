@@ -168,19 +168,29 @@ class learn_optical_flow():
                 
 
                 Y_corrected = self.getCorrected(np.array(Y_Value))
-                Y = tf.convert_to_tensor(Y_corrected)
+                for i in range(Y_corrected.shape[0]):
+                        Y_test.append((Y_corrected[i],Y_corrected[i],Y_corrected[i],Y_corrected[i],Y_corrected[i])
                 
+                
+                #Y = tf.convert_to_tensor(Y_corrected)
+                Y = tf.convert_to_tensor(Y_test)
                 Y_val_corrected = self.getCorrected(np.array(Val_Verb))
-                Y_val = tf.convert_to_tensor(Y_val_corrected)
                 
+                for i in range(Y_val_corrected.shape[0]):
+                        Y_val_test.append((Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i])
+
+                #Y_val = tf.convert_to_tensor(Y_val_corrected)
+                Y_val = tf.convert_to_tensor(Y_val_test)
                 
                 # Training batch
                 X = np.reshape(X_Value,(self.num_classes_total,self.fix_frames-self.val_seq_size,480,1280,1))
                 X_val = np.reshape(Val_Frame,(self.num_classes_total,self.val_seq_size,480,1280,1))
                 
                 print(Y)
-                print(Y_Value)
+                #print(Y_Value)
                 print(Y_val)
+                #print(Y_val_test)
+                #print(Y_test)
                 history = self.temporal_extractor.fit(X,Y,epochs=30,validation_data=(X_val,Y_val))
                 train_succ=True
             
