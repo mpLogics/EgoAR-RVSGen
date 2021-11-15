@@ -153,6 +153,7 @@ class LoadData():
             #if k==self.fix_frames+1:
             if k % 2 !=0:
                 init_val = np.concatenate([Mag[j],Angle[j]],axis=1)
+                print(init_val.shape)
                 temp_init_val = np.reshape(init_val,(1,init_val.shape[0],init_val.shape[1]))
                 prev_val = np.concatenate([prev_val,temp_init_val])
 
