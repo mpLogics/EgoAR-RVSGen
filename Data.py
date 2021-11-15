@@ -142,6 +142,7 @@ class LoadData():
         Mag[0] = Mag[0][120:360,160:480]
         Angle[0] = Angle[0][120:360,160:480]
         prev_matrix = np.concatenate([Mag[0],Angle[0]],axis=1)
+        print("Here: ",prev_matrix.shape)
         init_matrix = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
         
 
@@ -162,8 +163,9 @@ class LoadData():
 
             else:
                 prev_matrix = np.concatenate([Mag[j],Angle[j]],axis=1)
+                print("Here 2",prev_matrix.shape)
                 temp = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
-                init_matrix = np.concatenate([temp,init_matrix])
+                init_matrix = np.concatenate([init_matrix,temp])
                 j+=interval_size    
         
         Annotations.append((int)(Encoding[0]))
