@@ -131,7 +131,7 @@ class LoadData():
         self.test = pd.read_csv(self.test_split)
         self.input_shape = (299,299)
         self.sample_rate = 0.1
-        self.fix_frames = 10
+        self.fix_frames = 20
         self.num_classes_total = 51
         
     def get_matrix(self,Mag,Angle,Encoding):
@@ -141,19 +141,16 @@ class LoadData():
         prev_matrix = np.concatenate([Mag[0],Angle[0]],axis=1)
         init_matrix = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
         
-        prev_val = np.concatenate([Mag[4],Angle[4]],axis=1)
+        prev_val = np.concatenate([Mag[1],Angle[1]],axis=1)
         prev_val = np.reshape(prev_val,(1,prev_val.shape[0],prev_val.shape[1]))
         j+=interval_size
         
-        for k in range(1,self.fix_frames):
+        for k in range(2,self.fix_frames):
             #if k==self.fix_frames+1:
-            if k % 4 ==0:
-                if k==4:
-                    pass
-                else:
-                    init_val = np.concatenate([Mag[j],Angle[j]],axis=1)
-                    temp_init_val = np.reshape(init_val,(1,init_val.shape[0],init_val.shape[1]))
-                    prev_val = np.concatenate([prev_val,temp_init_val])
+            if k % 2 !=0:
+                init_val = np.concatenate([Mag[j],Angle[j]],axis=1)
+                temp_init_val = np.reshape(init_val,(1,init_val.shape[0],init_val.shape[1]))
+                prev_val = np.concatenate([prev_val,temp_init_val])
 
             else:
                 prev_matrix = np.concatenate([Mag[j],Angle[j]],axis=1)
