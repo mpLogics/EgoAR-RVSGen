@@ -36,7 +36,7 @@ class learn_optical_flow():
         input_shape_network = (self.fix_frames-self.val_seq_size, 240, 640, 1)
         model = Sequential()
         #model.add(Input(shape=(self.fix_frames-self.val_seq_size, 240, 640, 1)))
-        model.add(TimeDistributed(Conv2D(16, (5,5)),input_shape=input_shape_network)
+        model.add(TimeDistributed(Conv2D(16, (5,5)),input_shape=input_shape_network))
         #model.add(TimeDistributed(Conv2D(16,(5,5))))
         model.add(TimeDistributed(GlobalAveragePooling2D()))
         #model.add(CuDNNLSTM(5))
