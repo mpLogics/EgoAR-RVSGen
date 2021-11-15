@@ -139,7 +139,7 @@ class LoadData():
         Annotations=[]
         j = 0
         print("Check before mag",Mag[0].shape)
-        print("Check before angle",Ang[0].shape)
+        print("Check before angle",Angle[0].shape)
 
         Mag[0] = Mag[0][120:360,160:480]
         Angle[0] = Angle[0][120:360,160:480]
