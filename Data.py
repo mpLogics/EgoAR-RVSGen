@@ -162,6 +162,8 @@ class LoadData():
         print("Interval size = ",interval_size)
         
         for k in range(2,self.fix_frames):
+            if j<=1:
+                j+=interval_size
             print("K = ",k)
             print("J = ",j)
             #print("Here Sanity Check",Mag[j].shape)
