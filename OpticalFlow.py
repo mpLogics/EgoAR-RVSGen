@@ -33,6 +33,44 @@ class learn_optical_flow():
         self.val_seq_size = 5
     
     def build_temporal_model(self):
+        model = Sequential()# after having Conv2D...
+        model.add(
+            TimeDistributed(
+                Conv2D(64, (3,3), activation='relu'), 
+                input_shape=(5, 240, 640, 3) # 5 images...
+            )
+        )
+
+        model.add(
+            TimeDistributed(
+                Conv2D(64, (3,3), activation='relu')
+            )
+        )# We need to have only one dimension per output
+        # to insert them to the LSTM layer - Flatten or use Pooling
+        
+        model.add(
+            TimeDistributed(
+                GlobalAveragePooling2D() # Or Flatten()
+            )
+        )# previous layer gives 5 outputs, Keras will make the job
+        # to configure LSTM inputs shape (5, ...)
+        model.add(
+            LSTM(1024, activation='relu', return_sequences=False)
+        )
+        # and then, common Dense layers... Dropout...
+        # up to you
+        model.add(Dense(1024, activation='relu'))
+        model.add(Dropout(.5))# For example, for 3 outputs classes 
+        model.add(Dense(19, activation='softmax'))
+
+        model.compile(loss='sparse_categorical_crossentropy',
+                optimizer='adam',
+                metrics=['accuracy'] )
+        self.temporal_extractor = model
+        model.summary()
+
+    """
+    def build_temporal_model(self):
         input_shape_network = (self.fix_frames-self.val_seq_size, 240, 640, 1)
         print(input_shape_network)
         model = Sequential()
@@ -54,7 +92,7 @@ class learn_optical_flow():
         model.summary()
         self.temporal_extractor = model
 
-    """
+    
     def build_temporal_model(self):
         #import si
         from keras.models import Sequential
