@@ -59,14 +59,15 @@ class learn_optical_flow():
         model.add(TimeDistributed(Conv2D(256, (3, 3), padding='same')))
         model.add(Activation('relu'))
         
-        #model.add(TimeDistributed(Conv2D(256, (3, 3), padding='same', strides = 2)))
-        #model.add(Activation('relu'))    
+        model.add(TimeDistributed(Conv2D(256, (3, 3), padding='same', strides = 2)))
+        model.add(Activation('relu'))    
 
-        #model.add(TimeDistributed(Conv2D(256, (3, 3), padding='same')))
-        #model.add(Activation('relu'))
+        model.add(TimeDistributed(Conv2D(256, (3, 3), padding='same')))
+        model.add(Activation('relu'))
         
         model.add(TimeDistributed(Conv2D(512, (3, 3), padding='same', strides = 2)))
         model.add(Activation('relu'))    
+        
         #model.add(TimeDistributed(MaxPooling2D((2,2), data_format = 'channels_first', name='pool1')))    
         
         #model.add(TimeDistributed(Conv2D(32, (1, 1), data_format = 'channels_first')))
@@ -78,6 +79,8 @@ class learn_optical_flow():
         
         #model.add(LSTM(num_classes, return_sequences=True))
         model.add(CuDNNLSTM(512 , return_sequences=True))
+        model.add(CuDNNLSTM(512))
+        model.add(CuDNNLSTM(512))
         model.add(CuDNNLSTM(512))
         model.add(Dense(128))
         model.add(Dense(19,activation='softmax'))
@@ -275,7 +278,7 @@ class learn_optical_flow():
                 #print(Y_val)
                 #print(Y_val_test)
                 #print(Y_test)
-                history = self.temporal_extractor.fit(X,Y,epochs=300,validation_data=(X_val,Y_val))
+                history = self.temporal_extractor.fit(X,Y,epochs=50,validation_data=(X_val,Y_val))
                 train_succ=True
             
                 #print("Unsuccessful training for",i)
