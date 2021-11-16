@@ -37,7 +37,7 @@ class learn_optical_flow():
         model.add(
             TimeDistributed(
                 Conv2D(64, (3,3), activation='relu'), 
-                input_shape=(5, 240, 640, 3) # 5 images...
+                input_shape=(5, 240, 640, 1) # 5 images...
             )
         )
 
