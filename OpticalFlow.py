@@ -82,9 +82,12 @@ class learn_optical_flow():
         model.add(Dense(128))
         model.add(Dense(19,activation='softmax'))
 
-        model.compile(loss='mean_squared_error', optimizer='adam')  #,
+        model.compile(loss='sparse_categorical_crossentropy',
+                optimizer='adam',
+                metrics=['accuracy'] )
         #metrics=['accuracy'])
         model.summary()
+        self.temporal_extractor = model
 
     """
     def build_temporal_model(self):
