@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import Input
 from keras.models import Sequential
-from keras.layers import CuDNNLSTM,Dense,Dropout,LSTM,Flatten,Conv2D,GlobalAveragePooling2D,TimeDistributed,Input
+from keras.layers import CuDNNLSTM,Dense,Dropout,LSTM,Flatten,Conv2D,GlobalAveragePooling2D,TimeDistributed,Input,Activation
 
 
 import numpy as np
