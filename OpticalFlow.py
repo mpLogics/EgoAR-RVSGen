@@ -82,6 +82,7 @@ class learn_optical_flow():
         #model.add(CuDNNLSTM(512 , return_sequences=True))
         #model.add(CuDNNLSTM(512 , return_sequences=True))
         model.add(CuDNNLSTM(512))
+        model.add(Dropout(0.2))
         model.add(Dense(128))
         model.add(Dense(19,activation='softmax'))
 
