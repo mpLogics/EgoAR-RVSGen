@@ -33,40 +33,57 @@ class learn_optical_flow():
         self.val_seq_size = 5
     
     def build_temporal_model(self):
-        model = Sequential()# after having Conv2D...
+        model = Sequential()
+        #Izda.add(TimeDistributed(
+        #    Convolution2D(40,3,3,border_mode='same'), input_shape=(sequence_lengths, 1,8,10)))
         model.add(
             TimeDistributed(
-                Conv2D(64, (3,3), activation='relu'), 
-                input_shape=(5, 240, 640, 1) # 5 images...
-            )
-        )
+                Conv2D(32, (7, 7), padding='same', strides = 2),
+                input_shape=(5, 240, 640, 1)))
+        model.add(Activation('relu'))
 
-        model.add(
-            TimeDistributed(
-                Conv2D(64, (3,3), activation='relu')
-            )
-        )# We need to have only one dimension per output
-        # to insert them to the LSTM layer - Flatten or use Pooling
+        model.add(TimeDistributed(Conv2D(64, (5, 5), padding='same', strides = 2)))
+        model.add(Activation('relu'))
+
+        #model.add(TimeDistributed(MaxPooling2D((2,2), data_format = 'channels_first', name='pool1')))
         
-        model.add(
-            TimeDistributed(
-                GlobalAveragePooling2D() # Or Flatten()
-            )
-        )# previous layer gives 5 outputs, Keras will make the job
-        # to configure LSTM inputs shape (5, ...)
-        model.add(
-            LSTM(1024, activation='relu', return_sequences=False)
-        )
-        # and then, common Dense layers... Dropout...
-        # up to you
-        model.add(Dense(1024, activation='relu'))
-        model.add(Dropout(.5))# For example, for 3 outputs classes 
-        model.add(Dense(19, activation='softmax'))
+        model.add(TimeDistributed(Conv2D(128, (5, 5), padding='same', strides = 2)))
+        model.add(Activation('relu'))    
+        
+        model.add(TimeDistributed(Conv2D(128, (3, 3), padding='same')))
+        model.add(Activation('relu'))
+        
+        model.add(TimeDistributed(Conv2D(256, (3, 3), padding='same', strides = 2)))
+        model.add(Activation('relu'))
+        
+        model.add(TimeDistributed(Conv2D(256, (3, 3), padding='same')))
+        model.add(Activation('relu'))
+        
+        model.add(TimeDistributed(Conv2D(256, (3, 3), padding='same', strides = 2)))
+        model.add(Activation('relu'))    
 
-        model.compile(loss='sparse_categorical_crossentropy',
-                optimizer='adam',
-                metrics=['accuracy'] )
-        self.temporal_extractor = model
+        model.add(TimeDistributed(Conv2D(256, (3, 3), padding='same')))
+        model.add(Activation('relu'))
+        
+        model.add(TimeDistributed(Conv2D(512, (3, 3), padding='same', strides = 2)))
+        model.add(Activation('relu'))    
+        #model.add(TimeDistributed(MaxPooling2D((2,2), data_format = 'channels_first', name='pool1')))    
+        
+        #model.add(TimeDistributed(Conv2D(32, (1, 1), data_format = 'channels_first')))
+        #model.add(Activation('relu'))    
+        
+        model.add(TimeDistributed(Flatten()))
+        
+        #model.add(TimeDistributed(Dense(512, name="first_dense" )))
+        
+        #model.add(LSTM(num_classes, return_sequences=True))
+        model.add(CuDNNLSTM(512 , return_sequences=True))
+        model.add(CuDNNLSTM(512))
+        model.add(Dense(128))
+        model.add(Dense(19),activation='softmax')
+
+        model.compile(loss='mean_squared_error', optimizer='adam')  #,
+        #metrics=['accuracy'])
         model.summary()
 
     """
@@ -259,7 +276,7 @@ class learn_optical_flow():
                 train_succ=True
             
                 #print("Unsuccessful training for",i)
-                #train_succ=False
+                    #train_succ=False
                 
                 if train_succ==True:
                     # Collecting Metrics
