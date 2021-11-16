@@ -275,7 +275,7 @@ class learn_optical_flow():
                 #print(Y_val)
                 #print(Y_val_test)
                 #print(Y_test)
-                history = self.temporal_extractor.fit(X,Y,epochs=30,validation_data=(X_val,Y_val))
+                history = self.temporal_extractor.fit(X,Y,epochs=300,validation_data=(X_val,Y_val))
                 train_succ=True
             
                 #print("Unsuccessful training for",i)
