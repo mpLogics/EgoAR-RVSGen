@@ -73,7 +73,7 @@ class learn_optical_flow():
         #model.add(TimeDistributed(Conv2D(32, (1, 1), data_format = 'channels_first')))
         #model.add(Activation('relu'))    
         
-        #model.add(TimeDistributed(Flatten()))
+        model.add(TimeDistributed(Flatten()))
         #model.add(TimeDistributed(Dense(512, name="first_dense" )))
         #model.add(LSTM(num_classes, return_sequences=True))
         model.add(CuDNNLSTM(512 , return_sequences=True))
