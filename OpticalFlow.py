@@ -45,7 +45,7 @@ class learn_optical_flow():
         model.add(TimeDistributed(Conv2D(64, (5, 5), padding='same', strides = 2)))
         model.add(Activation('relu'))
 
-        model.add(TimeDistributed(MaxPooling2D((2,2), data_format = 'channels_first', name='pool1')))
+        #model.add(TimeDistributed(MaxPooling2D((2,2), data_format = 'channels_first', name='pool1')))
         
         model.add(TimeDistributed(Conv2D(128, (5, 5), padding='same', strides = 2)))
         model.add(Activation('relu'))    
@@ -68,7 +68,7 @@ class learn_optical_flow():
         model.add(TimeDistributed(Conv2D(512, (3, 3), padding='same', strides = 2)))
         model.add(Activation('relu'))    
         
-        model.add(TimeDistributed(MaxPooling2D((2,2), data_format = 'channels_first', name='pool1')))    
+        #model.add(TimeDistributed(MaxPooling2D((2,2), data_format = 'channels_first', name='pool1')))    
         
         #model.add(TimeDistributed(Conv2D(32, (1, 1), data_format = 'channels_first')))
         #model.add(Activation('relu'))    
