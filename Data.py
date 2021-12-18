@@ -141,8 +141,8 @@ class LoadData():
         #print("Check before mag",Mag[0].shape)
         #print("Check before angle",Angle[0].shape)
 
-        Mag[0] = Mag[0][120:360,160:480]
-        Angle[0] = Angle[0][120:360,160:480]
+        Mag[0] = Mag[0][120:240,160:320]
+        Angle[0] = Angle[0][120:240,160:320]
         prev_matrix = np.concatenate([Mag[0],Angle[0]],axis=1)
         init_matrix = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
         
