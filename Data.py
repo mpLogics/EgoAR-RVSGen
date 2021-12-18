@@ -151,8 +151,8 @@ class LoadData():
 
         #print("Check before mag(val)",Mag[1].shape)
         #print("Check before angle",Angle[1].shape)
-        Mag[1] = Mag[1][120:360,160:480]
-        Angle[1] = Angle[1][120:360,160:480]
+        Mag[1] = Mag[1][120:240,160:320]
+        Angle[1] = Angle[1][120:240,160:320]
         #print("Check after mag(val)",Mag[1].shape)
         #print("Check after angle(val)",Angle[0].shape)
 
@@ -168,8 +168,8 @@ class LoadData():
             #print("J = ",j)
             #print("Here Sanity Check",Mag[j].shape)
             #print("Here Sanity Check",Angle[j].shape)
-            Mag[j] = Mag[j][120:360,160:480]
-            Angle[j] = Angle[j][120:360,160:480]
+            Mag[j] = Mag[j][120:240,160:320]
+            Angle[j] = Angle[j][120:240,160:320]
             
             #print("Here -1",Mag[j].shape)
             #print("Here 0",Angle[j].shape)
