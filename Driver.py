@@ -9,7 +9,7 @@ config_file = open("config.json")
 config_values = json.load(config_file)["Configuration Values"]
 data_root = "data/"
 #try:
-if config_values["setannotation"]["run_value"]==True:
+if config_values["setannotation"]["run_value"]:
     base_path = input("Enter path to annotations folder. \n(For default path, enter DEFAULT \n (default path - current_dir/action_annotation/): ")
     SA = SetAnnotations()
     SA.totCombs=3
@@ -19,7 +19,7 @@ if config_values["setannotation"]["run_value"]==True:
         SA.base = base_path
     SA.run()
 
-if config_values["preprocess"]["run_value"]==True:
+if config_values["preprocess"]["run_value"]:
     train = []
     test = []
 
@@ -32,14 +32,14 @@ if config_values["preprocess"]["run_value"]==True:
     preProcessed_Data.tiers = 3
     preProcessed_Data.totCombs = 3
 
-if config_values["visualize"]["run_value"]==True:
+if config_values["visualize"]["run_value"]:
     from visualization import Visualizer        
     v1 = Visualizer()
     v1.file_path=(str)(config_values["visualize"]["basepath"] + config_values["visualize"]["filepath"])
     print(v1.file_path)
     v1.ExtractFrames()
 
-if config_values["train"]["run_value"]==True:
+if config_values["train"]["run_value"]:
     from train import Model,Train
 
     config = ConfigProto()

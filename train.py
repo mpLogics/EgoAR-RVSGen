@@ -22,6 +22,9 @@ class Model():
         self.pooling = None
         self.activation = "softmax"
         self.inputTensor = None 
+        self.model_modality = None
+        self.temporal_extractor = None
+        self.spatial_extractor = None
         
     def buildModel(self):
         base_model = keras.applications.InceptionV3(
@@ -30,7 +33,6 @@ class Model():
             pooling=self.pooling,classes=self.classes)
         
         base_model.trainable = self.base_trainable
-        #inputs = keras.Input(shape=self.input_shape)
         x = base_model.output
         x = keras.layers.GlobalAveragePooling2D()(x)
         outputs = keras.layers.Dense(units=self.classes,name="Predictions",activation="softmax")(x)
@@ -42,10 +44,56 @@ class Model():
         #                             activity_regularizer=keras.regularizers.l2(1e-5))(x)
     
         print("Total classes = ",self.classes)
-        model = keras.Model(base_model.input,outputs)
+        self.spatial_extractor = keras.Model(base_model.input,outputs)
         loss_func = keras.losses.SparseCategoricalCrossentropy()
         optimizer = keras.optimizers.Adam(learning_rate=0.0001)
-        model.compile(optimizer,loss_func,metrics=["accuracy"])
+        self.spatial_extractor.compile(optimizer,loss_func,metrics=["accuracy"])
+    
+        self.temporal_extractor = Sequential()
+        #Izda.add(TimeDistributed(
+        #    Convolution2D(40,3,3,border_mode='same'), input_shape=(sequence_lengths, 1,8,10)))
+        self.temporal_extractor.add(TimeDistributed(Conv2D(32, (7, 7), padding='same', strides = 2),
+                input_shape=(5, 240, 640, 1)),activation='relu')
+        self.temporal_extractor.add(Activation('relu'))
+
+        self.temporal_extractor.add(TimeDistributed(Conv2D(64, (5, 5), padding='same', strides = 2)))
+        self.temporal_extractor.add(Activation('relu'))
+        
+        self.temporal_extractor.add(TimeDistributed(Conv2D(128, (5, 5), padding='same', strides = 2)))
+        self.temporal_extractor.add(Activation('relu'))    
+        
+        self.temporal_extractor.add(TimeDistributed(Conv2D(128, (3, 3), padding='same')))
+        self.temporal_extractor.add(Activation('relu'))
+        
+        self.temporal_extractor.add(TimeDistributed(Conv2D(256, (3, 3), padding='same', strides = 2)))
+        self.temporal_extractor.add(Activation('relu'))
+        
+        self.temporal_extractor.add(TimeDistributed(Conv2D(256, (3, 3), padding='same')))
+        self.temporal_extractor.add(Activation('relu'))
+        
+        self.temporal_extractor.add(TimeDistributed(Conv2D(256, (3, 3), padding='same', strides = 2)))
+        self.temporal_extractor.add(Activation('relu'))    
+
+        self.temporal_extractor.add(TimeDistributed(Conv2D(256, (3, 3), padding='same')))
+        self.temporal_extractor.add(Activation('relu'))
+        
+        model.add(TimeDistributed(Conv2D(512, (3, 3), padding='same', strides = 2)))
+        model.add(Activation('relu'))    
+        
+        model.add(TimeDistributed(Flatten()))
+        model.add(CuDNNLSTM(512 , return_sequences=True))
+        model.add(Dropout(0.2))
+        model.add(CuDNNLSTM(512))
+        model.add(Dropout(0.2))
+        model.add(Dense(128))
+        model.add(Dropout(0.2)) 
+        model.add(Dense(19,activation='softmax'))
+
+        model.compile(loss='sparse_categorical_crossentropy',
+                optimizer='adam',
+                metrics=['accuracy'] )
+        model.summary()
+        self.temporal_extractor = model
         return model,loss_func,optimizer
 
 class Filter():
