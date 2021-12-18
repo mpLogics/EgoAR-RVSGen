@@ -286,8 +286,8 @@ class learn_optical_flow():
                 #Y_val = Y_val_test
                 
                 # Training batch
-                X = np.reshape(X_Value,(self.num_classes_total,self.fix_frames-self.val_seq_size,240,640,1))
-                X_val = np.reshape(Val_Frame,(self.num_classes_total,self.val_seq_size,240,640,1))
+                X = np.reshape(X_Value,(self.num_classes_total,self.fix_frames-self.val_seq_size,120,320,1))
+                X_val = np.reshape(Val_Frame,(self.num_classes_total,self.val_seq_size,120,320,1))
                 
                 #print(Y)
                 #print(Y_Value)
