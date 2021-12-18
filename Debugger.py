@@ -69,7 +69,8 @@ config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
 
 m2 = learn_optical_flow()
-m2.build_temporal_model()
+#m2.build_temporal_model()
+m2.convLSTM_model()
 #m2.debug()
 m2.train()
 

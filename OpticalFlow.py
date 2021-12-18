@@ -32,6 +32,21 @@ class learn_optical_flow():
         self.fix_frames = 10
         self.val_seq_size = 5
     
+    def convLSTM_model(self):
+        model = Sequential()
+        model.add(ConvLSTM2D(filters = 32, kernel_size = (3, 3), return_sequences = True, data_format = "channels_last", input_shape = (5, 240, 640, 1)))
+        model.add(ConvLSTM2D(filters = 16, kernel_size = (3, 3), return_sequences = True))
+        model.add(ConvLSTM2D(filters = 8, kernel_size = (3, 3), return_sequences = True))
+        model.add(ConvLSTM2D(filters = 8, kernel_size = (3, 3), return_sequences = False))
+        model.add(Dropout(0.2))
+        model.add(Flatten())
+        model.add(Dense(4, activation = "softmax"))
+        model.add(Dropout(0.2))
+        model.summary()
+        #opt = keras.optimizers.Adam(learning_rate=0.001)
+        model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        self.temporal_extractor = model
+
     def build_temporal_model(self):
         model = Sequential()
         #Izda.add(TimeDistributed(
