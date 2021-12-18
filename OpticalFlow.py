@@ -40,7 +40,7 @@ class learn_optical_flow():
         model.add(ConvLSTM2D(filters = 4, kernel_size = (3, 3), return_sequences = False))
         model.add(Dropout(0.2))
         model.add(Flatten())
-        model.add(Dense(4, activation = "softmax"))
+        model.add(Dense(19, activation = "softmax"))
         model.add(Dropout(0.2))
         model.summary()
         #opt = keras.optimizers.Adam(learning_rate=0.001)
