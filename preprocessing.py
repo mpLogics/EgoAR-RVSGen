@@ -75,6 +75,7 @@ class PreProcessing():
         self.tiers=3
         self.preprocess_save_path = self.root + "preprocessed_data/"
         self.ext=".npz"
+        self.input_flow_shape = (160,120)
     
     def FindLabels(self,videoName,train,test):
         File_found_flag = False
@@ -101,8 +102,15 @@ class PreProcessing():
     
     def obtainOpticalFlow(self,frame,prev_gray):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        
+        #Downsampling the frame sizes before computing optical flow
+        gray = cv2.resize(gray,self.input_flow_shape)
+        prev_gray = cv2.resize(prev_gray,self.input_flow_shape)
+        
+        #Calculating optical flow
         flow = cv2.calcOpticalFlowFarneback(prev_gray, gray,None,0.5, 3, 15, 3, 5, 1.2, 0)
         magnitude, angle = cv2.cartToPolar(flow[..., 0], flow[..., 1])
+        
         #mask[..., 0] = angle * 180 / np.pi / 2
         #mask[..., 2] = cv2.normalize(magnitude, None, 0, 255, cv2.NORM_MINMAX)
         #h,s,v = cv2.split(mask)
@@ -111,10 +119,12 @@ class PreProcessing():
         return magnitude,angle
         
 
-    def storeData(self,file,file_path,Y):
-        RGB=[]
+    def storeData(self,file,file_path,Y,modality):
+    
         Mag=[]
         Ang=[]
+        RGB=[]
+
         Action=[]
         Verb=[]
         Noun=[]
@@ -162,7 +172,7 @@ class PreProcessing():
         else:
             return False
 
-    def save_as_file(self,df,videoName,frames_removed):
+    def save_as_file(self,df,videoName,frames_removed,modality):
 
         #print(df["RGB"].shape)
         #print(df["Action"].shape)
@@ -170,6 +180,8 @@ class PreProcessing():
         #print(df["Noun"].shape)
         #print(df["Verb"].shape)
         #print(df["Angle"].shape)
+
+        #if modality=='all':
         RGB = np.array(df["RGB"][frames_removed:-frames_removed])
         Action = np.array(df["Action"][frames_removed:-frames_removed])
         Magnitude = np.array(df["Magnitude"][frames_removed:-frames_removed])
@@ -191,17 +203,18 @@ class PreProcessing():
             sio.savemat(self.root+"preprocessed_data/OF/"+videoName+self.ext, mdic_OF)
         
         else:
-            np.savez(self.root+"preprocessed_data/RGB/"+videoName+self.ext,
-            a = RGB,
-            b = Action,
-            c = Noun)
-
-            np.savez(self.root+"preprocessed_data/OF/"+videoName+self.ext,
-            a = Magnitude,
-            b = Angle,
-            c = Action,
-            d = Verb)
-        
+            if modality=='OF':
+                np.savez(self.root+"preprocessed_data/OF/"+videoName+self.ext,
+                a = Magnitude,
+                b = Angle,
+                c = Action,
+                d = Verb)
+            else:  
+                print("Saving RGB")  
+                np.savez(self.root+"preprocessed_data/RGB/"+videoName+self.ext,
+                a = RGB,
+                b = Action,
+                c = Noun)
 
     def preProcess(self,train,test):
         Old_Files_Read_Complete=False
@@ -225,7 +238,7 @@ class PreProcessing():
                     
                     if File_Found == True: 
                         if Old_Files_Read_Complete:
-                            df,frames_removed = self.storeData(videoName,file_path,Y)
+                            df,frames_removed = self.storeData(videoName,file_path,Y,modality='OF')
                             self.save_as_file(df,videoName,frames_removed)
                         else:
                             if self.searchFileExists(videoName)==False:
@@ -233,7 +246,7 @@ class PreProcessing():
                                 print("Last file read: "+videoName+self.ext)
                                 Old_Files_Read_Complete=True
                                 df,frames_removed = self.storeData(videoName,file_path,Y)
-                                self.save_as_file(df,videoName,frames_removed)
+                                self.save_as_file(df,videoName,frames_removed,modality='OF')
                     else:
                         pass    
                             
