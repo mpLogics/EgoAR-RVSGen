@@ -119,7 +119,7 @@ class PreProcessing():
         return magnitude,angle
         
 
-    def storeData(self,file,file_path,Y,modality):
+    def storeData(self,file,file_path,Y):
     
         Mag=[]
         Ang=[]
@@ -238,8 +238,8 @@ class PreProcessing():
                     
                     if File_Found == True: 
                         if Old_Files_Read_Complete:
-                            df,frames_removed = self.storeData(videoName,file_path,Y,modality='OF')
-                            self.save_as_file(df,videoName,frames_removed)
+                            df,frames_removed = self.storeData(videoName,file_path,Y)
+                            self.save_as_file(df,videoName,frames_removed,modality='OF')
                         else:
                             if self.searchFileExists(videoName)==False:
                                 print("Old Files read successful, will now begin saving new files.")
