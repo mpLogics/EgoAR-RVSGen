@@ -294,7 +294,7 @@ class learn_optical_flow():
                 #print(Y_val)
                 #print(Y_val_test)
                 #print(Y_test)
-                history = self.temporal_extractor.fit(X,Y,epochs=1,validation_data=(X_val,Y_val))
+                history = self.temporal_extractor.fit(X,Y,epochs=30,validation_data=(X_val,Y_val))
                 train_succ=True
             
                 #print("Unsuccessful training for",i)
@@ -321,11 +321,14 @@ class learn_optical_flow():
                 Val_Verb=[]
                 Val_Frame=[]
                 crt_batch=0
+                self.plot_makker.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/OF/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
+                print((str)(i) + " examples trained")
+                plotter_flag=True
+                
                 try:
                     if (num_batches+1)%30 == 0 and plotter_flag == False:
-                        self.plot_makker.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/OF/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
-                        print((str)(i) + " examples trained")
-                        plotter_flag=True
+                        pass
+                        
                 except Exception:
                     print("Plot saving unsuccessful!")
                 
