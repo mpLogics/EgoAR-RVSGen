@@ -224,11 +224,14 @@ class learn_optical_flow():
 
             while i<totalSamples-1:
 
-                X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
-                print(X_Value.shape)
-                print(Y_Value.shape)
-                print(Val_Frame.shape)
-                print(Val_Verb.shape)
+                try:
+                    X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
+                    print(X_Value.shape)
+                    print(Y_Value.shape)
+                    print(Val_Frame.shape)
+                    print(Val_Verb.shape)
+                except Exception:
+                    print("File read unsuccessful at index:",i)
 
                 """
                 try:
@@ -343,3 +346,8 @@ class learn_optical_flow():
             print("Model save successful!")
         
         self.plot_makker.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="OF_Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
+        try:
+            self.temporal_extractor.save('OF_Verb.h5')
+            print("Model trained successfully")
+        except Exception:
+            print("Model save unsuccessful")
