@@ -232,6 +232,7 @@ class learn_optical_flow():
                     print(Val_Verb.shape)
                 except Exception:
                     print("File read unsuccessful at index:",i)
+                    break
 
                 """
                 try:
@@ -323,7 +324,10 @@ class learn_optical_flow():
                 Y_Value=[]
                 Val_Verb=[]
                 Val_Frame=[]
-                
+                if (num_batches+1)%30 == 0 and plotter_flag == False:
+                    self.plot_makker.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/OF/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
+                    print((str)(i) + " examples trained")
+                    plotter_flag=True
                 try:
                     if (num_batches+1)%30 == 0 and plotter_flag == False:
                         self.plot_makker.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/OF/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
