@@ -152,7 +152,7 @@ class LoadData():
         #print("Check before mag(val)",Mag[1].shape)
         #print("Check before angle",Angle[1].shape)
         Mag[1] = Mag[1]#[120:240,160:320]
-        Angle[1] = Angle#[1][120:240,160:320]
+        Angle[1] = Angle[1]#[120:240,160:320]
         #print("Check after mag(val)",Mag[1].shape)
         #print("Check after angle(val)",Angle[0].shape)
 
