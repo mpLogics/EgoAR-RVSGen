@@ -240,7 +240,8 @@ class learn_optical_flow():
                     print("Error reading files from index: ",i)
                 """
                 
-                i+=self.num_classes_total
+                i+=self.num_classes_total 
+                print(i)
                 
                 # Logs
                 print("\nClasses covered in batch: ",(np.unique(np.array(Y_Value))).shape[0])
@@ -255,28 +256,28 @@ class learn_optical_flow():
                 #X_val = np.array(Val_Frame)
                 #X_val = Val_Frame
                 
-                Y_test = []
+                #Y_test = []
                 Y_corrected = self.getCorrected(np.array(Y_Value))
-                for i in range(Y_corrected.shape[0]):
-                    Y_test.append((Y_corrected[i],Y_corrected[i],Y_corrected[i],Y_corrected[i],Y_corrected[i]))
+                #for j in range(Y_corrected.shape[0]):
+                #    Y_test.append((Y_corrected[j],Y_corrected[j],Y_corrected[j],Y_corrected[j],Y_corrected[j]))
                     #for j in range(self.val_seq_size):
                         #Y_test.append(Y_corrected[i])
                     
                 
-                Y_test = np.array(Y_test)
+                #Y_test = np.array(Y_test)
                 #print("Training set Y",Y_test.shape)
                 Y = tf.convert_to_tensor(Y_corrected)
                 #Y = Y_test
                 Y_val_corrected = self.getCorrected(np.array(Val_Verb))
                 
                 
-                Y_val_test=[]
-                for i in range(Y_val_corrected.shape[0]):
-                    Y_val_test.append((Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i]))
+                #Y_val_test=[]
+                #for i in range(Y_val_corrected.shape[0]):
+                #    Y_val_test.append((Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i]))
                     #for j in range(self.val_seq_size):
                     #    Y_val_test.append(Y_val_corrected[i])    
                 
-                Y_val_test = np.array(Y_val_test)
+                #Y_val_test = np.array(Y_val_test)
                 #print("Validation set Y",Y_val_test.shape)
                 
                 
@@ -311,6 +312,9 @@ class learn_optical_flow():
                     print("Average Accuracy: ",np.mean(np.array(Accuracy)))
                     print("Average Validation Loss: ",np.mean(np.array(Val_Loss)))
                     print("Average Validation Accuracy: ",np.mean(np.array(Val_Acc)))
+                    train_succ=False
+                else:
+                    print("Training unsuccessful!")
                 
                 X_Value=[]
                 Y_Value=[]
