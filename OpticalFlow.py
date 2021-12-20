@@ -31,6 +31,7 @@ class learn_optical_flow():
         self.Epochs=60
         self.fix_frames = 10
         self.val_seq_size = 5
+        self.plot_makker = Visualizer()
     
     def convLSTM_model(self):
         model = Sequential()
@@ -206,7 +207,7 @@ class learn_optical_flow():
         for epochs in range(epochs_completed+1,self.Epochs+1):    
             if epochs!=1:
                 self.plot_makker.plot_metrics(m_path="data/performance_metrics/"+ modality +"/Metrics.npz",Epoch=epochs-1)
-            print("\nEpoch:",epochs)
+            print("\nEpoch",epochs)
             i = 0
             num_batches = 0
             crt_batch = 0
@@ -241,7 +242,6 @@ class learn_optical_flow():
                 """
                 
                 i+=self.num_classes_total 
-                print(i)
                 
                 # Logs
                 print("\nClasses covered in batch: ",(np.unique(np.array(Y_Value))).shape[0])
@@ -320,14 +320,12 @@ class learn_optical_flow():
                 Y_Value=[]
                 Val_Verb=[]
                 Val_Frame=[]
-                crt_batch=0
-                self.plot_makker.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/OF/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
-                print((str)(i) + " examples trained")
-                plotter_flag=True
                 
                 try:
                     if (num_batches+1)%30 == 0 and plotter_flag == False:
-                        pass
+                        self.plot_makker.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/OF/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
+                        print((str)(i) + " examples trained")
+                        plotter_flag=True
                         
                 except Exception:
                     print("Plot saving unsuccessful!")
