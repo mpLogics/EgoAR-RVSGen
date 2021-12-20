@@ -1,3 +1,4 @@
+from types import NoneType
 import scipy.io as sio
 import cv2
 from preprocessing import PreProcessing
@@ -13,10 +14,19 @@ class Visualizer():
         plt.figure(figsize=(l,b))        
         plt.title(caption) 
         
-        if yVal.any()==None:
-            plt.plot(xVal)
-        else:
-            plt.plot(xVal,yVal)
+        try:
+            if yVal==None:
+                plt.plot(xVal)
+            else:
+                plt.plot(xVal,yVal)
+        except Exception:
+            try:
+                if yVal.any()==None:
+                    plt.plot(xVal)
+                else:
+                    plt.plot(xVal,yVal)
+            except:
+                print('Plot Save unsuccessful. Error at makeplot!')
 
         if xlab==None and ylab==None:
             pass
