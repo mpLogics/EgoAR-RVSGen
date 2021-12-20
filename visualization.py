@@ -1,4 +1,3 @@
-from types import NoneType
 import scipy.io as sio
 import cv2
 from preprocessing import PreProcessing
