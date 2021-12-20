@@ -293,7 +293,7 @@ class learn_optical_flow():
                 #print(Y_val)
                 #print(Y_val_test)
                 #print(Y_test)
-                history = self.temporal_extractor.fit(X,Y,epochs=50,validation_data=(X_val,Y_val))
+                history = self.temporal_extractor.fit(X,Y,epochs=1,validation_data=(X_val,Y_val))
                 train_succ=True
             
                 #print("Unsuccessful training for",i)
@@ -319,7 +319,7 @@ class learn_optical_flow():
                 crt_batch=0
                 try:
                     if (num_batches+1)%30 == 0 and plotter_flag == False:
-                        self.plot_makker.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
+                        self.plot_makker.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/OF/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
                         print((str)(i) + " examples trained")
                         plotter_flag=True
                 except Exception:
@@ -337,4 +337,4 @@ class learn_optical_flow():
             self.temporal_extractor.save("Verb_Predictor")
             print("Model save successful!")
         
-        self.plot_makker.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
+        self.plot_makker.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="OF_Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
