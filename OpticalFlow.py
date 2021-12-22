@@ -125,8 +125,8 @@ class learn_optical_flow():
                     print("File read unsuccessful at index:",i)
                     break
 
-                print(Val_Frame)
-                print(Val_Verb)
+                #print(Val_Frame)
+                #print(Val_Verb)
                 
                 i+=self.num_classes_total 
                 
