@@ -35,13 +35,11 @@ class learn_optical_flow():
     
     def convLSTM_model(self):
         model = Sequential()
-        model.add(ConvLSTM2D(filters = 16, kernel_size = (7, 7), return_sequences = True, data_format = "channels_last", input_shape = (5, 120, 320, 1)))
+        model.add(ConvLSTM2D(filters = 32, kernel_size = (5, 5), return_sequences = True, data_format = "channels_last", input_shape = (5, 120, 320, 1)))
+        model.add(Dropout(0.5))
+        model.add(ConvLSTM2D(filters = 16, kernel_size = (3, 3), return_sequences = True))
         model.add(Dropout(0.2))
-        model.add(ConvLSTM2D(filters = 8, kernel_size = (5, 5), return_sequences = True))
-        model.add(Dropout(0.2))
-        model.add(ConvLSTM2D(filters = 4, kernel_size = (3, 3), return_sequences = True))
-        model.add(Dropout(0.2))
-        model.add(ConvLSTM2D(filters = 4, kernel_size = (3, 3), return_sequences = False))
+        model.add(ConvLSTM2D(filters = 8, kernel_size = (3, 3), return_sequences = False))
         model.add(Dropout(0.2))
         model.add(Flatten())
         model.add(Dense(19, activation = "softmax"))
@@ -50,116 +48,10 @@ class learn_optical_flow():
         model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         self.temporal_extractor = model
 
-    def build_temporal_model(self):
-        model = Sequential()
-        #Izda.add(TimeDistributed(
-        #    Convolution2D(40,3,3,border_mode='same'), input_shape=(sequence_lengths, 1,8,10)))
-        model.add(
-            TimeDistributed(
-                Conv2D(32, (7, 7), padding='same', strides = 2),
-                input_shape=(5, 240, 640, 1)))
-        model.add(Activation('relu'))
-
-        model.add(TimeDistributed(Conv2D(64, (5, 5), padding='same', strides = 2)))
-        model.add(Activation('relu'))
-
-        #model.add(TimeDistributed(MaxPooling2D((2,2), data_format = 'channels_first', name='pool1')))
-        
-        model.add(TimeDistributed(Conv2D(128, (5, 5), padding='same', strides = 2)))
-        model.add(Activation('relu'))    
-        
-        model.add(TimeDistributed(Conv2D(128, (3, 3), padding='same')))
-        model.add(Activation('relu'))
-        
-        model.add(TimeDistributed(Conv2D(256, (3, 3), padding='same', strides = 2)))
-        model.add(Activation('relu'))
-        
-        model.add(TimeDistributed(Conv2D(256, (3, 3), padding='same')))
-        model.add(Activation('relu'))
-        
-        model.add(TimeDistributed(Conv2D(256, (3, 3), padding='same', strides = 2)))
-        model.add(Activation('relu'))    
-
-        model.add(TimeDistributed(Conv2D(256, (3, 3), padding='same')))
-        model.add(Activation('relu'))
-        
-        model.add(TimeDistributed(Conv2D(512, (3, 3), padding='same', strides = 2)))
-        model.add(Activation('relu'))    
-        
-        #model.add(TimeDistributed(MaxPooling2D((2,2), data_format = 'channels_first', name='pool1')))    
-        
-        #model.add(TimeDistributed(Conv2D(32, (1, 1), data_format = 'channels_first')))
-        #model.add(Activation('relu'))    
-        
-        model.add(TimeDistributed(Flatten()))
-        #model.add(TimeDistributed(Dense(512, name="first_dense" )))
-        #model.add(LSTM(num_classes, return_sequences=True))
-        model.add(CuDNNLSTM(512 , return_sequences=True))
-        model.add(Dropout(0.2))
-        #model.add(CuDNNLSTM(512 , return_sequences=True))
-        #model.add(CuDNNLSTM(512 , return_sequences=True))
-        model.add(CuDNNLSTM(512))
-        model.add(Dropout(0.2))
-        model.add(Dense(128))
-        model.add(Dropout(0.2)) 
-        model.add(Dense(19,activation='softmax'))
-
-        model.compile(loss='sparse_categorical_crossentropy',
-                optimizer='adam',
-                metrics=['accuracy'] )
-        #metrics=['accuracy'])
-        model.summary()
-        self.temporal_extractor = model
-
-    """
-    def build_temporal_model(self):
-        input_shape_network = (self.fix_frames-self.val_seq_size, 240, 640, 1)
-        print(input_shape_network)
-        model = Sequential()
-        #model.add(Input(shape=(self.fix_frames-self.val_seq_size, 240, 640, 1)))
-        model.add(TimeDistributed(Conv2D(16, (30,30),strides = (5,5)),input_shape=input_shape_network))
-        #model.add(TimeDistributed(Conv2D(16,(5,5))))
-        model.add(TimeDistributed(GlobalAveragePooling2D()))
-        #model.add(CuDNNLSTM(5))
-        #model.add(Dropout(0.2))
-        #model.add(Flatten())
-        model.add(Dense(19,activation="softmax"))
-        
-        #lr_schedule = keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=1e-3, decay_rate=1e-6)
-        #optimizer = Adam(learning_rate=lr_schedule)
-
-        model.compile(loss='sparse_categorical_crossentropy',
-                optimizer='adam',
-                metrics=['accuracy'] )
-        model.summary()
-        self.temporal_extractor = model
-
-    
-    def build_temporal_model(self):
-        #import si
-        from keras.models import Sequential
-        from keras.layers import Dense, Dropout, LSTM, Flatten
-
-        # Set Model
-        classifier = Sequential()
-        classifier.add(LSTM(128,input_shape=(480,640*2)))
-        classifier.add(Flatten())
-        classifier.add(Dense(19,activation="softmax"))
-
-
-        # Compile model
-        classifier.compile(
-            loss='sparse_categorical_crossentropy',
-            optimizer='adam',
-            metrics=['accuracy']
-        )
-        classifier.summary()
-        self.temporal_extractor = classifier
-    """
     def check_prev_trainings(self,model_name,modality):
         try:
+            saved_model = keras.models.load_model(model_name)
             performance_metrics = np.load("data/performance_metrics/" + modality + "/Metrics.npz")
-            saved_model = keras.models.load_model("model_name")
         except Exception:
             print("Saved model could not be read.")
             return None,0,[],[],[],[]
@@ -213,17 +105,13 @@ class learn_optical_flow():
             print("\nEpoch",epochs)
             i = 0
             num_batches = 0
-            crt_batch = 0
             X_Value=[]
             Y_Value=[]
-            diff = 0
             plotter_flag = False
             Loss=[]
             Accuracy=[]
             Val_Loss=[]
             Val_Acc=[]
-            Val_Noun=[]
-            Val_Frame=[]
 
             while i<totalSamples-1:
 
@@ -239,16 +127,6 @@ class learn_optical_flow():
 
                 print(Val_Frame)
                 print(Val_Verb)
-                """
-                try:
-                    X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
-                    print(X_Value.shape)
-                    print(Y_Value.shape)
-                    print(Val_Frame.shape)
-                    print(Val_Verb.shape)
-                except Exception:
-                    print("Error reading files from index: ",i)
-                """
                 
                 i+=self.num_classes_total 
                 
@@ -259,55 +137,21 @@ class learn_optical_flow():
 
                 num_batches+=1
                 
-                # Setting X and Y for training
-                #X = np.array(X_Value)
-                #X = X_Value
-                #X_val = np.array(Val_Frame)
-                #X_val = Val_Frame
-                
-                #Y_test = []
                 Y_corrected = self.getCorrected(np.array(Y_Value))
-                #for j in range(Y_corrected.shape[0]):
-                #    Y_test.append((Y_corrected[j],Y_corrected[j],Y_corrected[j],Y_corrected[j],Y_corrected[j]))
-                    #for j in range(self.val_seq_size):
-                        #Y_test.append(Y_corrected[i])
                     
                 
-                #Y_test = np.array(Y_test)
-                #print("Training set Y",Y_test.shape)
                 Y = tf.convert_to_tensor(Y_corrected)
-                #Y = Y_test
                 Y_val_corrected = self.getCorrected(np.array(Val_Verb))
                 
                 
-                #Y_val_test=[]
-                #for i in range(Y_val_corrected.shape[0]):
-                #    Y_val_test.append((Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i],Y_val_corrected[i]))
-                    #for j in range(self.val_seq_size):
-                    #    Y_val_test.append(Y_val_corrected[i])    
-                
-                #Y_val_test = np.array(Y_val_test)
-                #print("Validation set Y",Y_val_test.shape)
-                
-                
-                
                 Y_val = tf.convert_to_tensor(Y_val_corrected)
-                #Y_val = Y_val_test
                 
                 # Training batch
                 X = np.reshape(X_Value,(self.num_classes_total*2,self.fix_frames-self.val_seq_size,120,320,1))
                 X_val = np.reshape(Val_Frame,(self.num_classes_total*2,self.val_seq_size,120,320,1))
                 
-                #print(Y)
-                #print(Y_Value)
-                #print(Y_val)
-                #print(Y_val_test)
-                #print(Y_test)
-                history = self.temporal_extractor.fit(X,Y,epochs=30,validation_data=(X_val,Y_val))
+                history = self.temporal_extractor.fit(X,Y,epochs=1,validation_data=(X_val,Y_val))
                 train_succ=True
-            
-                #print("Unsuccessful training for",i)
-                    #train_succ=False
                 
                 if train_succ==True:
                     # Collecting Metrics
@@ -329,10 +173,7 @@ class learn_optical_flow():
                 Y_Value=[]
                 Val_Verb=[]
                 Val_Frame=[]
-                if (num_batches+1)%30 == 0 and plotter_flag == False:
-                    self.plot_makker.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/OF/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
-                    print((str)(i) + " examples trained")
-                    plotter_flag=True
+                
                 try:
                     if (num_batches+1)%30 == 0 and plotter_flag == False:
                         self.plot_makker.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/OF/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
