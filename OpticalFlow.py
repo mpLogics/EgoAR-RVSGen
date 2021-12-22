@@ -39,8 +39,8 @@ class learn_optical_flow():
         model.add(ConvLSTM2D(filters = 8, kernel_size = (5, 5), return_sequences = True))
         model.add(ConvLSTM2D(filters = 4, kernel_size = (3, 3), return_sequences = True))
         model.add(ConvLSTM2D(filters = 4, kernel_size = (3, 3), return_sequences = False))
-        model.add(Flatten())
         model.add(Dropout(0.2))
+        model.add(Flatten())
         model.add(Dense(19, activation = "softmax"))
         model.summary()
         #opt = keras.optimizers.Adam(learning_rate=0.001)
@@ -234,6 +234,8 @@ class learn_optical_flow():
                     print("File read unsuccessful at index:",i)
                     break
 
+                print(Val_Frame)
+                print(Val_Verb)
                 """
                 try:
                     X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
