@@ -128,7 +128,7 @@ class learn_optical_flow():
                 #print(Val_Frame)
                 #print(Val_Verb)
                 
-                i+=self.num_classes_total 
+                i+=self.num_classes_total*2 
                 
                 # Logs
                 print("\nClasses covered in batch: ",(np.unique(np.array(Y_Value))).shape[0])
