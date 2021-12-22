@@ -249,7 +249,7 @@ class LoadData():
         final_matrix = np.reshape(prev_matrix,((1,prev_matrix.shape[0],prev_matrix.shape[1],prev_matrix.shape[2])))
         final_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
 
-        for j in range(i+1,i+num_classes_total):
+        for j in range(i+1,i+(num_classes_total*2)):
             #Modal,Annotation = self.load_file(access_order[j],modality="OF")
             #frame_indices = self.get_frame_order(Modal,modality="OF")
             #print("Loading File index",access_order[j])
