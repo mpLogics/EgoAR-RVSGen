@@ -149,7 +149,8 @@ class learn_optical_flow():
                     break
 
                 
-                i+=self.num_classes_total*2 
+                i+=self.num_classes_total*self.upscale_factor
+                print(i)
                 
                 # Logs
                 print("\nClasses covered in batch: ",(np.unique(np.array(Y_Value))).shape[0])
