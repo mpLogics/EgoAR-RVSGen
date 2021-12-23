@@ -29,22 +29,36 @@ class learn_optical_flow():
         self.train_test_split = (("1","1"))
         self.batch_preprocess_size = 510
         self.Epochs=60
-        self.fix_frames = 10
-        self.val_seq_size = 5
+        self.fix_frames = 20
+        self.val_seq_size = 10
         self.plot_makker = Visualizer()
+        self.upscale_factor = 5
+        self.frame_rows = 120
+        self.frame_cols = 320
+        self.channels = 1
     
     def convLSTM_model(self):
         model = Sequential()
-        model.add(ConvLSTM2D(filters = 32, kernel_size = (5, 5), return_sequences = True, data_format = "channels_last", input_shape = (5, 120, 320, 1)))
+        
+        model.add(ConvLSTM2D(
+            filters = 32, 
+            kernel_size = (5, 5),
+            return_sequences = True, 
+            data_format = "channels_last", 
+            input_shape = (
+                self.fix_frames-self.val_seq_size,
+                self.frame_rows,
+                self.frame_cols, 
+                self.channels)))
+
         model.add(Dropout(0.5))
         model.add(ConvLSTM2D(filters = 16, kernel_size = (3, 3), return_sequences = True))
-        model.add(Dropout(0.2))
+        model.add(Dropout(0.5))
         model.add(ConvLSTM2D(filters = 8, kernel_size = (3, 3), return_sequences = False))
-        model.add(Dropout(0.2))
+        model.add(Dropout(0.5))
         model.add(Flatten())
         model.add(Dense(19, activation = "softmax"))
         model.summary()
-        #opt = keras.optimizers.Adam(learning_rate=0.001)
         model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         self.temporal_extractor = model
 
@@ -55,9 +69,6 @@ class learn_optical_flow():
         except Exception:
             print("Saved model could not be read.")
             return None,0,[],[],[],[]
-        
-        #performance_metrics = np.load("data/performance_metrics/Metrics.npz")
-        #self.model = keras.models.load_model("Noun_Predictor")
         
         epochs_completed = performance_metrics['a'].shape[0]
         Loss_per_epoch=[]
@@ -125,8 +136,6 @@ class learn_optical_flow():
                     print("File read unsuccessful at index:",i)
                     break
 
-                #print(Val_Frame)
-                #print(Val_Verb)
                 
                 i+=self.num_classes_total*2 
                 
@@ -147,8 +156,19 @@ class learn_optical_flow():
                 Y_val = tf.convert_to_tensor(Y_val_corrected)
                 
                 # Training batch
-                X = np.reshape(X_Value,(self.num_classes_total*2,self.fix_frames-self.val_seq_size,120,320,1))
-                X_val = np.reshape(Val_Frame,(self.num_classes_total*2,self.val_seq_size,120,320,1))
+                X = np.reshape(X_Value,(
+                    self.num_classes_total*self.upscale_factor,
+                    self.fix_frames-self.val_seq_size,
+                    self.frame_rows,
+                    self.frame_cols,
+                    self.channels))
+                
+                X_val = np.reshape(Val_Frame,(
+                    self.num_classes_total*self.upscale_factor,
+                    self.val_seq_size,
+                    self.frame_rows,
+                    self.frame_cols,
+                    self.channels))
                 
                 history = self.temporal_extractor.fit(X,Y,epochs=1,validation_data=(X_val,Y_val))
                 train_succ=True
@@ -176,7 +196,12 @@ class learn_optical_flow():
                 
                 try:
                     if (num_batches+1)%30 == 0 and plotter_flag == False:
-                        self.plot_makker.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/OF/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
+                        
+                        self.plot_makker.makePlot(
+                            Loss,
+                            caption = "Loss Curve",
+                            sloc = "data/Graphs/OF/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
+                        
                         print((str)(i) + " examples trained")
                         plotter_flag=True
                         
@@ -195,7 +220,10 @@ class learn_optical_flow():
             self.temporal_extractor.save("Verb_Predictor")
             print("Model save successful!")
         
-        self.plot_makker.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="OF_Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
+        self.plot_makker.makePlot(
+            Loss_per_epoch,
+            caption = "Loss Curve",
+            sloc="OF_Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
         try:
             self.temporal_extractor.save('OF_Verb.h5')
             print("Model trained successfully")

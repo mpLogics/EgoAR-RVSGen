@@ -131,7 +131,7 @@ class LoadData():
         self.test = pd.read_csv(self.test_split)
         self.input_shape = (299,299)
         self.sample_rate = 0.1
-        self.fix_frames = 10
+        self.fix_frames = 20
         self.num_classes_total = 51
         
     def get_matrix(self,Mag,Angle,Encoding):
@@ -234,7 +234,7 @@ class LoadData():
             j+=interval_size
         return frame_indices
     
-    def read_flow(self,i,access_order,num_classes_total):
+    def read_flow(self,i,access_order,num_classes_total,multiply_factor):
         Frames=[]
         Y=[]
         Val_Frame=[]
@@ -249,7 +249,7 @@ class LoadData():
         final_matrix = np.reshape(prev_matrix,((1,prev_matrix.shape[0],prev_matrix.shape[1],prev_matrix.shape[2])))
         final_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
 
-        for j in range(i+1,i+(num_classes_total*2)):
+        for j in range(i+1,i+(num_classes_total*multiply_factor)):
             #Modal,Annotation = self.load_file(access_order[j],modality="OF")
             #frame_indices = self.get_frame_order(Modal,modality="OF")
             #print("Loading File index",access_order[j])
