@@ -101,9 +101,13 @@ class learn_optical_flow():
         Accuracy_per_epoch=[]
         Val_Loss_per_epoch=[]
         Val_Acc_per_epoch=[]
+        
         access_order = accessor.build_order()
         train_succ=False
-        saved,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings(modality="OF",model_name="Verb_Predictor")
+        
+        saved,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings(
+            modality="OF",model_name="Verb_Predictor")
+        
         if saved==None:
             pass
         else:
@@ -112,7 +116,10 @@ class learn_optical_flow():
 
         for epochs in range(epochs_completed+1,self.Epochs+1):    
             if epochs!=1:
-                self.plot_makker.plot_metrics(m_path="data/performance_metrics/"+ modality +"/Metrics.npz",Epoch=epochs-1)
+                self.plot_makker.plot_metrics(
+                    m_path="data/performance_metrics/"+ modality +"/Metrics.npz",
+                    Epoch=epochs-1)
+            
             print("\nEpoch",epochs)
             i = 0
             num_batches = 0
@@ -125,14 +132,14 @@ class learn_optical_flow():
             Val_Acc=[]
 
             while i<totalSamples-1:
-
-                X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(
-                    i,
-                    access_order,
-                    self.num_classes_total,
-                    self.upscale_factor)
+                
                 try:
-                    X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(i,access_order,self.num_classes_total)
+                    X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(
+                        i,
+                        access_order,
+                        self.num_classes_total,
+                        self.upscale_factor)
+
                     print(X_Value.shape)
                     print(Y_Value.shape)
                     print(Val_Frame.shape)
