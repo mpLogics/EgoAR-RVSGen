@@ -131,7 +131,7 @@ class LoadData():
         self.test = pd.read_csv(self.test_split)
         self.input_shape = (299,299)
         self.sample_rate = 0.1
-        self.fix_frames = 20
+        self.fix_frames = 10
         self.num_classes_total = 51
         
     def get_matrix(self,Mag,Angle,Encoding):

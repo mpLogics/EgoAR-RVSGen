@@ -29,8 +29,8 @@ class learn_optical_flow():
         self.train_test_split = (("1","1"))
         self.batch_preprocess_size = 510
         self.Epochs=60
-        self.fix_frames = 20
-        self.val_seq_size = 10
+        self.fix_frames = 10
+        self.val_seq_size = 5
         self.plot_makker = Visualizer()
         self.upscale_factor = 5
         self.frame_rows = 120
@@ -132,7 +132,7 @@ class learn_optical_flow():
             Val_Acc=[]
 
             while i<totalSamples-1:
-                
+
                 try:
                     X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(
                         i,
