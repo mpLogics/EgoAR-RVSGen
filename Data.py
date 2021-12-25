@@ -284,6 +284,7 @@ class LoadData():
         print(prev_Annot.shape)
         print(final_matrix.shape)
 
+        key_exit = input("Waiting...")
 
         # Obtaining validation data for the batch
         m = i+(num_classes*multiply_factor)
