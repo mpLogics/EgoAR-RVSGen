@@ -281,9 +281,6 @@ class LoadData():
             final_matrix = np.concatenate([final_matrix,prev_matrix])
             prev_Annot = np.concatenate([prev_Annot,init_Annot])
         
-        print(prev_Annot.shape)
-        print(final_matrix.shape)
-
         # Obtaining validation data for the batch
         m = i+(num_classes*multiply_factor)
         Mag,Ang,Encoding = self.load_file(access_order[m],modality="OF")
@@ -319,9 +316,11 @@ class LoadData():
         final_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
 
         for j in range(i+1,i+(num_classes_total*multiply_factor)):
+            
             #Modal,Annotation = self.load_file(access_order[j],modality="OF")
             #frame_indices = self.get_frame_order(Modal,modality="OF")
             #print("Loading File index",access_order[j])
+            
             Mag,Ang,Encoding = self.load_file(access_order[j],modality="OF")
             init_matrix,init_Annot,prev_val,init_val_annot = self.get_matrix(Mag,Ang,Encoding)
             init_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
