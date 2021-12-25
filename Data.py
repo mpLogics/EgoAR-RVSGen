@@ -157,6 +157,7 @@ class LoadData():
             
             j+=interval_size    
         
+        print(Encoding[0])
         Annotations.append((int)(Encoding[0]))
         return init_matrix,np.array(Annotations)
 
