@@ -149,11 +149,12 @@ class learn_optical_flow():
                     break
 
                 
-                i+=self.num_classes_total*self.upscale_factor
+                i+=((self.num_classes_total*self.upscale_factor) + self.num_classes_total)
                 print(i)
                 
                 # Logs
-                print("\nClasses covered in batch: ",(np.unique(np.array(Y_Value))).shape[0])
+                print("\nClasses covered in train set: ",(np.unique(np.array(Y_Value))).shape[0])
+                print("\nClasses covered in validation set: ",(np.unique(np.array(Val_Verb))).shape[0])
                 print("Batch(es) read: ",num_batches)
                 print("Files read = ",i)                   
 
