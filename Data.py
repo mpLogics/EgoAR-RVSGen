@@ -281,6 +281,10 @@ class LoadData():
             final_matrix = np.concatenate([final_matrix,prev_matrix])
             prev_Annot = np.concatenate([prev_Annot,init_Annot])
         
+        print(prev_Annot.shape)
+        print(final_matrix.shape)
+
+
         # Obtaining validation data for the batch
         m = i+(num_classes*multiply_factor)
         Mag,Ang,Encoding = self.load_file(access_order[m],modality="OF")
