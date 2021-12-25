@@ -218,6 +218,7 @@ class LoadData():
             
             j+=interval_size    
         
+        print(Encoding[0])
         Annotations.append((int)(Encoding[0]))
         return init_matrix,np.array(Annotations),prev_val,np.array([(int)(Encoding[0])])
 
@@ -264,10 +265,6 @@ class LoadData():
     
     def read_val_flow(self,i,access_order,num_classes,multiply_factor):
         Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
-        
-        Y=[]
-
-        Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
         prev_matrix,prev_Annot = self.get_any_matrix(Mag,Ang,Encoding)
         final_matrix = np.reshape(prev_matrix,((1,prev_matrix.shape[0],prev_matrix.shape[1],prev_matrix.shape[2])))
 
@@ -301,52 +298,7 @@ class LoadData():
 
 
 
-    def read_flow(self,i,access_order,num_classes_total,multiply_factor):
-        Frames=[]
-        Y=[]
-        Val_Frame=[]
-        
-        Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
-        #print(i)
-        #print(access_order[i])
-        #print(Encoding[0])
-        
-        prev_matrix,prev_Annot,prev_val,prev_val_annot = self.get_matrix(Mag,Ang,Encoding)
-        final_matrix = np.reshape(prev_matrix,((1,prev_matrix.shape[0],prev_matrix.shape[1],prev_matrix.shape[2])))
-        final_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
-
-        for j in range(i+1,i+(num_classes_total*multiply_factor)):
-            
-            #Modal,Annotation = self.load_file(access_order[j],modality="OF")
-            #frame_indices = self.get_frame_order(Modal,modality="OF")
-            #print("Loading File index",access_order[j])
-            
-            Mag,Ang,Encoding = self.load_file(access_order[j],modality="OF")
-            init_matrix,init_Annot,prev_val,init_val_annot = self.get_matrix(Mag,Ang,Encoding)
-            init_val = np.reshape(prev_val,((1,prev_val.shape[0],prev_val.shape[1],prev_val.shape[2])))
-            final_val = np.concatenate([final_val,init_val])
-            prev_val_annot = np.concatenate([prev_val_annot,init_val_annot])
-            
-            #init_matrix,init_Annot,val_matrix,val_annot = get_matrix(Mag,Ang,Encoding)
-            prev_matrix = np.reshape(init_matrix,((1,init_matrix.shape[0],init_matrix.shape[1],init_matrix.shape[2])))
-            final_matrix = np.concatenate([final_matrix,prev_matrix])
-            prev_Annot = np.concatenate([prev_Annot,init_Annot])
-
-            #for count in range(self.fix_frames):
-            #    if count==4:
-            #        Val_Frame.append(Modal[frame_indices[count]])
-            #        Val_Noun.append((int)(Annotation[frame_indices[count]]))
-            #    
-            #    else:
-            #        Frames.append(Modal[frame_indices[count]])
-            #        Y.append((int)(Annotation[frame_indices[count]]))
-        
-        Frames = final_matrix
-        Y = prev_Annot
-        Val_Frame = final_val
-        Val_Annotation = np.array(prev_val_annot)
-        
-        return Frames, Y, Val_Frame, Val_Annotation
+    
 
     def read_frames(self,i,access_order,num_classes_total):    
         Frame=[]
