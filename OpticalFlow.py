@@ -29,7 +29,7 @@ class learn_optical_flow():
         self.train_test_split = (("1","1"))
         self.batch_preprocess_size = 510
         self.Epochs=60
-        self.fix_frames = 10
+        self.fix_frames = 5
         self.val_seq_size = 5
         self.plot_makker = Visualizer()
         self.upscale_factor = 5
@@ -134,7 +134,7 @@ class learn_optical_flow():
             while i<totalSamples-1:
 
                 try:
-                    X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_flow(
+                    X_Value,Y_Value,Val_Frame,Val_Verb = L1.read_val_flow(
                         i,
                         access_order,
                         self.num_classes_total,
@@ -171,7 +171,7 @@ class learn_optical_flow():
                 # Training batch
                 X = np.reshape(X_Value,(
                     self.num_classes_total*self.upscale_factor,
-                    self.fix_frames-self.val_seq_size,
+                    self.fix_frames,
                     self.frame_rows,
                     self.frame_cols,
                     self.channels))

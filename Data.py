@@ -131,9 +131,37 @@ class LoadData():
         self.test = pd.read_csv(self.test_split)
         self.input_shape = (299,299)
         self.sample_rate = 0.1
-        self.fix_frames = 10
+        self.fix_frames = 5
         self.num_classes_total = 51
         
+    def get_any_matrix(self,Mag,Angle,Encoding):
+        interval_size = math.floor(len(Mag)/self.fix_frames)
+        Annotations=[]
+        j = 0
+        
+        Mag[0] = Mag[0]#[120:240,160:320]
+        Angle[0] = Angle[0]#[120:240,160:320]
+        prev_matrix = np.concatenate([Mag[0],Angle[0]],axis=1)
+        init_matrix = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
+
+        for k in range(1,self.fix_frames):
+            if j<=0:
+                j+=interval_size
+            
+            Mag[j] = Mag[j]
+            Angle[j] = Angle[j]
+            
+            prev_matrix = np.concatenate([Mag[j],Angle[j]],axis=1)
+            temp = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
+            init_matrix = np.concatenate([init_matrix,temp])
+            
+            j+=interval_size    
+        
+        Annotations.append((int)(Encoding[0]))
+        return init_matrix,np.array(Annotations)
+
+
+
     def get_matrix(self,Mag,Angle,Encoding):
         interval_size = math.floor(len(Mag)/self.fix_frames)
         Annotations=[]
@@ -234,11 +262,49 @@ class LoadData():
             j+=interval_size
         return frame_indices
     
+    def read_val_flow(self,i,access_order,num_classes,multiply_factor):
+        Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
+        
+        Y=[]
+
+        Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
+        prev_matrix,prev_Annot = self.get_any_matrix(Mag,Ang,Encoding)
+        final_matrix = np.reshape(prev_matrix,((1,prev_matrix.shape[0],prev_matrix.shape[1],prev_matrix.shape[2])))
+
+        # Obtaining training data for the batch
+        for j in range(i+1,i+(num_classes*multiply_factor)):
+            
+            Mag,Ang,Encoding = self.load_file(access_order[j],modality="OF")
+            init_matrix,init_Annot = self.get_any_matrix(Mag,Ang,Encoding)
+
+            prev_matrix = np.reshape(init_matrix,((1,init_matrix.shape[0],init_matrix.shape[1],init_matrix.shape[2])))
+            final_matrix = np.concatenate([final_matrix,prev_matrix])
+            prev_Annot = np.concatenate([prev_Annot,init_Annot])
+        
+        # Obtaining validation data for the batch
+        m = i+(num_classes*multiply_factor)
+        Mag,Ang,Encoding = self.load_file(access_order[m],modality="OF")
+        prev_val_matrix,prev_val_Annot = self.get_any_matrix(Mag,Ang,Encoding)
+        final_val_matrix = np.reshape(prev_val_matrix,((1,prev_val_matrix.shape[0],prev_val_matrix.shape[1],prev_val_matrix.shape[2])))
+
+        # Obtaining training data for the batch
+        for j in range(m+1,m+num_classes):
+            
+            Mag,Ang,Encoding = self.load_file(access_order[j],modality="OF")
+            init_val_matrix,init_val_Annot = self.get_any_matrix(Mag,Ang,Encoding)
+
+            prev_val_matrix = np.reshape(init_val_matrix,((1,init_val_matrix.shape[0],init_val_matrix.shape[1],init_val_matrix.shape[2])))
+            final_val_matrix = np.concatenate([final_val_matrix,prev_val_matrix])
+            prev_val_Annot = np.concatenate([prev_val_Annot,init_val_Annot])
+        
+        return final_matrix,prev_Annot,final_val_matrix,prev_val_Annot
+
+
+
     def read_flow(self,i,access_order,num_classes_total,multiply_factor):
         Frames=[]
         Y=[]
         Val_Frame=[]
-        Val_Noun=[]
         
         Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
         #print(i)
