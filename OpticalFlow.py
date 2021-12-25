@@ -177,7 +177,7 @@ class learn_optical_flow():
                     self.channels))
                 
                 X_val = np.reshape(Val_Frame,(
-                    self.num_classes_total*self.upscale_factor,
+                    self.num_classes_total,
                     self.val_seq_size,
                     self.frame_rows,
                     self.frame_cols,
