@@ -46,7 +46,7 @@ class learn_optical_flow():
             return_sequences = True, 
             data_format = "channels_last", 
             input_shape = (
-                self.fix_frames-self.val_seq_size,
+                self.fix_frames,
                 self.frame_rows,
                 self.frame_cols, 
                 self.channels)))
