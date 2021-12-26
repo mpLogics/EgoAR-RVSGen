@@ -157,7 +157,6 @@ class LoadData():
             
             j+=interval_size    
         
-        print(Encoding[0])
         Annotations.append((int)(Encoding[0]))
         return init_matrix,np.array(Annotations)
 
@@ -167,6 +166,7 @@ class LoadData():
         interval_size = math.floor(len(Mag)/self.fix_frames)
         Annotations=[]
         j = 0
+        
         #print("Check before mag",Mag[0].shape)
         #print("Check before angle",Angle[0].shape)
 
@@ -193,10 +193,12 @@ class LoadData():
         for k in range(2,self.fix_frames):
             if j<=1:
                 j+=interval_size
+            
             #print("K = ",k)
             #print("J = ",j)
             #print("Here Sanity Check",Mag[j].shape)
             #print("Here Sanity Check",Angle[j].shape)
+            
             Mag[j] = Mag[j]#[120:240,160:320]
             Angle[j] = Angle[j]#[120:240,160:320]
             

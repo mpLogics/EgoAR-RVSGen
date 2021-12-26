@@ -123,8 +123,6 @@ class learn_optical_flow():
             print("\nEpoch",epochs)
             i = 0
             num_batches = 0
-            X_Value=[]
-            Y_Value=[]
             plotter_flag = False
             Loss=[]
             Accuracy=[]
@@ -150,14 +148,14 @@ class learn_optical_flow():
 
                 
                 i+=((self.num_classes_total*self.upscale_factor) + self.num_classes_total)
-                print(i)
                 
                 # Logs
                 print("\nClasses covered in train set: ",(np.unique(np.array(Y_Value))).shape[0])
-                print("\nClasses covered in validation set: ",(np.unique(np.array(Val_Verb))).shape[0])
+                print("Classes covered in validation set: ",(np.unique(np.array(Val_Verb))).shape[0])
                 print("Batch(es) read: ",num_batches)
                 print("Files read = ",i)                   
-
+                print(Y_Value)
+                print(Val_Verb)
                 num_batches+=1
                 
                 Y_corrected = self.getCorrected(np.array(Y_Value))
@@ -203,10 +201,7 @@ class learn_optical_flow():
                 else:
                     print("Training unsuccessful!")
                 
-                X_Value=[]
-                Y_Value=[]
-                Val_Verb=[]
-                Val_Frame=[]
+
                 
                 try:
                     if (num_batches+1)%30 == 0 and plotter_flag == False:
