@@ -83,14 +83,12 @@ class GenVerbSpace():
 
             totalSamples = self.getTotalSamples(mode="train")
             P_Noun_Verb = self.calProbCombinations(totalSamples=totalSamples)
-            P_Noun = self.calProbVerbs(totalSamples=totalSamples)
-            P_Verb = self.calProbNouns(totalSamples=totalSamples)
-            print(P_Verb)
+            P_Verb = self.calProbVerbs(totalSamples=totalSamples)
+            P_Noun = self.calProbNouns(totalSamples=totalSamples)
             Verb_Set = self.getVerbSet()
             V = len(Verb_Set)
 
             for i in range(V):
-                print(i,":",Verb_Set[i],":",P_Verb[Verb_Set[i]])
                 P_YVerb[Verb_Set[i]] = (P_Noun_Verb[(Noun_Pred,Verb_Set[i])]/P_Noun[Noun_Pred])/P_Verb[Verb_Set[i]]
                 
             Final_Probabilities = dict(sorted(P_YVerb.items(), key = lambda kv: kv[1]))
