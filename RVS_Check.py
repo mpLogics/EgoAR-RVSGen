@@ -8,7 +8,7 @@ from keras.layers import Dense,Dropout,Flatten,Input,ConvLSTM2D
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 """
-from OpticalFlow import learn_optical_flow
+#from OpticalFlow import learn_optical_flow
 from RVSGen import GenVerbSpace
 
 #l_of = learn_optical_flow()
@@ -22,7 +22,8 @@ from RVSGen import GenVerbSpace
 
 #x = verb_predictor.output
 reduced_verb_space = GenVerbSpace()
-Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred="tomato",K_Value=10)
+Nouns = reduced_verb_space.getNounSet()
+Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred=Nouns[0],K_Value=10)
 print(Verb_Probable)
 
 
