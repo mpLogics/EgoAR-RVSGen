@@ -48,7 +48,10 @@ class GenVerbSpace():
         return P_Verb
     
     def calProbCombinations(self,totalSamples):
-        Noun,Verb,N,V = self.defineSets()
+        Noun = self.getNounSet()
+        Verb = self.getVerbSet()
+        N = len(Noun)
+        V = len(Verb)
         P_Noun_Verb = {}
             
         for i in range(N):
