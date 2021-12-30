@@ -25,7 +25,7 @@ reduced_verb_space = GenVerbSpace()
 Nouns = reduced_verb_space.getNounSet()
 Verbs = reduced_verb_space.getNounSet()
 
-print("Predicted Noun =",Nouns[0])
+print("Predicted Noun =",Nouns[4])
 
 Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred=Nouns[0],K_Value=10)
 print(Verb_Probable)
