@@ -90,7 +90,7 @@ class GenVerbSpace():
             V = len(Verb_Set)
 
             for i in range(V):
-                print(i,":",Verb_Set[i],":",P_Verb[Verb_Set[i]])
+                print(i,":",Verb_Set[i+1],":",P_Verb[Verb_Set[i]])
                 P_YVerb[Verb_Set[i]] = (P_Noun_Verb[(Noun_Pred,Verb_Set[i])]/P_Noun[Noun_Pred])/P_Verb[Verb_Set[i]]
                 
             Final_Probabilities = dict(sorted(P_YVerb.items(), key = lambda kv: kv[1]))
