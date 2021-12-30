@@ -21,15 +21,6 @@ class GenVerbSpace():
         for i in range(len(self.Noun_Space)):
             Noun.append((int)(re.split(" ",self.Noun_Space[0][i])[-1]))
         return Noun
-    
-    def RVSGen(self,P_Noun_Verb,P_Noun,P_Verb,V,Noun_Pred,K_Value,Verb):
-            P_YVerb={}
-            for i in range(V):
-                P_YVerb[Verb[i]] = (P_Noun_Verb[(Noun_Pred,Verb[i])]/P_Noun[Noun_Pred])/P_Verb[Verb[i]]
-                
-            Final_Probabilities = dict(sorted(P_YVerb.items(), key = lambda kv: kv[1]))
-            Verb_Probable = list(Final_Probabilities.keys())[-K_Value:]
-            return Verb_Probable
 
     def calProbNouns(self,totalSamples):
         Noun = self.getNounSet()
@@ -74,9 +65,30 @@ class GenVerbSpace():
         
         return P_Noun_Verb
 
-    def getTotalSamples(self):
+    def getTotalSamples(self,mode):
         totalSamples=0
         for i in range(self.Splits):
-            train = pd.read_csv("data/Splits/train_split" + (str)(i+1) + ".csv")
-            totalSamples+=len(train)
+            if mode=="train":
+                data = pd.read_csv("data/Splits/train_split" + (str)(i+1) + ".csv")
+            else:
+                data = pd.read_csv("data/Splits/train_split" + (str)(i+1) + ".csv")
+            totalSamples+=len(data)
         return totalSamples
+    
+    def RVSGen(self,Noun_Pred,K_Value):
+            P_YVerb={}
+
+            totalSamples = self.getTotalSamples(mode="train")
+            P_Noun_Verb = self.calProbCombinations(totalSamples=totalSamples)
+            P_Noun = self.calProbVerbs(totalSamples=totalSamples)
+            P_Verb = self.calProbNouns(totalSamples=totalSamples)
+            
+            Verb_Set = self.getVerbSet()
+            V = len(Verb_Set)
+
+            for i in range(V):
+                P_YVerb[Verb_Set[i]] = (P_Noun_Verb[(Noun_Pred,Verb_Set[i])]/P_Noun[Noun_Pred])/P_Verb[Verb_Set[i]]
+                
+            Final_Probabilities = dict(sorted(P_YVerb.items(), key = lambda kv: kv[1]))
+            Verb_Probable = list(Final_Probabilities.keys())[-K_Value:]
+            return Verb_Probable

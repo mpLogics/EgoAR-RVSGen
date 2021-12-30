@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import Input
 from keras.models import Sequential
-from keras.layers import CuDNNLSTM,Dense,Dropout,LSTM,Flatten,Conv2D,GlobalAveragePooling2D,TimeDistributed,Input,Activation,MaxPooling2D,ConvLSTM2D
+from keras.layers import Dense,Dropout,Flatten,Input,ConvLSTM2D
 
 
 import numpy as np
@@ -50,12 +50,20 @@ class learn_optical_flow():
                 self.frame_rows,
                 self.frame_cols, 
                 self.channels)))
+        model.add(Dropout(0.5))
+        
+        model.add(ConvLSTM2D(
+            filters = 16, 
+            kernel_size = (3, 3), 
+            return_sequences = True))
+        model.add(Dropout(0.5))
 
+        model.add(ConvLSTM2D(
+            filters = 8, 
+            kernel_size = (3, 3), 
+            return_sequences = False))
         model.add(Dropout(0.5))
-        model.add(ConvLSTM2D(filters = 16, kernel_size = (3, 3), return_sequences = True))
-        model.add(Dropout(0.5))
-        model.add(ConvLSTM2D(filters = 8, kernel_size = (3, 3), return_sequences = False))
-        model.add(Dropout(0.5))
+        
         model.add(Flatten())
         model.add(Dense(19, activation = "softmax"))
         model.summary()

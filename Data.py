@@ -129,6 +129,7 @@ class LoadData():
         self.batch_size = 25
         self.train = pd.read_csv(self.train_split)
         self.test = pd.read_csv(self.test_split)
+        self.mode = "train"
         self.input_shape = (299,299)
         self.sample_rate = 0.1
         self.fix_frames = 5
@@ -234,8 +235,10 @@ class LoadData():
     
 
     def load_file(self,i,modality):
-        file_path = "data/preprocessed_data/" + modality + "/" + self.train["FileName"][i] + ".npz"
-        
+        if self.mode=="train":
+            file_path = "data/preprocessed_data/" + modality + "/" + self.train["FileName"][i] + ".npz"
+        else:
+            file_path = "data/preprocessed_data/" + modality + "/" + self.test["FileName"][i] + ".npz"
         if modality=="RGB":
             modal = np.load(file_path,allow_pickle=True)["a"]
             Annotation = np.load(file_path,allow_pickle=True)["c"]
