@@ -97,8 +97,8 @@ for i in range(10):
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
 
-print(pred1)
-print()
-print(pred2)
+    print(pred1)
+    print()
+    print(pred2)
 #Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred=Nouns[0],K_Value=10)
 
