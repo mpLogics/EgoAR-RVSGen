@@ -25,6 +25,7 @@ class RVS_Implement():
 
     def custom_activation(self,x):
         print(x)
+        print(x.values)
         sum=0
         activation_values=[]
         for i in x:
