@@ -71,7 +71,7 @@ def set_verb_rules():
 
 data_loader = LoadData()
 verb_predictor = get_models(return_all=False)
-
+verb_predictor.summary()
 for i in range(10):
     mag,angle,encoding = data_loader.load_file(i,modality="OF")
     
@@ -87,12 +87,10 @@ for i in range(10):
         init_matrix.shape[2],
         1))
     
-    print(final_matrix.shape)
-    yes = input("Proceed?")
     
     feature_extractor = keras.Model(
         inputs=verb_predictor.input,
-        outputs=verb_predictor.output)
+        outputs=verb_predictor.get_layer('Flatten').output)
     
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
