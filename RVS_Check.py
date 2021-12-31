@@ -24,8 +24,10 @@ class RVS_Implement():
         self.VerbSet = [13,1,4,12,5,6,7]
 
     def custom_activation(self,x):
+        
+        """
         print(x)
-        print(x.values)
+        #print(x.values)
         sum=0
         activation_values=[]
         for i in x:
@@ -36,7 +38,9 @@ class RVS_Implement():
                 activation_values.append(math.exp(x)/sum)
             else:
                 activation_values.append(0)
-        return tf.tensor(activation_values)
+        """
+        #return tf.tensor(activation_values)
+        print(bk.exp(x))
     
     def get_models(self,return_all):
         if not return_all:
