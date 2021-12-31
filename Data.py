@@ -239,19 +239,16 @@ class LoadData():
             file_path = "data/preprocessed_data/" + modality + "/" + self.train["FileName"][i] + ".npz"
         else:
             file_path = "data/preprocessed_data/" + modality + "/" + self.test["FileName"][i] + ".npz"
+        
         if modality=="RGB":
             modal = np.load(file_path,allow_pickle=True)["a"]
             Annotation = np.load(file_path,allow_pickle=True)["c"]
         else:
             file_in = np.load(file_path,allow_pickle=True)
             mag = file_in['a']
-            #ang = np.array([element for (i,element) in enumerate(file_in['b'])]) 
             ang = file_in['b']
             encoding = file_in['d']
             return mag,ang,encoding
-            #modal = np.zeros((s1,s2,s3*2))
-            #modal[:,:,:s3] = mag
-            #modal[:,:,s3:] = ang
         return modal,Annotation
     
 

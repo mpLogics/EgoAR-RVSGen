@@ -82,9 +82,11 @@ class GenVerbSpace():
             P_YVerb={}
 
             totalSamples = self.getTotalSamples(mode="train")
-            P_Noun_Verb = self.calProbCombinations(totalSamples=totalSamples)
             P_Verb = self.calProbVerbs(totalSamples=totalSamples)
             P_Noun = self.calProbNouns(totalSamples=totalSamples)
+            
+            P_Noun_Verb = self.calProbCombinations(totalSamples=totalSamples)
+            
             Verb_Set = self.getVerbSet()
             V = len(Verb_Set)
 
