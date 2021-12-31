@@ -90,7 +90,7 @@ for i in range(10):
     
     feature_extractor = keras.Model(
         inputs=verb_predictor.input,
-        outputs=verb_predictor.get_layer('Flatten').output)
+        outputs=verb_predictor.get_layer('flatten').output)
     
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
