@@ -90,7 +90,7 @@ for i in range(1):
     
     base_model = verb_predictor.get_layer('flatten').output
     final_model = keras.layers.Dense(units=10,name="Predictions",activation="softmax")(base_model)
-    #final_model = keras.layers.Dense 
+    #final_model = keras.layers.Dense
     
     #feature_extractor = keras.Model(
     #    inputs=verb_predictor.input,
@@ -106,5 +106,8 @@ for i in range(1):
     print(pred1)
     print()
     print(pred2)
+
+    print(np.argmax(pred1))
+    print(np.argmax(pred2))
 #Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred=Nouns[0],K_Value=10)
 
