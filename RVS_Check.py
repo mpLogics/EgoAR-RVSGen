@@ -50,7 +50,29 @@ def return_true_annotation(value,component):
             value+=2
         else:
             value-=3
-"""
+
+
+def set_verb_rules():
+    print("No existing rules found, creating new rules!")
+    reduced_verb_space = GenVerbSpace()
+    Nouns = reduced_verb_space.getNounSet()
+    Verbs = reduced_verb_space.getNounSet()
+    totalSamples = reduced_verb_space.getTotalSamples(mode="train")
+
+    P_Noun = reduced_verb_space.calProbNouns(totalSamples)
+    P_Verb = reduced_verb_space.calProbVerbs(totalSamples)
+    P_Noun_Verb = reduced_verb_space.calProbCombinations(totalSamples)
+
+    return P_Noun,P_Verb,P_Noun_Verb
+
+#print("Predicted Noun =",Nouns[4])
+
+#print(Verb_Probable)
+#P_Noun,P_Verb,P_Noun_Verb = set_verb_rules(root="data/")
+
+data_loader = LoadData()
+verb_predictor = get_models(return_all=False)
+
 for i in range(10):
     mag,angle,encoding = data_loader.load_file(i,modality="Verb")
     
@@ -70,43 +92,9 @@ for i in range(10):
     
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
-"""
 
-def set_verb_rules(root):
-    try:
-        os.scandir(root + "Verb_Rules/")
-    except FileNotFoundError:
-        print("Directory not found, creating directory")
-        os.mkdir(os.path.join(os.getcwd(),root + "Verb_Rules"))
-    
-    existing_files = os.listdir(root+"Verb_Rules/")
-    
-    if len(existing_files)==0:
-        print("No existing rules found, creating new rules!")
-        reduced_verb_space = GenVerbSpace()
-        Nouns = reduced_verb_space.getNounSet()
-        Verbs = reduced_verb_space.getNounSet()
-        totalSamples = reduced_verb_space.getTotalSamples(mode="train")
-
-        P_Noun = reduced_verb_space.calProbNouns(totalSamples)
-        P_Verb = reduced_verb_space.calProbVerbs(totalSamples)
-        P_Noun_Verb = reduced_verb_space.calProbCombinations(totalSamples)
-        sio.savemat(root+"Verb_Rules/" + "P_Noun" + ".mat", P_Noun)
-        sio.savemat(root+"Verb_Rules/" + "P_Verb" + ".mat", P_Verb)
-        sio.savemat(root+"Verb_Rules/" + "P_Noun_Verb" + ".mat", P_Noun_Verb)
-
-    else:
-        print("Pre-existing rules found. Loading them into memory!")
-        P_Noun = sio.loadmat(root+"Verb_Rules/" + "P_Noun" + ".mat")
-        P_Verb = sio.loadmat(root+"Verb_Rules/" + "P_Verb" + ".mat")
-        P_Noun_Verb = sio.loadmat(root+"Verb_Rules/" + "P_Noun_Verb" + ".mat")
-
-    return P_Noun,P_Verb,P_Noun_Verb
-
-#print("Predicted Noun =",Nouns[4])
-#data_loader = LoadData()
+print(pred1)
+print()
+print(pred2)
 #Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred=Nouns[0],K_Value=10)
-#print(Verb_Probable)
-set_verb_rules(root="data/")
-
 
