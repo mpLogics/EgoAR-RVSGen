@@ -88,7 +88,7 @@ for i in range(1):
         1))
     
     
-    base_model = verb_predictor.get_layer('flatten')
+    base_model = verb_predictor.get_layer('flatten').output
     final_model = keras.layers.Dense(units=10,name="Predictions",activation="softmax")(base_model)
     #final_model = keras.layers.Dense 
     
@@ -98,7 +98,7 @@ for i in range(1):
     feature_extractor = keras.Model(
         inputs = verb_predictor.input,
         outputs = final_model)
-            
+
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
     print(pred1.shape)
