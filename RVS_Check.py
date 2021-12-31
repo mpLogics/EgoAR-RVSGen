@@ -8,7 +8,7 @@ from keras.layers import Dense,Dropout,Flatten,Input,ConvLSTM2D
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 """
-
+import scipy.io as sio
 import pandas as pd
 import os
 from Data import LoadData
@@ -71,25 +71,37 @@ for i in range(10):
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
 """
+
 def set_verb_rules(root):
     try:
         os.scandir(root + "Verb_Rules/")
     except FileNotFoundError:
         print("Directory not found, creating directory")
         os.mkdir(os.path.join(os.getcwd(),root + "Verb_Rules"))
+    
+    existing_files = os.listdir(root+"Verb_Rules/")
+    
+    if len(existing_files)==0:
+        print("No existing rules found, creating new rules!")
+        reduced_verb_space = GenVerbSpace()
+        Nouns = reduced_verb_space.getNounSet()
+        Verbs = reduced_verb_space.getNounSet()
+        totalSamples = reduced_verb_space.getTotalSamples(mode="train")
 
-    reduced_verb_space = GenVerbSpace()
-    Nouns = reduced_verb_space.getNounSet()
-    Verbs = reduced_verb_space.getNounSet()
-    totalSamples = reduced_verb_space.getTotalSamples(mode="train")
+        P_Noun = reduced_verb_space.calProbNouns(totalSamples)
+        P_Verb = reduced_verb_space.calProbVerbs(totalSamples)
+        P_Noun_Verb = reduced_verb_space.calProbCombinations(totalSamples)
+        sio.savemat(root+"Verb_Rules/" + "P_Noun" + ".mat", P_Noun)
+        sio.savemat(root+"Verb_Rules/" + "P_Verb" + ".mat", P_Verb)
+        sio.savemat(root+"Verb_Rules/" + "P_Noun_Verb" + ".mat", P_Noun_Verb)
 
-    P_Noun = reduced_verb_space.calProbNouns(totalSamples)
-    P_Verb = reduced_verb_space.calProbVerbs(totalSamples)
-    P_Noun_Verb = reduced_verb_space.calProbCombinations(totalSamples)
+    else:
+        print("Pre-existing rules found. Loading them into memory!")
+        P_Noun = sio.loadmat(root+"Verb_Rules/" + "P_Noun" + ".mat")
+        P_Verb = sio.loadmat(root+"Verb_Rules/" + "P_Verb" + ".mat")
+        P_Noun_Verb = sio.loadmat(root+"Verb_Rules/" + "P_Noun_Verb" + ".mat")
 
-    print(type(P_Noun))
-    print(type(P_Verb))
-    print(P_Noun_Verb[0])
+    return P_Noun,P_Verb,P_Noun_Verb
 
 #print("Predicted Noun =",Nouns[4])
 #data_loader = LoadData()
