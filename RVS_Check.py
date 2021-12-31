@@ -50,7 +50,7 @@ def return_true_annotation(value,component):
             value+=2
         else:
             value-=3
-
+"""
 for i in range(10):
     mag,angle,encoding = data_loader.load_file(i,modality="Verb")
     
@@ -70,7 +70,7 @@ for i in range(10):
     
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
-
+"""
 def set_verb_rules(root):
     try:
         os.scandir(root + "Verb_Rules/")
