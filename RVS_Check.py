@@ -72,7 +72,7 @@ def set_verb_rules():
 data_loader = LoadData()
 verb_predictor = get_models(return_all=False)
 verb_predictor.summary()
-for i in range(10):
+for i in range(1):
     mag,angle,encoding = data_loader.load_file(i,modality="OF")
     
     init_matrix,init_Annot = data_loader.get_any_matrix(
@@ -88,14 +88,21 @@ for i in range(10):
         1))
     
     
-    feature_extractor = keras.Model(
-        inputs=verb_predictor.input,
-        outputs=verb_predictor.get_layer('flatten').output)
+    base_model = verb_predictor.get_layer('flatten')
+    final_model = keras.layers.Dense(units=10,name="Predictions",activation="softmax")(base_model)
+    #final_model = keras.layers.Dense 
     
+    #feature_extractor = keras.Model(
+    #    inputs=verb_predictor.input,
+    #    outputs=verb_predictor.get_layer('flatten').output)
+    feature_extractor = keras.Model(
+        inputs = verb_predictor.input,
+        outputs = final_model)
+            
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
     print(pred1.shape)
-    print(pred2.shape)
+    print(pred2.shape)  
     print(pred1)
     print()
     print(pred2)
