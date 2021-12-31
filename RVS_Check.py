@@ -80,10 +80,15 @@ for i in range(10):
         angle,
         encoding)
     
-    final_matrix = np.reshape(init_matrix,((
-        1,init_matrix.shape[0],
+    final_matrix = np.reshape(init_matrix,(
+        1,
+        init_matrix.shape[0],
         init_matrix.shape[1],
-        init_matrix.shape[2])))
+        init_matrix.shape[2],
+        1))
+    
+    print(final_matrix.shape)
+    yes = input("Proceed?")
     
     feature_extractor = keras.Model(
         inputs=verb_predictor.input,
