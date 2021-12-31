@@ -73,7 +73,7 @@ data_loader = LoadData()
 verb_predictor = get_models(return_all=False)
 
 for i in range(10):
-    mag,angle,encoding = data_loader.load_file(i,modality="Verb")
+    mag,angle,encoding = data_loader.load_file(i,modality="OF")
     
     init_matrix,init_Annot = data_loader.get_any_matrix(
         mag,
