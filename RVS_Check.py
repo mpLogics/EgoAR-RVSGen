@@ -21,7 +21,7 @@ import math
 
 class RVS_Implement():
     def __init__(self):
-        self.VerbSet = np.array([13,1,4,12,5,6,7])
+        self.VerbSet = np.array([0,13,1,4,12,5,6,7])
 
     def custom_activation(self,x):        
         sum=0
@@ -140,7 +140,7 @@ for i in range(1):
     print(pred1)
     
     print()
-    print(pred2)
+    #print(pred2)
 
     print(np.argmax(pred1))
     print(np.argmax(pred2))
