@@ -24,8 +24,6 @@ class RVS_Implement():
         self.VerbSet = [13,1,4,12,5,6,7]
 
     def custom_activation(self,x):        
-        print(x)
-        #print(x.values)
         sum=0
         activation_values=[]
         for i in x:
@@ -36,8 +34,8 @@ class RVS_Implement():
                 activation_values.append(math.exp(x)/sum)
             else:
                 activation_values.append(0)
-        print(bk.exp(x))
-        return tf.tensor(activation_values)
+        print(np.array(activation_values))
+        return np.array(activation_values)
     
     
     def vectorize_ca(self):
@@ -129,6 +127,9 @@ for i in range(1):
 
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
+
+    activated_values = rvs_checker.custom_activation(x=pred2)
+    print("Activated Values: ",activated_values)
     print(pred1.shape)
     print(pred2.shape)  
     
