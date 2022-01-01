@@ -25,7 +25,6 @@ class RVS_Implement():
 
     def custom_activation(self,x):        
         print("Feature Values: ",x)
-        
         sum=0
         activation_values=[]
         
@@ -38,8 +37,9 @@ class RVS_Implement():
             else:
                 activation_values.append(0)
         
+        print("Activation Values1: ",activation_values)
         activation_values = np.array(activation_values)
-        print("Activation Values: ",activation_values)
+        print("Activation Values2: ",activation_values)
         print("Sum of actiation values: ",np.sum(activation_values))
         return activation_values
     
