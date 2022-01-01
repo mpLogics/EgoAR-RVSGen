@@ -29,7 +29,7 @@ class RVS_Implement():
         for i in x:
             for j in i:
                 print(j)
-                if j in self.VerbSet.any():
+                if j in self.VerbSet:
                     sum+=math.exp(i)
         for i in x:
             for j in i:
