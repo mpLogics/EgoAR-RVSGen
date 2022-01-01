@@ -30,7 +30,6 @@ class RVS_Implement():
         activation_values=[]
         
         for j in range(len(x)):
-            print(j)
             if j in self.VerbSet:
                 sum+=math.exp(j)
         for j in range(len(x)):
@@ -40,8 +39,8 @@ class RVS_Implement():
                 activation_values.append(0)
         
         activation_values = np.array(activation_values)
-        print(activation_values)
-        print(np.sum(activation_values))
+        print("Activation Values: ",activation_values)
+        print("Sum of actiation values: ",np.sum(activation_values))
         return activation_values
     
     
@@ -138,16 +137,18 @@ for i in range(1):
     activated_values = rvs_checker.custom_activation(x=pred2)
     print("Activated Values: ",activated_values)
     
-    print(pred1.shape)
-    print(pred2.shape)  
+    print("Pred 1 shape: ",pred1.shape)
+    print("Pred 2 shape: ",pred2.shape)
     
     print()
-    print(pred1)
+    print("Pred 1: ",pred1)
+    print("Pred 2: ",pred2)
     
     print()
     #print(pred2)
 
-    print(np.argmax(pred1))
-    print(np.argmax(pred2))
+    print("From Pred 1: ",np.argmax(pred1))
+    print("From Pred 2: ",np.argmax(pred2))
+
 #Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred=Nouns[0],K_Value=10)
 
