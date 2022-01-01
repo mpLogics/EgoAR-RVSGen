@@ -24,21 +24,25 @@ class RVS_Implement():
         self.VerbSet = np.array([0,13,1,4,12,5,6,7])
 
     def custom_activation(self,x):        
+        print("Feature Values: ",x)
+        
         sum=0
         activation_values=[]
-        for i in x:
-            for j in range(len(i)):
-                print(j)
-                if j in self.VerbSet:
-                    sum+=math.exp(j)
-        for i in x:
-            for j in range(len(i)):
-                if j in self.VerbSet:
-                    activation_values.append(math.exp(j)/sum)
-                else:
-                    activation_values.append(0)
-        print(np.array(activation_values))
-        return np.array(activation_values)
+        
+        for j in range(len(x)):
+            print(j)
+            if j in self.VerbSet:
+                sum+=math.exp(j)
+        for j in range(len(x)):
+            if j in self.VerbSet:
+                activation_values.append(math.exp(j)/sum)
+            else:
+                activation_values.append(0)
+        
+        activation_values = np.array(activation_values)
+        print(activation_values)
+        print(np.sum(activation_values))
+        return activation_values
     
     
     def vectorize_ca(self):
@@ -133,6 +137,7 @@ for i in range(1):
 
     activated_values = rvs_checker.custom_activation(x=pred2)
     print("Activated Values: ",activated_values)
+    
     print(pred1.shape)
     print(pred2.shape)  
     
