@@ -134,7 +134,7 @@ for i in range(1):
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
 
-    activated_values = rvs_checker.custom_activation(x=pred2)
+    activated_values = rvs_checker.custom_activation(x=pred2[0])
     
     print("Pred 1 shape: ",pred1.shape)
     print("Pred 2 shape: ",pred2.shape)
