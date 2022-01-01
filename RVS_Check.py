@@ -37,16 +37,12 @@ class RVS_Implement():
             else:
                 activation_values.append(0)
         
-        print("Activation Values1: ",activation_values)
         activation_values = np.array(activation_values)
         print("Activation Values2: ",activation_values)
         print("Sum of actiation values: ",np.sum(activation_values))
         return activation_values
     
     
-    def vectorize_ca(self):
-        np_vectorize = np.vectorize(self.custom_activation)
-
     def get_models(self,return_all):
         if not return_all:
             return keras.models.load_model("Verb_Predictor")
@@ -121,7 +117,7 @@ for i in range(1):
     
     
     base_model = verb_predictor.get_layer('flatten').output
-    final_model = keras.layers.Dense(units=19,name="Predictions",activation=None)(base_model)
+    final_model = keras.layers.Dense(units=19,name="Predictions",activation="softmax")(base_model)
     #final_model = keras.layers.Dense
     
     #feature_extractor = keras.Model(
@@ -138,7 +134,7 @@ for i in range(1):
     
     print("From feature vector values: ",np.argmax(pred2[0]))
     print("From activated Values: ",np.argmax(activated_values))
-    print("From fully predicted values: ",np.argmax(pred1))
+    print("From fully predicted values: ",np.argmax(pred1[0]))
     
 #Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred=Nouns[0],K_Value=10)
 
