@@ -128,10 +128,11 @@ for i in range(1):
 
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
+    activated_values = rvs_checker.custom_activation(x=pred2[0])
     print("Pred 1:",pred1)
     print("Pred 2:",pred2)
     print("Activated Values:",activated_values)
-    activated_values = rvs_checker.custom_activation(x=pred2[0])
+    
     
     print("From feature vector values: ",np.argmax(pred2[0]))
     print("From activated Values: ",np.argmax(activated_values))
