@@ -148,7 +148,7 @@ for i in range(1):
     #print(pred2)
 
     print("From Pred 1: ",np.argmax(pred1))
-    print("From Pred 2: ",np.argmax(pred2))
+    print("From Pred 2: ",np.argmax(activated_values))
 
 #Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred=Nouns[0],K_Value=10)
 
