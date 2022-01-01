@@ -135,18 +135,13 @@ for i in range(1):
     pred2 = feature_extractor.predict(final_matrix)
 
     activated_values = rvs_checker.custom_activation(x=pred2)
-    print("Activated Values: ",activated_values)
     
     print("Pred 1 shape: ",pred1.shape)
     print("Pred 2 shape: ",pred2.shape)
-    
+    print("Activated Values: ",activated_values)
     print()
     print("Pred 1: ",pred1)
-    print("Pred 2: ",pred2)
     
-    print()
-    #print(pred2)
-
     print("From Pred 1: ",np.argmax(pred1))
     print("From Pred 2: ",np.argmax(activated_values))
 
