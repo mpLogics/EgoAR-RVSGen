@@ -136,7 +136,7 @@ for i in range(1):
     print("Pred 1: ",pred1)
     activated_values = rvs_checker.custom_activation(x=pred2[0])
     
-    print("From feature vector values: ",np.argmax(pred2))
+    print("From feature vector values: ",np.argmax(pred2[0]))
     print("From activated Values: ",np.argmax(activated_values))
     print("From fully predicted values: ",np.argmax(pred1))
     
