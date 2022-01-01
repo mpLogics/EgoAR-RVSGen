@@ -27,6 +27,7 @@ class RVS_Implement():
         sum=0
         activation_values=[]
         for i in x:
+            print(i)
             if i in self.VerbSet.any():
                 sum+=math.exp(i)
         for i in x:
