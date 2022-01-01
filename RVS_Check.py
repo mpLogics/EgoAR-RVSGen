@@ -133,17 +133,12 @@ for i in range(1):
 
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
-
+    print("Pred 1: ",pred1)
     activated_values = rvs_checker.custom_activation(x=pred2[0])
     
-    print("Pred 1 shape: ",pred1.shape)
-    print("Pred 2 shape: ",pred2.shape)
-    print("Activated Values: ",activated_values)
-    print()
-    print("Pred 1: ",pred1)
+    print("From feature vector values: ",np.argmax(pred2))
+    print("From activated Values: ",np.argmax(activated_values))
+    print("From fully predicted values: ",np.argmax(pred1))
     
-    print("From Pred 1: ",np.argmax(pred1))
-    print("From Pred 2: ",np.argmax(activated_values))
-
 #Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred=Nouns[0],K_Value=10)
 
