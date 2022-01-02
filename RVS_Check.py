@@ -133,7 +133,6 @@ for i in range(1):
     print("Pred 2:",pred2)
     print("Activated Values:",activated_values)
     
-    
     print("From feature vector values: ",np.argmax(pred2[0]))
     print("From activated Values: ",np.argmax(activated_values))
     print("From fully predicted values: ",np.argmax(pred1[0]))

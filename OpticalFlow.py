@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import Input
 from keras.models import Sequential
-from keras.layers import Dense,Dropout,Flatten,Input,ConvLSTM2D
+from keras.layers import Dense,Dropout,Flatten,Input,ConvLSTM2D,Activation
 
 
 import numpy as np
@@ -65,7 +65,12 @@ class learn_optical_flow():
         model.add(Dropout(0.5))
         
         model.add(Flatten())
-        model.add(Dense(19, activation = "softmax"))
+        model.add(Dense(units = 256))
+        model.add(Dense(units = 128))
+        model.add(Dense(units = 64))
+        model.add(Dense(units = 19))
+        #model.add(Dense(19, activation = "softmax"))
+        model.add(Activation('softmax'))
         model.summary()
         model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         self.temporal_extractor = model
