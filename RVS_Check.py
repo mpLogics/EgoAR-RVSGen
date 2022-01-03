@@ -30,10 +30,11 @@ class RVS_Implement():
         
         for j in range(len(x)):
             if j in self.VerbSet:
-                sum+=math.exp(j)
+                sum+=math.exp(x[j])
+        
         for j in range(len(x)):
             if j in self.VerbSet:
-                activation_values.append(math.exp(j)/sum)
+                activation_values.append(math.exp(x[j])/sum)
             else:
                 activation_values.append(0)
         
@@ -89,9 +90,6 @@ class RVS_Implement():
 
         return P_Noun,P_Verb,P_Noun_Verb
 
-#print("Predicted Noun =",Nouns[4])
-
-#print(Verb_Probable)
 #P_Noun,P_Verb,P_Noun_Verb = set_verb_rules(root="data/")
 
 data_loader = LoadData()
@@ -115,14 +113,7 @@ for i in range(1):
         1))
     
     
-    base_model = verb_predictor.get_layer('dense_3').output
-    #final_model = keras.layers.Dense(units=19,name="Predictions",activation=None)(base_model)
-    
-    #final_model = keras.layers.Dense
-    
-    #feature_extractor = keras.Model(
-    #    inputs=verb_predictor.input,
-    #    outputs=verb_predictor.get_layer('flatten').output)
+    base_model = verb_predictor.get_layer('dense_3').output 
     feature_extractor = keras.Model(
         inputs = verb_predictor.input,
         outputs = base_model)
@@ -130,13 +121,13 @@ for i in range(1):
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
     activated_values = rvs_checker.custom_activation(x=pred2[0])
-    print("Pred 1:",pred1)
-    print("Pred 2:",pred2)
-    print("Activated Values:",activated_values)
+    #print("Pred 1:",pred1)
+    #print("Pred 2:",pred2)
+    #print("Activated Values:",activated_values)
     
-    print("From feature vector values: ",np.argmax(pred2[0]))
-    print("From activated Values: ",np.argmax(activated_values))
-    print("From fully predicted values: ",np.argmax(pred1[0]))
+    #print("From feature vector values: ",np.argmax(pred2[0]))
+    #print("From activated Values: ",np.argmax(activated_values))
+    #print("From fully predicted values: ",np.argmax(pred1[0]))
     
 #Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred=Nouns[0],K_Value=10)
 
