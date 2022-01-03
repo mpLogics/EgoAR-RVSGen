@@ -24,7 +24,6 @@ class RVS_Implement():
         self.VerbSet = np.array([0,13,1,4,12,5,6,7])
 
     def custom_activation(self,x):        
-        print("Feature Values: ",x)
         sum=0
         activation_values=[]
         
@@ -121,13 +120,14 @@ for i in range(1):
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
     activated_values = rvs_checker.custom_activation(x=pred2[0])
-    #print("Pred 1:",pred1)
-    #print("Pred 2:",pred2)
-    #print("Activated Values:",activated_values)
     
-    #print("From feature vector values: ",np.argmax(pred2[0]))
-    #print("From activated Values: ",np.argmax(activated_values))
-    #print("From fully predicted values: ",np.argmax(pred1[0]))
+    print("Pred 1:",pred1)
+    print("Pred 2:",pred2)
+    print("Activated Values:",activated_values)
+    
+    print("From feature vector values: ",np.argmax(pred2[0]))
+    print("From activated Values: ",np.argmax(activated_values))
+    print("From fully predicted values: ",np.argmax(pred1[0]))
     
 #Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred=Nouns[0],K_Value=10)
 
