@@ -95,7 +95,7 @@ class RVS_Implement():
 data_loader = LoadData()
 rvs_checker = RVS_Implement()
 P_Noun,P_Verb,P_Noun_Verb = rvs_checker.set_verb_rules()
-rvs_checker.VerbSet = rvs_checker.rvs_generator.RVSGen(Noun_Pred=1,K_Value=10)-1
+rvs_checker.VerbSet = np.array(rvs_checker.rvs_generator.RVSGen(Noun_Pred=1,K_Value=10))-1
 print("Verb Set: ",rvs_checker.VerbSet)
 choice = input("Proceed?(Y/n)")
 #rvs_checker.predict_with_RVS()
