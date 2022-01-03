@@ -104,6 +104,7 @@ for i in range(1):
         angle,
         encoding)
     
+    
     final_matrix = np.reshape(init_matrix,(
         1,
         init_matrix.shape[0],
@@ -124,6 +125,7 @@ for i in range(1):
     print("Pred 1:",pred1)
     print("Pred 2:",pred2)
     print("Activated Values:",activated_values)
+    print("Ground Truth: ",init_Annot)
     
     print("From feature vector values: ",np.argmax(pred2[0]))
     print("From activated Values: ",np.argmax(activated_values))
