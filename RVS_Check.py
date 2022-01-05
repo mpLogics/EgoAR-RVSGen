@@ -24,17 +24,17 @@ class RVS_Implement():
         self.VerbSet = []
         self.rvs_generator = GenVerbSpace()
 
-    def custom_activation(self,x):        
+    def custom_activation(self,x,P_Verb):        
         sum=0
         activation_values=[]
         
         for j in range(len(x)):
             if j in self.VerbSet:
-                sum+=math.exp(x[j])
+                sum+=math.exp(x[j]*P_Verb[j+1])
         
         for j in range(len(x)):
             if j in self.VerbSet:
-                activation_values.append(math.exp(x[j])/sum)
+                activation_values.append((math.exp(x[j]*P_Verb[j+1]))/sum)
             else:
                 activation_values.append(0)
         
@@ -81,7 +81,7 @@ class RVS_Implement():
         print("No existing rules found, creating new rules!")
         reduced_verb_space = GenVerbSpace()
         Nouns = reduced_verb_space.getNounSet()
-        Verbs = reduced_verb_space.getNounSet()
+        Verb_Set = reduced_verb_space.getVerbSet()
         totalSamples = reduced_verb_space.getTotalSamples(mode="train")
 
         P_Noun = reduced_verb_space.calProbNouns(totalSamples)
@@ -126,7 +126,7 @@ for i in range(1):
 
     pred1 = verb_predictor.predict(final_matrix)
     pred2 = feature_extractor.predict(final_matrix)
-    activated_values = rvs_checker.custom_activation(x=pred2[0])
+    activated_values = rvs_checker.custom_activation(x=pred2[0],P_Verb=P_Verb)
     
     print("Pred 1:",pred1)
     print("Pred 2:",pred2)
