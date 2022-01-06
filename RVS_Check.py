@@ -114,7 +114,11 @@ Nouns = pd.read_csv("data/Splits/train_split1.csv")["Noun"]
 
 for i in range(total_samples):
     mag,angle,encoding = data_loader.load_file(i,modality="OF")    
-    rvs_checker.VerbSet = np.array(rvs_checker.rvs_generator.RVSGen(Noun_Pred=Nouns[i],K_Value=K))-1
+    rvs_checker.VerbSet = np.array(
+        rvs_checker.rvs_generator.RVSGen(
+            Noun_Pred=Nouns[i],
+            K_Value=K,
+            P_Noun_Verb=P_Noun_Verb))-1
     init_matrix,init_Annot = data_loader.get_any_matrix(
         mag,
         angle,
