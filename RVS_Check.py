@@ -148,7 +148,7 @@ for i in range(total_samples):
     print("From fully predicted values: ",np.argmax(pred1[0]))
     RVS_Predicted.append(np.argmax(activated_values))
 
-    if (i+1)%100:
+    if (i+1)%100==0:
         print("\n\nFiles read:",i)
         print("Current Accuracy:",np.mean(np.array(ground_truth)==np.array(RVS_Predicted)))
 
