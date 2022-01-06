@@ -110,11 +110,11 @@ except FileNotFoundError:
     RVS_Predicted = []
 except:
     print("Directory Not Found")
+Nouns = pd.read_csv("data/Splits/train_split1.csv")["Noun"]
 
 for i in range(total_samples):
-    mag,angle,encoding = data_loader.load_file(i,modality="OF")
-    RGB,Noun = data_loader.load_file(i,modality="RGB")
-    rvs_checker.VerbSet = np.array(rvs_checker.rvs_generator.RVSGen(Noun_Pred=Noun[0],K_Value=K))-1
+    mag,angle,encoding = data_loader.load_file(i,modality="OF")    
+    rvs_checker.VerbSet = np.array(rvs_checker.rvs_generator.RVSGen(Noun_Pred=Nouns[i],K_Value=K))-1
     init_matrix,init_Annot = data_loader.get_any_matrix(
         mag,
         angle,
@@ -127,8 +127,7 @@ for i in range(total_samples):
         init_matrix.shape[1],
         init_matrix.shape[2],
         1))
-    
-    
+        
     base_model = verb_predictor.get_layer('dense_3').output 
     feature_extractor = keras.Model(
         inputs = verb_predictor.input,
@@ -145,7 +144,7 @@ for i in range(total_samples):
     print("From fully predicted values: ",np.argmax(pred1[0]))
     RVS_Predicted.append(np.argmax(activated_values))
 
-    if i%100:
+    if i+1%100:
         print("\n\nFiles read:",i)
         print("Current Accuracy:",np.mean(np.array(ground_truth)==np.array(RVS_Predicted)))
 
