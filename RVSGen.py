@@ -114,16 +114,11 @@ class GenVerbSpace():
             
             Verb_Set = self.getVerbSet()
             V = len(Verb_Set)
-            
-            print("P-Noun for the verb:",P_Noun[Noun_Pred])
-            print("P-Verb:",P_Verb)
-            print("P-Noun-Verb:",P_Noun_Verb)
 
             for i in range(V):
                 #P_YVerb[Verb_Set[i]] = (P_Noun_Verb[(Noun_Pred,Verb_Set[i])])/(P_Noun[Noun_Pred]*P_Verb[Verb_Set[i]])
                 P_YVerb[Verb_Set[i]] = P_Noun_Verb[(Noun_Pred,Verb_Set[i])]
             
-            print("P_Verbs Reduced:",P_YVerb)
             Final_Probabilities = dict(sorted(P_YVerb.items(), key = lambda kv: kv[1]))
             Verb_Probable = list(Final_Probabilities.keys())[-K_Value:]
             print("Final Probabilities: ",Final_Probabilities)
