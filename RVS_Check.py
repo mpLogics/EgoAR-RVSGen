@@ -111,9 +111,14 @@ except FileNotFoundError:
 except:
     print("Directory Not Found")
 Nouns = pd.read_csv("data/Splits/train_split1.csv")["Noun"]
+i=0
+j=0
+while i < total_samples:
+    try:
+        mag,angle,encoding = data_loader.load_file(i,modality="OF")
+    except:
+        print("File index",i,"could not be read.")
 
-for i in range(total_samples):
-    mag,angle,encoding = data_loader.load_file(i,modality="OF")    
     rvs_checker.VerbSet = np.array(
         rvs_checker.rvs_generator.RVSGen(
             Noun_Pred=Nouns[i],
@@ -141,16 +146,23 @@ for i in range(total_samples):
     pred2 = feature_extractor.predict(final_matrix)
     activated_values = rvs_checker.custom_activation(x=pred2[0],P_Verb=P_Verb)
     
-    print("\nVerb Set: ",rvs_checker.VerbSet)
-    print("Ground Truth: ",init_Annot)
-    print("From activated Values: ",np.argmax(activated_values))
-    print("From feature vector values: ",np.argmax(pred2[0]))
-    print("From fully predicted values: ",np.argmax(pred1[0]))
+    if (i+1)%95==0:
+        i+=19
+    else:
+        i+=1
+    
+    #print("\nVerb Set: ",rvs_checker.VerbSet)
+    #print("Ground Truth: ",init_Annot)
+    #print("From activated Values: ",np.argmax(activated_values))
+    #print("From feature vector values: ",np.argmax(pred2[0]))
+    #print("From fully predicted values: ",np.argmax(pred1[0]))
     RVS_Predicted.append(np.argmax(activated_values))
 
-    if (i+1)%100==0:
+    if (j+1)%100==0:
         print("\n\nFiles read:",i)
         print("Current Accuracy:",np.mean(np.array(ground_truth)==np.array(RVS_Predicted)))
+    
+    j+=1
 
 np.savez(
     "data/results/K_"+(str)(K)+"_Metrics.npz",
