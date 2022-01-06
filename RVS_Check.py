@@ -39,7 +39,6 @@ class RVS_Implement():
                 activation_values.append(0)
         
         activation_values = np.array(activation_values)
-        print("Sum of actiation values: ",np.sum(activation_values))
         return activation_values
     
     
@@ -97,7 +96,6 @@ K = 10
 rvs_checker = RVS_Implement()
 P_Noun,P_Verb,P_Noun_Verb = rvs_checker.set_verb_rules()
 total_samples = rvs_checker.rvs_generator.getTotalSamples(mode="train")
-rvs_checker.VerbSet = np.array(rvs_checker.rvs_generator.RVSGen(Noun_Pred=1,K_Value=K))-1
 verb_predictor = rvs_checker.get_models(return_all=False)
 verb_predictor.summary()
 
@@ -112,10 +110,11 @@ except FileNotFoundError:
 except:
     print("Directory Not Found")
 
-
 for i in range(total_samples):
     mag,angle,encoding = data_loader.load_file(i,modality="OF")
-    
+    RGB,Noun = data_loader.load_file(i,modality="RGB")
+
+    rvs_checker.VerbSet = np.array(rvs_checker.rvs_generator.RVSGen(Noun_Pred=Noun,K_Value=K))-1
     init_matrix,init_Annot = data_loader.get_any_matrix(
         mag,
         angle,
@@ -139,7 +138,7 @@ for i in range(total_samples):
     pred2 = feature_extractor.predict(final_matrix)
     activated_values = rvs_checker.custom_activation(x=pred2[0],P_Verb=P_Verb)
     
-    print("Verb Set: ",rvs_checker.VerbSet)
+    print("\nVerb Set: ",rvs_checker.VerbSet)
     print("Ground Truth: ",init_Annot)
     print("From activated Values: ",np.argmax(activated_values))
     print("From feature vector values: ",np.argmax(pred2[0]))
@@ -147,6 +146,7 @@ for i in range(total_samples):
     RVS_Predicted.append(np.argmax(activated_values))
 
     if i%100:
+        print("\n\nFiles read:",i)
         print("Current Accuracy:",np.mean(np.array(ground_truth)==np.array(RVS_Predicted)))
 
 np.savez(
