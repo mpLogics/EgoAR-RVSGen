@@ -93,16 +93,27 @@ class RVS_Implement():
 
 
 data_loader = LoadData()
+K = 10
 rvs_checker = RVS_Implement()
 P_Noun,P_Verb,P_Noun_Verb = rvs_checker.set_verb_rules()
-rvs_checker.VerbSet = np.array(rvs_checker.rvs_generator.RVSGen(Noun_Pred=1,K_Value=10))-1
-print("Verb Set: ",rvs_checker.VerbSet)
-choice = input("Proceed?(Y/n)")
-#rvs_checker.predict_with_RVS()
+total_samples = rvs_checker.rvs_generator.getTotalSamples(mode="train")
+rvs_checker.VerbSet = np.array(rvs_checker.rvs_generator.RVSGen(Noun_Pred=1,K_Value=K))-1
 verb_predictor = rvs_checker.get_models(return_all=False)
 verb_predictor.summary()
 
-for i in range(1):
+try:
+    Metrics = np.load("data/results/K_"+(str)(K)+"_Metrics.npz",allow_pickle=True)
+    ground_truth = Metrics['a']
+    RVS_Predicted = Metrics['b']
+except FileNotFoundError:
+    print("No existing file found!")
+    ground_truth = []
+    RVS_Predicted = []
+except:
+    print("Directory Not Found")
+
+
+for i in range(total_samples):
     mag,angle,encoding = data_loader.load_file(i,modality="OF")
     
     init_matrix,init_Annot = data_loader.get_any_matrix(
@@ -110,7 +121,7 @@ for i in range(1):
         angle,
         encoding)
     
-    
+    ground_truth.append(init_Annot[0]-1)    
     final_matrix = np.reshape(init_matrix,(
         1,
         init_matrix.shape[0],
@@ -128,14 +139,21 @@ for i in range(1):
     pred2 = feature_extractor.predict(final_matrix)
     activated_values = rvs_checker.custom_activation(x=pred2[0],P_Verb=P_Verb)
     
-    print("Pred 1:",pred1)
-    print("Pred 2:",pred2)
-    print("Activated Values:",activated_values)
+    print("Verb Set: ",rvs_checker.VerbSet)
     print("Ground Truth: ",init_Annot)
-    
-    print("From feature vector values: ",np.argmax(pred2[0]))
     print("From activated Values: ",np.argmax(activated_values))
+    print("From feature vector values: ",np.argmax(pred2[0]))
     print("From fully predicted values: ",np.argmax(pred1[0]))
-    
+    RVS_Predicted.append(np.argmax(activated_values))
+
+    if i%100:
+        print("Current Accuracy:",np.mean(np.array(ground_truth)==np.array(RVS_Predicted)))
+
+np.savez(
+    "data/results/K_"+(str)(K)+"_Metrics.npz",
+    a = np.array(ground_truth),
+    b = np.array(RVS_Predicted))
+
+
 #Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred=Nouns[0],K_Value=10)
 

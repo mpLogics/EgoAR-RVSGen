@@ -6,7 +6,7 @@ class GenVerbSpace():
     def __init__(self):
         self.Noun_Path = "data/action_annotation/noun_idx.txt"
         self.Verb_Path = "data/action_annotation/verb_idx.txt"
-        self.Action_Path = "data/action_annotation/action_idx.txt"
+        #self.Action_Path = "data/action_annotation/action_idx.txt"
         self.Noun_Space = pd.read_csv(self.Noun_Path,header=None)
         self.Verb_Space = pd.read_csv(self.Verb_Path,header=None)
         self.Non_Occuring_Actions = 901
