@@ -121,5 +121,4 @@ class GenVerbSpace():
             
             Final_Probabilities = dict(sorted(P_YVerb.items(), key = lambda kv: kv[1]))
             Verb_Probable = list(Final_Probabilities.keys())[-K_Value:]
-            print("Final Probabilities: ",Final_Probabilities)
             return Verb_Probable
