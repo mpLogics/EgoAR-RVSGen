@@ -104,15 +104,19 @@ try:
     Metrics = np.load("data/results/K_"+(str)(K)+"_Metrics.npz",allow_pickle=True)
     ground_truth = Metrics['a']
     RVS_Predicted = Metrics['b']
+    Predicted = Metrics['c']
 except FileNotFoundError:
     print("No existing file found!")
     ground_truth = []
     RVS_Predicted = []
+    Predicted=[]
 except:
     print("Directory Not Found")
 Nouns = pd.read_csv("data/Splits/train_split1.csv")["Noun"]
 i=0
 j=0
+
+
 while i < total_samples:
     try:
         mag,angle,encoding = data_loader.load_file(i,modality="OF")
@@ -157,17 +161,20 @@ while i < total_samples:
     #print("From feature vector values: ",np.argmax(pred2[0]))
     #print("From fully predicted values: ",np.argmax(pred1[0]))
     RVS_Predicted.append(np.argmax(activated_values))
+    Predicted.append(np.argmax(pred1[0]))
 
     if (j+1)%100==0:
         print("\n\nFiles read:",i)
-        print("Current Accuracy:",np.mean(np.array(ground_truth)==np.array(RVS_Predicted)))
+        print("Current Accuracy (with RVSGen):",np.mean(np.array(ground_truth)==np.array(RVS_Predicted)))
+        print("Current Accuracy (without RVSGen):",np.mean(np.array(ground_truth)==np.array(Predicted)))
     
     j+=1
 
 np.savez(
     "data/results/K_"+(str)(K)+"_Metrics.npz",
     a = np.array(ground_truth),
-    b = np.array(RVS_Predicted))
+    b = np.array(RVS_Predicted),
+    c = np.array(Predicted))
 
 
 #Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred=Nouns[0],K_Value=10)
