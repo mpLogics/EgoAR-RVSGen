@@ -95,6 +95,7 @@ data_loader = LoadData()
 K = 10
 rvs_checker = RVS_Implement()
 P_Noun,P_Verb,P_Noun_Verb = rvs_checker.set_verb_rules()
+
 total_samples = rvs_checker.rvs_generator.getTotalSamples(mode="train")
 verb_predictor = rvs_checker.get_models(return_all=False)
 verb_predictor.summary()
@@ -113,8 +114,7 @@ except:
 for i in range(total_samples):
     mag,angle,encoding = data_loader.load_file(i,modality="OF")
     RGB,Noun = data_loader.load_file(i,modality="RGB")
-
-    rvs_checker.VerbSet = np.array(rvs_checker.rvs_generator.RVSGen(Noun_Pred=Noun,K_Value=K))-1
+    rvs_checker.VerbSet = np.array(rvs_checker.rvs_generator.RVSGen(Noun_Pred=Noun[0],K_Value=K))-1
     init_matrix,init_Annot = data_loader.get_any_matrix(
         mag,
         angle,
