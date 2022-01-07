@@ -128,7 +128,8 @@ for z in range(len(K)):
                 rvs_checker.rvs_generator.RVSGen(
                     Noun_Pred=Nouns[access_order[i+k]],
                     K_Value=K[z],
-                    P_Noun_Verb=P_Noun_Verb))-1
+                    P_Noun_Verb=P_Noun_Verb,
+                    P_Verb=P_Verb))-1
                     
             activated_values = rvs_checker.custom_activation(x=pred2[k],P_Verb=P_Verb)
 
