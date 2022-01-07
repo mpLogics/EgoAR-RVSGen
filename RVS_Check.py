@@ -149,28 +149,27 @@ for z in range(len(K)):
                         Noun_Pred=Nouns[access_order[i]],
                         K_Value=K[z],
                         P_Noun_Verb=P_Noun_Verb))-1
+            base_model = verb_predictor.get_layer('dense_3').output 
+            feature_extractor = keras.Model(
+                inputs = verb_predictor.input,
+                outputs = base_model)
+
+            #Predicting for Training Set
+            pred1 = verb_predictor.predict(X)
+            pred2 = feature_extractor.predict(X)
+            
+            for k in range(len(pred1)):
+                activated_values = rvs_checker.custom_activation(x=pred2[k],P_Verb=P_Verb)
+                RVS_Predicted.append(np.argmax(activated_values))
+                Predicted.append(np.argmax(pred1[k]))
+                ground_truth.append(Y_Value[k]-1)
+
+            i+=((num_classes_verbs*scale_factor) + num_classes_verbs)        
+            print("\nBatch(es) read: ",num_batches)
+            print("Files read = ",i)                   
+            num_batches+=1
         except:
             print("Error at processing file index",i)
-
-        base_model = verb_predictor.get_layer('dense_3').output 
-        feature_extractor = keras.Model(
-            inputs = verb_predictor.input,
-            outputs = base_model)
-
-        #Predicting for Training Set
-        pred1 = verb_predictor.predict(X)
-        pred2 = feature_extractor.predict(X)
-        
-        for k in range(len(pred1)):
-            activated_values = rvs_checker.custom_activation(x=pred2[k],P_Verb=P_Verb)
-            RVS_Predicted.append(np.argmax(activated_values))
-            Predicted.append(np.argmax(pred1[k]))
-            ground_truth.append(Y_Value[k]-1)
-
-        i+=((num_classes_verbs*scale_factor) + num_classes_verbs)        
-        print("\nBatch(es) read: ",num_batches)
-        print("Files read = ",i)                   
-        num_batches+=1
 
     np.savez(
         "data/results/K_"+(str)(K[z])+"_Metrics.npz",
