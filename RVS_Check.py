@@ -164,13 +164,12 @@ for z in range(len(K)):
                 Predicted.append(np.argmax(pred1[k]))
                 ground_truth.append(Y_Value[k]-1)
 
-            i+=((num_classes_verbs*scale_factor) + num_classes_verbs)        
             print("\nBatch(es) read: ",num_batches)
             print("Files read = ",i)                   
             num_batches+=1
         except:
             print("Error at processing file index",i)
-
+        i+=((num_classes_verbs*scale_factor) + num_classes_verbs)        
     np.savez(
         "data/results/K_"+(str)(K[z])+"_Metrics.npz",
         a = np.array(ground_truth),
