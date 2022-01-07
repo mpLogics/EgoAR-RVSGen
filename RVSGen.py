@@ -2,8 +2,6 @@ import numpy as np
 import pandas as pd
 import regex as re
 
-from RVS_Check import P_Verb
-
 class GenVerbSpace():
     def __init__(self):
         self.Noun_Path = "data/action_annotation/noun_idx.txt"
@@ -105,7 +103,7 @@ class GenVerbSpace():
             totalSamples+=len(data)
         return totalSamples
     
-    def RVSGen(self,Noun_Pred,K_Value,P_Noun_Verb):
+    def RVSGen(self,Noun_Pred,K_Value,P_Noun_Verb,P_Verb):
             P_YVerb={}
             #P_Verb = self.calProbVerbs(totalSamples=totalSamples)
             #P_Noun = self.calProbNouns(totalSamples=totalSamples)

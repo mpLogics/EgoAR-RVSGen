@@ -48,34 +48,6 @@ class RVS_Implement():
         else:
             return keras.models.load_model("Noun_Predictor"),keras.models.load_model("Verb_Predictor")
         
-    def predict_with_RVS(self,Verb_Probable,pred):
-        activation=[]
-        sum_features=0
-        
-        for i in range(len(Verb_Probable)):
-            sum_features+=math.exp(pred[Verb_Probable[i]])
-
-        for i in range(len(Verb_Probable)):
-            soft_value = math.exp(Verb_Probable[i])
-            activation.append(soft_value/sum_features)
-
-        final_features = np.array(activation)
-        print(final_features)
-        predicted_verb = np.argmax(final_features)
-        print(predicted_verb)
-
-    def return_true_annotation(self,value,component):
-        if component=="Verb":
-            return value + 1
-        else:
-            if value<=15:
-                value+=1
-            elif value>15 and value<=43:
-                value+=2
-            else:
-                value-=3
-
-
     def set_verb_rules(self):
         print("No existing rules found, creating new rules!")
         reduced_verb_space = GenVerbSpace()
