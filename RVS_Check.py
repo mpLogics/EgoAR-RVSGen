@@ -99,6 +99,10 @@ for z in range(len(K)):
     access_order = accessor.build_order()
     num_batches=0
     
+    base_model = verb_predictor.get_layer('dense_3').output 
+    feature_extractor = keras.Model(
+        inputs = verb_predictor.input,
+        outputs = base_model)
 
     while i<total_samples:
         try:
@@ -115,23 +119,19 @@ for z in range(len(K)):
                         frame_cols,
                         channels))
             
-            for j in range(i,i+num_classes_verbs*scale_factor):
-                rvs_checker.VerbSet = np.array(
-                    rvs_checker.rvs_generator.RVSGen(
-                        Noun_Pred=Nouns[access_order[i]],
-                        K_Value=K[z],
-                        P_Noun_Verb=P_Noun_Verb))-1
-            base_model = verb_predictor.get_layer('dense_3').output 
-            feature_extractor = keras.Model(
-                inputs = verb_predictor.input,
-                outputs = base_model)
-
             #Predicting for Training Set
             pred1 = verb_predictor.predict(X)
             pred2 = feature_extractor.predict(X)
-            
+
             for k in range(len(pred1)):
+                rvs_checker.VerbSet = np.array(
+                    rvs_checker.rvs_generator.RVSGen(
+                        Noun_Pred=Nouns[access_order[i+k]],
+                        K_Value=K[z],
+                        P_Noun_Verb=P_Noun_Verb))-1
+                        
                 activated_values = rvs_checker.custom_activation(x=pred2[k],P_Verb=P_Verb)
+
                 RVS_Predicted.append(np.argmax(activated_values))
                 Predicted.append(np.argmax(pred1[k]))
                 ground_truth.append(Y_Value[k]-1)
