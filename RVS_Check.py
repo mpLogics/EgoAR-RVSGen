@@ -76,7 +76,7 @@ frame_cols = 320
 channels = 1
 
 data_loader = LoadData()
-K = [8,10,12]
+K = [4,5,6,7,8,9,10,11,12,13,14]
 
 for z in range(len(K)):
     try:
@@ -141,7 +141,7 @@ for z in range(len(K)):
             ground_truth.append(Y_Value[k]-1)
 
         print("\nBatch(es) read: ",num_batches)
-        print("Files read = ",i)                   
+        #print("Files read = ",i)                   
         num_batches+=1
         
         i+=((num_classes_verbs*scale_factor) + num_classes_verbs)        
