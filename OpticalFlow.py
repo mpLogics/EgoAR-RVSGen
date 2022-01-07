@@ -115,6 +115,7 @@ class learn_optical_flow():
         Val_Loss_per_epoch=[]
         Val_Acc_per_epoch=[]
         
+        accessor.random_flag = False
         access_order = accessor.build_order()
         train_succ=False
         
