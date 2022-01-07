@@ -11,7 +11,7 @@ from keras import backend as bk
 import scipy.io as sio
 import pandas as pd
 import os
-from Data import LoadData
+from Data import LoadData,Data_Access
 
 #from OpticalFlow import learn_optical_flow
 import math
@@ -115,66 +115,113 @@ except:
 Nouns = pd.read_csv("data/Splits/train_split1.csv")["Noun"]
 i=0
 j=0
+num_classes_verbs = 19
+scale_factor = 5
 
+accessor = Data_Access()
+accessor.modality="OF"
+access_order = accessor.build_order()
+num_batches=0
 
-while i < total_samples:
+while i<total_samples:
     try:
-        mag,angle,encoding = data_loader.load_file(i,modality="OF")
-    except:
-        print("File index",i,"could not be read.")
+        X_Value,Y_Value,Val_Frame,Val_Verb = data_loader.read_val_flow(
+            i,
+            access_order,
+            num_classes=num_classes_verbs,
+            multiply_factor=scale_factor)
 
-    rvs_checker.VerbSet = np.array(
-        rvs_checker.rvs_generator.RVSGen(
-            Noun_Pred=Nouns[i],
-            K_Value=K,
-            P_Noun_Verb=P_Noun_Verb))-1
-    init_matrix,init_Annot = data_loader.get_any_matrix(
-        mag,
-        angle,
-        encoding)
-    
-    ground_truth.append(init_Annot[0]-1)    
-    final_matrix = np.reshape(init_matrix,(
-        1,
-        init_matrix.shape[0],
-        init_matrix.shape[1],
-        init_matrix.shape[2],
-        1))
-        
+        for j in range(i,i+num_classes_verbs*scale_factor):
+            rvs_checker.VerbSet = np.array(
+                rvs_checker.rvs_generator.RVSGen(
+                    Noun_Pred=Nouns[access_order[i]],
+                    K_Value=K,
+                    P_Noun_Verb=P_Noun_Verb))-1
+    except:
+        print("Error at processing file index",i)
+
     base_model = verb_predictor.get_layer('dense_3').output 
     feature_extractor = keras.Model(
         inputs = verb_predictor.input,
         outputs = base_model)
 
-    pred1 = verb_predictor.predict(final_matrix)
-    pred2 = feature_extractor.predict(final_matrix)
-    activated_values = rvs_checker.custom_activation(x=pred2[0],P_Verb=P_Verb)
+    #Predicting for Training Set
+    pred1 = verb_predictor.predict(X_Value)
+    pred2 = feature_extractor.predict(X_Value)
     
-    if (i+1)%95==0:
-        i+=19
-    else:
-        i+=1
-    
-    #print("\nVerb Set: ",rvs_checker.VerbSet)
-    #print("Ground Truth: ",init_Annot)
-    #print("From activated Values: ",np.argmax(activated_values))
-    #print("From feature vector values: ",np.argmax(pred2[0]))
-    #print("From fully predicted values: ",np.argmax(pred1[0]))
-    RVS_Predicted.append(np.argmax(activated_values))
-    Predicted.append(np.argmax(pred1[0]))
+    for k in range(len(pred1)):
+        activated_values = rvs_checker.custom_activation(x=pred2[k],P_Verb=P_Verb)
+        RVS_Predicted.append(np.argmax(activated_values))
+        Predicted.append(np.argmax(pred1[k]))
+        ground_truth.append(Y_Value[k])
 
-    if (j+1)%100==0:
-        print("\n\nFiles read:",i)
-        print("Current Accuracy (with RVSGen):",np.mean(np.array(ground_truth)==np.array(RVS_Predicted)))
-        print("Current Accuracy (without RVSGen):",np.mean(np.array(ground_truth)==np.array(Predicted)))
-    
-    j+=1
+    i+=((num_classes_verbs*scale_factor) + num_classes_verbs)        
+    print("Batch(es) read: ",num_batches)
+    print("Files read = ",i)                   
+    num_batches+=1
 
 np.savez(
     "data/results/K_"+(str)(K)+"_Metrics.npz",
     a = np.array(ground_truth),
     b = np.array(RVS_Predicted),
     c = np.array(Predicted))
+"""
+while i < total_samples:
+    try:
+        mag,angle,encoding = data_loader.load_file(i,modality="OF")
+
+        rvs_checker.VerbSet = np.array(
+            rvs_checker.rvs_generator.RVSGen(
+                Noun_Pred=Nouns[i],
+                K_Value=K,
+                P_Noun_Verb=P_Noun_Verb))-1
+    
+        init_matrix,init_Annot = data_loader.get_any_matrix(
+            mag,
+            angle,
+            encoding)
+        
+        ground_truth.append(init_Annot[0]-1)    
+        final_matrix = np.reshape(init_matrix,(
+            1,
+            init_matrix.shape[0],
+            init_matrix.shape[1],
+            init_matrix.shape[2],
+            1))
+            
+        base_model = verb_predictor.get_layer('dense_3').output 
+        feature_extractor = keras.Model(
+            inputs = verb_predictor.input,
+            outputs = base_model)
+
+        pred1 = verb_predictor.predict(final_matrix)
+        pred2 = feature_extractor.predict(final_matrix)
+        activated_values = rvs_checker.custom_activation(x=pred2[0],P_Verb=P_Verb)
+        
+        if (i+1)%95==0:
+            i+=19
+        else:
+            i+=1
+        
+        #print("\nVerb Set: ",rvs_checker.VerbSet)
+        #print("Ground Truth: ",init_Annot)
+        #print("From activated Values: ",np.argmax(activated_values))
+        #print("From feature vector values: ",np.argmax(pred2[0]))
+        #print("From fully predicted values: ",np.argmax(pred1[0]))
+
+        RVS_Predicted.append(np.argmax(activated_values))
+        Predicted.append(np.argmax(pred1[0]))
+
+        if (j+1)%100==0:
+            print("\n\nFiles read:",i)
+            print("Current Accuracy (with RVSGen):",np.mean(np.array(ground_truth)==np.array(RVS_Predicted)))
+            print("Current Accuracy (without RVSGen):",np.mean(np.array(ground_truth)==np.array(Predicted)))
+        
+        j+=1
+    
+    except:
+        print("Error while processing file index",i)
+"""
 
 
 #Verb_Probable = reduced_verb_space.RVSGen(Noun_Pred=Nouns[0],K_Value=10)
