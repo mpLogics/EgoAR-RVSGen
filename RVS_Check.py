@@ -140,7 +140,8 @@ for z in range(len(K)):
             Predicted.append(np.argmax(pred1[k]))
             ground_truth.append(Y_Value[k]-1)
 
-        print("\nBatch(es) read: ",num_batches)
+        if num_batches%20==0:
+            print("\nCurrent K-value:",K[z],"Batch(es) read: ",num_batches)
         #print("Files read = ",i)                   
         num_batches+=1
         
