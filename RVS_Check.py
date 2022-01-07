@@ -122,6 +122,10 @@ accessor = Data_Access()
 accessor.modality="OF"
 access_order = accessor.build_order()
 num_batches=0
+fix_frames = 5
+frame_rows = 120
+frame_cols = 320
+channels = 1
 
 while i<total_samples:
     try:
@@ -130,7 +134,14 @@ while i<total_samples:
             access_order,
             num_classes=num_classes_verbs,
             multiply_factor=scale_factor)
-
+        
+        X = np.reshape(X_Value,(
+                    num_classes_verbs*scale_factor,
+                    fix_frames,
+                    frame_rows,
+                    frame_cols,
+                    channels))
+        
         for j in range(i,i+num_classes_verbs*scale_factor):
             rvs_checker.VerbSet = np.array(
                 rvs_checker.rvs_generator.RVSGen(
@@ -146,14 +157,14 @@ while i<total_samples:
         outputs = base_model)
 
     #Predicting for Training Set
-    pred1 = verb_predictor.predict(X_Value)
-    pred2 = feature_extractor.predict(X_Value)
+    pred1 = verb_predictor.predict(X)
+    pred2 = feature_extractor.predict(X)
     
     for k in range(len(pred1)):
         activated_values = rvs_checker.custom_activation(x=pred2[k],P_Verb=P_Verb)
         RVS_Predicted.append(np.argmax(activated_values))
         Predicted.append(np.argmax(pred1[k]))
-        ground_truth.append(Y_Value[k])
+        ground_truth.append(Y_Value[k]-1)
 
     i+=((num_classes_verbs*scale_factor) + num_classes_verbs)        
     print("Batch(es) read: ",num_batches)
