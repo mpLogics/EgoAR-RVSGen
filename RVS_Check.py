@@ -76,7 +76,7 @@ frame_cols = 320
 channels = 1
 
 data_loader = LoadData()
-K = [4,5,6,7,8,9,10,11,12,13,14]
+K = [8,9,10,11,12,13,14]
 
 for z in range(len(K)):
     try:
