@@ -30,11 +30,11 @@ class RVS_Implement():
         
         for j in range(len(x)):
             if j in self.VerbSet:
-                sum+=math.exp(x[j]*P_Verb[j+1])
+                sum+=math.exp(x[j])
         
         for j in range(len(x)):
             if j in self.VerbSet:
-                activation_values.append((math.exp(x[j]*P_Verb[j+1]))/sum)
+                activation_values.append(math.exp(x[j])/sum)
             else:
                 activation_values.append(0)
         
@@ -169,7 +169,10 @@ for z in range(len(K)):
             num_batches+=1
         except:
             print("Error at processing file index",i)
+            break
+        
         i+=((num_classes_verbs*scale_factor) + num_classes_verbs)        
+    
     np.savez(
         "data/results/K_"+(str)(K[z])+"_Metrics.npz",
         a = np.array(ground_truth),

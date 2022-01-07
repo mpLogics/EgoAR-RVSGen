@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import regex as re
 
+from RVS_Check import P_Verb
+
 class GenVerbSpace():
     def __init__(self):
         self.Noun_Path = "data/action_annotation/noun_idx.txt"
@@ -110,10 +112,10 @@ class GenVerbSpace():
             #P_Noun_Verb = self.calProbCombinations(totalSamples=totalSamples)
             Verb_Set = self.getVerbSet()
             V = len(Verb_Set)
-            
+
             for i in range(V):
                 #P_YVerb[Verb_Set[i]] = (P_Noun_Verb[(Noun_Pred,Verb_Set[i])])/(P_Noun[Noun_Pred]*P_Verb[Verb_Set[i]])
-                P_YVerb[Verb_Set[i]] = P_Noun_Verb[(Noun_Pred,Verb_Set[i])]
+                P_YVerb[Verb_Set[i]] = P_Noun_Verb[(Noun_Pred,Verb_Set[i])]*P_Verb[Verb_Set[i]]
             
             Final_Probabilities = dict(sorted(P_YVerb.items(), key = lambda kv: kv[1]))
             Verb_Probable = list(Final_Probabilities.keys())[-K_Value:]
