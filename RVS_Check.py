@@ -104,44 +104,41 @@ for z in range(len(K)):
         inputs = verb_predictor.input,
         outputs = base_model)
 
-    while i<total_samples:
-        try:
-            X_Value,Y_Value,Val_Frame,Val_Verb = data_loader.read_val_flow(
-                i,
-                access_order,
-                num_classes=num_classes_verbs,
-                multiply_factor=scale_factor)
-            
-            X = np.reshape(X_Value,(
-                        num_classes_verbs*scale_factor,
-                        fix_frames,
-                        frame_rows,
-                        frame_cols,
-                        channels))
-            
-            #Predicting for Training Set
-            pred1 = verb_predictor.predict(X)
-            pred2 = feature_extractor.predict(X)
+    while i<total_samples-1:
+        
+        X_Value,Y_Value,Val_Frame,Val_Verb = data_loader.read_val_flow(
+            i,
+            access_order,
+            num_classes=num_classes_verbs,
+            multiply_factor=scale_factor)
+        
+        X = np.reshape(X_Value,(
+                    num_classes_verbs*scale_factor,
+                    fix_frames,
+                    frame_rows,
+                    frame_cols,
+                    channels))
+        
+        #Predicting for Training Set
+        pred1 = verb_predictor.predict(X)
+        pred2 = feature_extractor.predict(X)
 
-            for k in range(len(pred1)):
-                rvs_checker.VerbSet = np.array(
-                    rvs_checker.rvs_generator.RVSGen(
-                        Noun_Pred=Nouns[access_order[i+k]],
-                        K_Value=K[z],
-                        P_Noun_Verb=P_Noun_Verb))-1
-                        
-                activated_values = rvs_checker.custom_activation(x=pred2[k],P_Verb=P_Verb)
+        for k in range(len(pred1)):
+            rvs_checker.VerbSet = np.array(
+                rvs_checker.rvs_generator.RVSGen(
+                    Noun_Pred=Nouns[access_order[i+k]],
+                    K_Value=K[z],
+                    P_Noun_Verb=P_Noun_Verb))-1
+                    
+            activated_values = rvs_checker.custom_activation(x=pred2[k],P_Verb=P_Verb)
 
-                RVS_Predicted.append(np.argmax(activated_values))
-                Predicted.append(np.argmax(pred1[k]))
-                ground_truth.append(Y_Value[k]-1)
+            RVS_Predicted.append(np.argmax(activated_values))
+            Predicted.append(np.argmax(pred1[k]))
+            ground_truth.append(Y_Value[k]-1)
 
-            print("\nBatch(es) read: ",num_batches)
-            print("Files read = ",i)                   
-            num_batches+=1
-        except:
-            print("Error at processing file index",i)
-            break
+        print("\nBatch(es) read: ",num_batches)
+        print("Files read = ",i)                   
+        num_batches+=1
         
         i+=((num_classes_verbs*scale_factor) + num_classes_verbs)        
     
