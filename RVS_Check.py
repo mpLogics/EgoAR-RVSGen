@@ -105,12 +105,15 @@ for z in range(len(K)):
         outputs = base_model)
 
     while i<total_samples-1:
-        
-        X_Value,Y_Value,Val_Frame,Val_Verb = data_loader.read_val_flow(
-            i,
-            access_order,
-            num_classes=num_classes_verbs,
-            multiply_factor=scale_factor)
+        try:
+            X_Value,Y_Value,Val_Frame,Val_Verb = data_loader.read_val_flow(
+                i,
+                access_order,
+                num_classes=num_classes_verbs,
+                multiply_factor=scale_factor)
+        except:
+            print("Error reading file index:",i)
+            break
         
         X = np.reshape(X_Value,(
                     num_classes_verbs*scale_factor,
