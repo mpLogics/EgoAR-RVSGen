@@ -90,92 +90,93 @@ class RVS_Implement():
         return P_Noun,P_Verb,P_Noun_Verb
 
 
-
-data_loader = LoadData()
-K = 10
 rvs_checker = RVS_Implement()
 P_Noun,P_Verb,P_Noun_Verb = rvs_checker.set_verb_rules()
-
 total_samples = rvs_checker.rvs_generator.getTotalSamples(mode="train")
 verb_predictor = rvs_checker.get_models(return_all=False)
 verb_predictor.summary()
-
-try:
-    Metrics = np.load("data/results/K_"+(str)(K)+"_Metrics.npz",allow_pickle=True)
-    ground_truth = Metrics['a']
-    RVS_Predicted = Metrics['b']
-    Predicted = Metrics['c']
-except FileNotFoundError:
-    print("No existing file found!")
-    ground_truth = []
-    RVS_Predicted = []
-    Predicted=[]
-except:
-    print("Directory Not Found")
 Nouns = pd.read_csv("data/Splits/train_split1.csv")["Noun"]
-i=0
-j=0
 num_classes_verbs = 19
 scale_factor = 5
-
-accessor = Data_Access()
-accessor.modality="OF"
-access_order = accessor.build_order()
-num_batches=0
 fix_frames = 5
 frame_rows = 120
 frame_cols = 320
 channels = 1
 
-while i<total_samples:
+data_loader = LoadData()
+K = [8,10,12]
+
+for z in range(len(K)):
     try:
-        X_Value,Y_Value,Val_Frame,Val_Verb = data_loader.read_val_flow(
-            i,
-            access_order,
-            num_classes=num_classes_verbs,
-            multiply_factor=scale_factor)
-        
-        X = np.reshape(X_Value,(
-                    num_classes_verbs*scale_factor,
-                    fix_frames,
-                    frame_rows,
-                    frame_cols,
-                    channels))
-        
-        for j in range(i,i+num_classes_verbs*scale_factor):
-            rvs_checker.VerbSet = np.array(
-                rvs_checker.rvs_generator.RVSGen(
-                    Noun_Pred=Nouns[access_order[i]],
-                    K_Value=K,
-                    P_Noun_Verb=P_Noun_Verb))-1
+        Metrics = np.load("data/results/K_"+(str)(K[z])+"_Metrics.npz",allow_pickle=True)
+        ground_truth = Metrics['a']
+        RVS_Predicted = Metrics['b']
+        Predicted = Metrics['c']
+    except FileNotFoundError:
+        print("No existing file found!")
+        ground_truth = []
+        RVS_Predicted = []
+        Predicted=[]
     except:
-        print("Error at processing file index",i)
-
-    base_model = verb_predictor.get_layer('dense_3').output 
-    feature_extractor = keras.Model(
-        inputs = verb_predictor.input,
-        outputs = base_model)
-
-    #Predicting for Training Set
-    pred1 = verb_predictor.predict(X)
-    pred2 = feature_extractor.predict(X)
+        print("Directory Not Found")
     
-    for k in range(len(pred1)):
-        activated_values = rvs_checker.custom_activation(x=pred2[k],P_Verb=P_Verb)
-        RVS_Predicted.append(np.argmax(activated_values))
-        Predicted.append(np.argmax(pred1[k]))
-        ground_truth.append(Y_Value[k]-1)
+    i=0
+    accessor = Data_Access()
+    accessor.random_flag=False
+    accessor.modality="OF"
+    access_order = accessor.build_order()
+    num_batches=0
+    
 
-    i+=((num_classes_verbs*scale_factor) + num_classes_verbs)        
-    print("Batch(es) read: ",num_batches)
-    print("Files read = ",i)                   
-    num_batches+=1
+    while i<total_samples:
+        try:
+            X_Value,Y_Value,Val_Frame,Val_Verb = data_loader.read_val_flow(
+                i,
+                access_order,
+                num_classes=num_classes_verbs,
+                multiply_factor=scale_factor)
+            
+            X = np.reshape(X_Value,(
+                        num_classes_verbs*scale_factor,
+                        fix_frames,
+                        frame_rows,
+                        frame_cols,
+                        channels))
+            
+            for j in range(i,i+num_classes_verbs*scale_factor):
+                rvs_checker.VerbSet = np.array(
+                    rvs_checker.rvs_generator.RVSGen(
+                        Noun_Pred=Nouns[access_order[i]],
+                        K_Value=K[z],
+                        P_Noun_Verb=P_Noun_Verb))-1
+        except:
+            print("Error at processing file index",i)
 
-np.savez(
-    "data/results/K_"+(str)(K)+"_Metrics.npz",
-    a = np.array(ground_truth),
-    b = np.array(RVS_Predicted),
-    c = np.array(Predicted))
+        base_model = verb_predictor.get_layer('dense_3').output 
+        feature_extractor = keras.Model(
+            inputs = verb_predictor.input,
+            outputs = base_model)
+
+        #Predicting for Training Set
+        pred1 = verb_predictor.predict(X)
+        pred2 = feature_extractor.predict(X)
+        
+        for k in range(len(pred1)):
+            activated_values = rvs_checker.custom_activation(x=pred2[k],P_Verb=P_Verb)
+            RVS_Predicted.append(np.argmax(activated_values))
+            Predicted.append(np.argmax(pred1[k]))
+            ground_truth.append(Y_Value[k]-1)
+
+        i+=((num_classes_verbs*scale_factor) + num_classes_verbs)        
+        print("\nBatch(es) read: ",num_batches)
+        print("Files read = ",i)                   
+        num_batches+=1
+
+    np.savez(
+        "data/results/K_"+(str)(K[z])+"_Metrics.npz",
+        a = np.array(ground_truth),
+        b = np.array(RVS_Predicted),
+        c = np.array(Predicted))
 """
 while i < total_samples:
     try:
