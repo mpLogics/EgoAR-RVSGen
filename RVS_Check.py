@@ -30,11 +30,11 @@ class RVS_Implement():
         
         for j in range(len(x)):
             if j in self.VerbSet:
-                sum+=math.exp(x[j]*P_Verb)
+                sum+=math.exp(x[j]*P_Verb[j+1])
         
         for j in range(len(x)):
             if j in self.VerbSet:
-                activation_values.append((math.exp(x[j])*P_Verb)/sum)
+                activation_values.append((math.exp(x[j])*P_Verb[j+1])/sum)
             else:
                 activation_values.append(0)
         
