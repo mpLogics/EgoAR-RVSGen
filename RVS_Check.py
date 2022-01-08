@@ -97,7 +97,7 @@ for z in range(len(K)):
     #accessor.random_flag=False
     #accessor.modality = "OF"
     #access_order = accessor.build_order()
-    access_order = [i for i in range(len(total_samples))]
+    access_order = [i for i in range(total_samples)]
     num_batches=0
     
     base_model = verb_predictor.get_layer('dense_3').output 
