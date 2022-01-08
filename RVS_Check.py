@@ -71,8 +71,8 @@ verb_predictor = rvs_rules.get_models(return_all=False)
 verb_predictor.summary()
 
 Nouns = pd.read_csv("data/Splits/test_split1.csv")["Noun"]
-num_classes_verbs = 19
-scale_factor = 5
+num_classes_verbs = 20
+scale_factor = 6
 fix_frames = 5
 frame_rows = 120
 frame_cols = 320

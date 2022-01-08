@@ -39,7 +39,7 @@ class GenVerbSpace():
         P_Noun = {}
         for i in range(N):
             frequency=0
-            for j in range(3):
+            for j in range(self.Splits):
                 train = pd.read_csv("data/Splits/train_split" + (str)(j+1)+".csv")
                 frequency+=np.sum(train["Noun"]==Noun[i])
             P_Noun[Noun[i]] = frequency/totalSamples
@@ -51,7 +51,7 @@ class GenVerbSpace():
         P_Verb = {}
         for i in range(V):
             frequency=0
-            for j in range(3):
+            for j in range(self.Splits):
                 train = pd.read_csv("data/Splits/train_split" + (str)(j+1)+".csv")
                 frequency+=np.sum(train["Verb"]==Verb[i])
             P_Verb[Verb[i]] = frequency/totalSamples
@@ -101,7 +101,7 @@ class GenVerbSpace():
             else:
                 data = pd.read_csv("data/Splits/test_split" + (str)(i+1) + ".csv")
             totalSamples+=len(data)
-        print("Total Samples",totalSamples,"mode=",mode)
+        print("Total Samples:",totalSamples,", mode =",mode)
         return totalSamples
     
     def RVSGen(self,Noun_Pred,K_Value,P_Noun_Verb,P_Verb):
