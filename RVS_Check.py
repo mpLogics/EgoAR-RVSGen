@@ -79,6 +79,7 @@ frame_cols = 320
 channels = 1
 
 data_loader = LoadData()
+data_loader.mode = "test"
 K = [i for i in range(1,15)]
 
 model_pred=False
