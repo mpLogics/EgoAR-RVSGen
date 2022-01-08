@@ -72,7 +72,7 @@ verb_predictor.summary()
 
 Nouns = pd.read_csv("data/Splits/test_split1.csv")["Noun"]
 num_classes_verbs = 20
-scale_factor = 6
+scale_factor = 5
 fix_frames = 5
 frame_rows = 120
 frame_cols = 320
@@ -106,15 +106,19 @@ for z in range(len(K)):
         inputs = verb_predictor.input,
         outputs = base_model)
 
-    while i < total_samples - 1:
+    while i < total_samples:
+        if i>=2000:
+            num_classes_verbs=1
+            scale_factor = 1
         try:
             X_Value,Y_Value,Val_Frame,Val_Verb = data_loader.read_val_flow(
                 i,
                 access_order,
-                num_classes=20,
-                multiply_factor=6)
+                num_classes=num_classes_verbs,
+                multiply_factor=scale_factor)
         except:
             print("Error reading file index:",i)
+            print("Num:",num_classes_verbs)
             break
         
         X = np.reshape(X_Value,(
@@ -150,8 +154,8 @@ for z in range(len(K)):
         #print("Files read = ",i)                   
         num_batches+=1
         
-        i+=((num_classes_verbs*scale_factor) + num_classes_verbs)        
-    
+        i+=((num_classes_verbs*scale_factor) + num_classes_verbs)      
+
     if not model_pred:
         np.savez(
             "data/results/K_test_"+(str)(K[z])+"_Metrics.npz",
