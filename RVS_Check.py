@@ -93,10 +93,11 @@ for z in range(len(K)):
     Predicted=[]
     
     i=0
-    accessor = Data_Access()
-    accessor.random_flag=False
-    accessor.modality = "OF"
-    access_order = accessor.build_order()
+    #accessor = Data_Access()
+    #accessor.random_flag=False
+    #accessor.modality = "OF"
+    #access_order = accessor.build_order()
+    access_order = [i for i in range(len(total_samples))]
     num_batches=0
     
     base_model = verb_predictor.get_layer('dense_3').output 
