@@ -78,20 +78,14 @@ channels = 1
 data_loader = LoadData()
 K = [1,2,3]
 
+model_pred=False
 for z in range(len(K)):
-    try:
-        Metrics = np.load("data/results/K_"+(str)(K[z])+"_Metrics.npz",allow_pickle=True)
-        ground_truth = Metrics['a']
-        RVS_Predicted = Metrics['b']
-        Predicted = Metrics['c']
-    except FileNotFoundError:
-        print("No existing file found!")
-        ground_truth = []
-        RVS_Predicted = []
-        Predicted=[]
-    except:
-        print("Directory Not Found")
-    
+    if z>=1:
+        model_pred=True
+
+    ground_truth = []
+    RVS_Predicted = []
+    Predicted=[]
     i=0
     accessor = Data_Access()
     accessor.random_flag=False
@@ -123,7 +117,9 @@ for z in range(len(K)):
                     channels))
         
         #Predicting for Training Set
-        pred1 = verb_predictor.predict(X)
+        if not model_pred:
+            pred1 = verb_predictor.predict(X)
+        
         pred2 = feature_extractor.predict(X)
 
         for k in range(len(pred1)):
@@ -137,7 +133,8 @@ for z in range(len(K)):
             activated_values = rvs_checker.custom_activation(x=pred2[k],P_Verb=P_Verb)
 
             RVS_Predicted.append(np.argmax(activated_values))
-            Predicted.append(np.argmax(pred1[k]))
+            if not model_pred:
+                Predicted.append(np.argmax(pred1[k]))
             ground_truth.append(Y_Value[k]-1)
 
         if num_batches%20==0:
@@ -147,11 +144,17 @@ for z in range(len(K)):
         
         i+=((num_classes_verbs*scale_factor) + num_classes_verbs)        
     
-    np.savez(
-        "data/results/K_"+(str)(K[z])+"_Metrics.npz",
-        a = np.array(ground_truth),
-        b = np.array(RVS_Predicted),
-        c = np.array(Predicted))
+    if not model_pred:
+        np.savez(
+            "data/results/K_"+(str)(K[z])+"_Metrics.npz",
+            a = np.array(ground_truth),
+            b = np.array(RVS_Predicted),
+            c = np.array(Predicted))
+    else:
+        np.savez(
+            "data/results/K_"+(str)(K[z])+"_Metrics.npz",
+            a = np.array(ground_truth),
+            b = np.array(RVS_Predicted))
 """
 while i < total_samples:
     try:
