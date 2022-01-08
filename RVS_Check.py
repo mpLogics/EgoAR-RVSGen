@@ -111,8 +111,8 @@ for z in range(len(K)):
             X_Value,Y_Value,Val_Frame,Val_Verb = data_loader.read_val_flow(
                 i,
                 access_order,
-                num_classes=num_classes_verbs,
-                multiply_factor=scale_factor)
+                num_classes=20,
+                multiply_factor=6)
         except:
             print("Error reading file index:",i)
             break
