@@ -99,8 +99,9 @@ class GenVerbSpace():
             if mode=="train":
                 data = pd.read_csv("data/Splits/train_split" + (str)(i+1) + ".csv")
             else:
-                data = pd.read_csv("data/Splits/train_split" + (str)(i+1) + ".csv")
+                data = pd.read_csv("data/Splits/test_split" + (str)(i+1) + ".csv")
             totalSamples+=len(data)
+        print("Total Samples")
         return totalSamples
     
     def RVSGen(self,Noun_Pred,K_Value,P_Noun_Verb,P_Verb):

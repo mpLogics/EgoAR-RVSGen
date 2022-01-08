@@ -62,12 +62,15 @@ class RVS_Implement():
         return P_Noun,P_Verb,P_Noun_Verb
 
 
-rvs_checker = RVS_Implement()
-P_Noun,P_Verb,P_Noun_Verb = rvs_checker.set_verb_rules()
-total_samples = rvs_checker.rvs_generator.getTotalSamples(mode="train")
-verb_predictor = rvs_checker.get_models(return_all=False)
+rvs_rules = RVS_Implement()
+rvs_gen = GenVerbSpace()
+P_Noun,P_Verb,P_Noun_Verb = rvs_rules.set_verb_rules()
+
+total_samples = rvs_gen.getTotalSamples(mode="test")
+verb_predictor = rvs_rules.get_models(return_all=False)
 verb_predictor.summary()
-Nouns = pd.read_csv("data/Splits/train_split1.csv")["Noun"]
+
+Nouns = pd.read_csv("data/Splits/test_split1.csv")["Noun"]
 num_classes_verbs = 19
 scale_factor = 5
 fix_frames = 5
@@ -76,20 +79,23 @@ frame_cols = 320
 channels = 1
 
 data_loader = LoadData()
-K = [1,2,3]
+K = [i for i in range(1,15)]
 
 model_pred=False
+
 for z in range(len(K)):
+    
     if z>=1:
         model_pred=True
 
     ground_truth = []
     RVS_Predicted = []
     Predicted=[]
+    
     i=0
     accessor = Data_Access()
     accessor.random_flag=False
-    accessor.modality="OF"
+    accessor.modality = "OF"
     access_order = accessor.build_order()
     num_batches=0
     
@@ -98,7 +104,7 @@ for z in range(len(K)):
         inputs = verb_predictor.input,
         outputs = base_model)
 
-    while i<total_samples-1:
+    while i < total_samples - 1:
         try:
             X_Value,Y_Value,Val_Frame,Val_Verb = data_loader.read_val_flow(
                 i,
@@ -123,14 +129,14 @@ for z in range(len(K)):
         pred2 = feature_extractor.predict(X)
 
         for k in range(len(pred1)):
-            rvs_checker.VerbSet = np.array(
-                rvs_checker.rvs_generator.RVSGen(
+            rvs_rules.VerbSet = np.array(
+                rvs_rules.rvs_generator.RVSGen(
                     Noun_Pred=Nouns[access_order[i+k]],
                     K_Value=K[z],
                     P_Noun_Verb=P_Noun_Verb,
                     P_Verb=P_Verb))-1
                     
-            activated_values = rvs_checker.custom_activation(x=pred2[k],P_Verb=P_Verb)
+            activated_values = rvs_rules.custom_activation(x=pred2[k],P_Verb=P_Verb)
 
             RVS_Predicted.append(np.argmax(activated_values))
             if not model_pred:
@@ -146,13 +152,13 @@ for z in range(len(K)):
     
     if not model_pred:
         np.savez(
-            "data/results/K_"+(str)(K[z])+"_Metrics.npz",
+            "data/results/K_test_"+(str)(K[z])+"_Metrics.npz",
             a = np.array(ground_truth),
             b = np.array(RVS_Predicted),
             c = np.array(Predicted))
     else:
         np.savez(
-            "data/results/K_"+(str)(K[z])+"_Metrics.npz",
+            "data/results/K_test_"+(str)(K[z])+"_Metrics.npz",
             a = np.array(ground_truth),
             b = np.array(RVS_Predicted))
 """
