@@ -48,7 +48,7 @@ class Test_Experiments():
             except:
                 print("Error encountered at index:",i)
             
-            if (i+batch_size)>=self.totalSamples:
+            if (i+batch_size)>=total_samples:
                 batch_size=1
             i+=batch_size
         return np.array(Noun_Predicted)
@@ -122,7 +122,7 @@ class Test_Experiments():
                             df[field_name] = [np.argmax(activated_values)+1]
                         
                         results.append(df)        
-                if (i+batch_size)>=self.totalSamples:
+                if (i+batch_size)>=total_samples:
                     batch_size = 1
                 
                 i+=batch_size
