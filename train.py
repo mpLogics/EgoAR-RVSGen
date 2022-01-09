@@ -4,13 +4,12 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.python.keras.applications import imagenet_utils
 from tensorflow.python.ops.variables import trainable_variables
-from Data import LoadData
+from Data import LoadData,Data_Access
 from RVSGen import GenVerbSpace as GVS
 import pandas as pd
 import os
 import random
 from visualization import Visualizer
-import datetime
 
 class Model():
     def __init__(self):
@@ -49,72 +48,7 @@ class Model():
         optimizer = keras.optimizers.Adam(learning_rate=0.0001)
         self.spatial_extractor.compile(optimizer,loss_func,metrics=["accuracy"])
     
-        self.temporal_extractor = Sequential()
-        #Izda.add(TimeDistributed(
-        #    Convolution2D(40,3,3,border_mode='same'), input_shape=(sequence_lengths, 1,8,10)))
-        self.temporal_extractor.add(TimeDistributed(Conv2D(32, (7, 7), padding='same', strides = 2),
-                input_shape=(5, 240, 640, 1)),activation='relu')
-        self.temporal_extractor.add(Activation('relu'))
-
-        self.temporal_extractor.add(TimeDistributed(Conv2D(64, (5, 5), padding='same', strides = 2)))
-        self.temporal_extractor.add(Activation('relu'))
-        
-        self.temporal_extractor.add(TimeDistributed(Conv2D(128, (5, 5), padding='same', strides = 2)))
-        self.temporal_extractor.add(Activation('relu'))    
-        
-        self.temporal_extractor.add(TimeDistributed(Conv2D(128, (3, 3), padding='same')))
-        self.temporal_extractor.add(Activation('relu'))
-        
-        self.temporal_extractor.add(TimeDistributed(Conv2D(256, (3, 3), padding='same', strides = 2)))
-        self.temporal_extractor.add(Activation('relu'))
-        
-        self.temporal_extractor.add(TimeDistributed(Conv2D(256, (3, 3), padding='same')))
-        self.temporal_extractor.add(Activation('relu'))
-        
-        self.temporal_extractor.add(TimeDistributed(Conv2D(256, (3, 3), padding='same', strides = 2)))
-        self.temporal_extractor.add(Activation('relu'))    
-
-        self.temporal_extractor.add(TimeDistributed(Conv2D(256, (3, 3), padding='same')))
-        self.temporal_extractor.add(Activation('relu'))
-        
-        model.add(TimeDistributed(Conv2D(512, (3, 3), padding='same', strides = 2)))
-        model.add(Activation('relu'))    
-        
-        model.add(TimeDistributed(Flatten()))
-        model.add(CuDNNLSTM(512 , return_sequences=True))
-        model.add(Dropout(0.2))
-        model.add(CuDNNLSTM(512))
-        model.add(Dropout(0.2))
-        model.add(Dense(128))
-        model.add(Dropout(0.2)) 
-        model.add(Dense(19,activation='softmax'))
-
-        model.compile(loss='sparse_categorical_crossentropy',
-                optimizer='adam',
-                metrics=['accuracy'] )
-        model.summary()
-        self.temporal_extractor = model
-        return model,loss_func,optimizer
-
-class Filter():
-    def __init__(self):
-        self.K_Range = (5,20)
-        self.K_Default = 0
-        self.totalSamples = GVS.getTotalSamples()
-        self.Noun = pd.read_csv(self.Noun_path)
-        self.P_Noun = GVS.calProbNouns
-        self.P_Verb = GVS.calProbVerbs
-        self.P_Noun_Verb = GVS.calProbVerbs(totalSamples=self.totalSamples)
-        self.Verb = GVS.getVerbSet()
-    
-    
-    #def applyFilter(self):
-    #    GVS.RVSGen(self.P_Noun_Verb,self.P_Noun,self.P_Verb,V,Noun_Pred,K_Value,self.Verb)
-    #self.Noun = pd.read_csv
-
-
-
-
+        return loss_func,optimizer
 
 class Train():
     def __init__(self):
@@ -150,13 +84,10 @@ class Train():
     def check_prev_trainings(self,model_name,modality):
         try:
             performance_metrics = np.load("data/performance_metrics/" + modality + "/Metrics.npz")
-            saved_model = keras.models.load_model("model_name")
+            saved_model = keras.models.load_model(model_name)
         except Exception:
             print("Saved model could not be read.")
             return 1,[],[],[],[]
-        
-        #performance_metrics = np.load("data/performance_metrics/Metrics.npz")
-        #self.model = keras.models.load_model("Noun_Predictor")
         
         epochs_completed = performance_metrics['a'].shape[0]
         Loss_per_epoch=[]
@@ -169,8 +100,6 @@ class Train():
             Accuracy_per_epoch.append(performance_metrics['b'][i])
             Val_Loss_per_epoch.append(performance_metrics['c'][i])
             Val_Acc_per_epoch.append(performance_metrics['d'][i])
-        
-        #self.model = keras.models.load_model("Noun_Predictor")
 
         return saved_model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch
 
@@ -185,14 +114,11 @@ class Train():
         Val_Loss_per_epoch=[]
         Val_Acc_per_epoch=[]
         access_order = Data_Access().build_order()
-        #print(self.model.summary())
         train_succ=False
         self.model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings()
         
         print("Epochs completed =",epochs_completed)
         
-        
-
         for epochs in range(epochs_completed+1,self.Epochs+1):    
             self.plot_makker.plot_metrics(m_path="data/performance_metrics/Metrics.npz",Epoch=epochs-1)
             print("\nEpoch:",epochs)

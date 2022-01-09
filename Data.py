@@ -158,81 +158,11 @@ class LoadData():
             
             j+=interval_size    
         
-        Annotations.append((int)(Encoding[0]))
-        return init_matrix,np.array(Annotations)
-
-
-
-    def get_matrix(self,Mag,Angle,Encoding):
-        interval_size = math.floor(len(Mag)/self.fix_frames)
-        Annotations=[]
-        j = 0
-        
-        #print("Check before mag",Mag[0].shape)
-        #print("Check before angle",Angle[0].shape)
-
-        Mag[0] = Mag[0]#[120:240,160:320]
-        Angle[0] = Angle[0]#[120:240,160:320]
-        prev_matrix = np.concatenate([Mag[0],Angle[0]],axis=1)
-        init_matrix = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
-        
-        #print("Check after mag",Mag[0].shape)
-        #print("Check after angle",Angle[0].shape)
-
-        #print("Check before mag(val)",Mag[1].shape)
-        #print("Check before angle",Angle[1].shape)
-        Mag[1] = Mag[1]#[120:240,160:320]
-        Angle[1] = Angle[1]#[120:240,160:320]
-        #print("Check after mag(val)",Mag[1].shape)
-        #print("Check after angle(val)",Angle[0].shape)
-
-        prev_val = np.concatenate([Mag[1],Angle[1]],axis=1)
-        prev_val = np.reshape(prev_val,(1,prev_val.shape[0],prev_val.shape[1]))
-        j+=interval_size
-        #print("Interval size = ",interval_size)
-        
-        for k in range(2,self.fix_frames):
-            if j<=1:
-                j+=interval_size
-            
-            #print("K = ",k)
-            #print("J = ",j)
-            #print("Here Sanity Check",Mag[j].shape)
-            #print("Here Sanity Check",Angle[j].shape)
-            
-            Mag[j] = Mag[j]#[120:240,160:320]
-            Angle[j] = Angle[j]#[120:240,160:320]
-            
-            #print("Here -1",Mag[j].shape)
-            #print("Here 0",Angle[j].shape)
-            
-            #if k==self.fix_frames+1:
-            if k % 2 !=0:
-                init_val = np.concatenate([Mag[j],Angle[j]],axis=1)
-                temp_init_val = np.reshape(init_val,(1,init_val.shape[0],init_val.shape[1]))
-                prev_val = np.concatenate([prev_val,temp_init_val])
-
-            else:
-                prev_matrix = np.concatenate([Mag[j],Angle[j]],axis=1)
-                #print("Here 2",Mag[j].shape)
-                #print("Here 3",Angle[j].shape)
-                #print("Here 4",prev_matrix.shape)
-                temp = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
-                init_matrix = np.concatenate([init_matrix,temp])
-            
-            j+=interval_size    
-        
-        print(Encoding[0])
-        Annotations.append((int)(Encoding[0]))
-        return init_matrix,np.array(Annotations),prev_val,np.array([(int)(Encoding[0])])
-
-            #prev_matrix = np.concatenate([Mag[j],Angle[j]],axis=1)
-            #temp = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
-            #init_matrix = np.concatenate([temp,init_matrix])
-            #j+=interval_size    
-        #Annotations.append((int(Encoding[0])))
-        #return init_matrix,np.array(Annotations),init_val,val_annot
-    
+        if self.mode=="train":
+            Annotations.append((int)(Encoding[0]))
+            return init_matrix,np.array(Annotations)
+        else:
+            return init_matrix
 
     def load_file(self,i,modality):
         if self.mode=="train":
@@ -242,14 +172,22 @@ class LoadData():
         
         if modality=="RGB":
             modal = np.load(file_path,allow_pickle=True)["a"]
-            Annotation = np.load(file_path,allow_pickle=True)["c"]
+            if self.mode=="train":
+                Annotation = np.load(file_path,allow_pickle=True)["c"]
+                return modal,Annotation
+            else:
+                return modal            
+        
         else:
             file_in = np.load(file_path,allow_pickle=True)
             mag = file_in['a']
             ang = file_in['b']
-            encoding = file_in['d']
-            return mag,ang,encoding
-        return modal,Annotation
+            
+            if self.mode=="train":
+                encoding = file_in['d']
+                return mag,ang,encoding
+            else:
+                return mag,ang
     
 
     def get_frame_order(self,frames,modality):
@@ -267,64 +205,99 @@ class LoadData():
         return frame_indices
     
     def read_val_flow(self,i,access_order,num_classes,multiply_factor):
-        Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
-        prev_matrix,prev_Annot = self.get_any_matrix(Mag,Ang,Encoding)
-        final_matrix = np.reshape(prev_matrix,((1,prev_matrix.shape[0],prev_matrix.shape[1],prev_matrix.shape[2])))
+        if self.mode=="test":
+            Mag,Ang = self.load_file(access_order[i],modality="OF")
+            prev_matrix = self.get_any_matrix(Mag,Ang,Encoding=[])
+        else:
+            Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
+            prev_matrix,prev_Annot = self.get_any_matrix(Mag,Ang,Encoding)
+        final_matrix = np.reshape(
+                prev_matrix,(
+                    (1,
+                    prev_matrix.shape[0],
+                    prev_matrix.shape[1],
+                    prev_matrix.shape[2])))
 
-        # Obtaining training data for the batch
+        # Obtaining data for the batch
         for j in range(i+1,i+(num_classes*multiply_factor)):
             
-            Mag,Ang,Encoding = self.load_file(access_order[j],modality="OF")
-            init_matrix,init_Annot = self.get_any_matrix(Mag,Ang,Encoding)
+            if self.mode=="test":
+                Mag,Ang = self.load_file(access_order[j],modality="OF")
+                prev_matrix = self.get_any_matrix(Mag,Ang,Encoding=[])
+            else:
+                Mag,Ang,Encoding = self.load_file(access_order[j],modality="OF")
+                init_matrix,init_Annot = self.get_any_matrix(Mag,Ang,Encoding)
 
-            prev_matrix = np.reshape(init_matrix,((1,init_matrix.shape[0],init_matrix.shape[1],init_matrix.shape[2])))
-            final_matrix = np.concatenate([final_matrix,prev_matrix])
-            prev_Annot = np.concatenate([prev_Annot,init_Annot])
-        
-        # Obtaining validation data for the batch
-        m = i+(num_classes*multiply_factor)
-        Mag,Ang,Encoding = self.load_file(access_order[m],modality="OF")
-        prev_val_matrix,prev_val_Annot = self.get_any_matrix(Mag,Ang,Encoding)
-        final_val_matrix = np.reshape(prev_val_matrix,((1,prev_val_matrix.shape[0],prev_val_matrix.shape[1],prev_val_matrix.shape[2])))
-
-        # Obtaining training data for the batch
-        for j in range(m+1,m+num_classes):
+            prev_matrix = np.reshape(
+                init_matrix,(
+                    (1,
+                    init_matrix.shape[0],
+                    init_matrix.shape[1],
+                    init_matrix.shape[2])))
             
-            Mag,Ang,Encoding = self.load_file(access_order[j],modality="OF")
-            init_val_matrix,init_val_Annot = self.get_any_matrix(Mag,Ang,Encoding)
-
-            prev_val_matrix = np.reshape(init_val_matrix,((1,init_val_matrix.shape[0],init_val_matrix.shape[1],init_val_matrix.shape[2])))
-            final_val_matrix = np.concatenate([final_val_matrix,prev_val_matrix])
-            prev_val_Annot = np.concatenate([prev_val_Annot,init_val_Annot])
+            final_matrix = np.concatenate([final_matrix,prev_matrix])
+            if self.mode=="train":
+                prev_Annot = np.concatenate([prev_Annot,init_Annot])
         
-        return final_matrix,prev_Annot,final_val_matrix,prev_val_Annot
+        if self.mode=="train":
+            # Obtaining validation data for the batch
+            m = i+(num_classes*multiply_factor)
+            Mag,Ang,Encoding = self.load_file(access_order[m],modality="OF")
+            prev_val_matrix,prev_val_Annot = self.get_any_matrix(Mag,Ang,Encoding)
+            final_val_matrix = np.reshape(prev_val_matrix,((1,prev_val_matrix.shape[0],prev_val_matrix.shape[1],prev_val_matrix.shape[2])))
 
+            # Obtaining training data for the batch
+            for j in range(m+1,m+num_classes):
+                
+                Mag,Ang,Encoding = self.load_file(access_order[j],modality="OF")
+                init_val_matrix,init_val_Annot = self.get_any_matrix(Mag,Ang,Encoding)
 
-
-    
+                prev_val_matrix = np.reshape(init_val_matrix,((1,init_val_matrix.shape[0],init_val_matrix.shape[1],init_val_matrix.shape[2])))
+                final_val_matrix = np.concatenate([final_val_matrix,prev_val_matrix])
+                prev_val_Annot = np.concatenate([prev_val_Annot,init_val_Annot])
+            
+            return final_matrix,prev_Annot,final_val_matrix,prev_val_Annot
+        else:
+            return final_matrix
 
     def read_frames(self,i,access_order,num_classes_total):    
+        
+        if not self.mode=="test":
+            Y_Noun=[]
+            Val_Frame=[]
+            Val_Noun=[]
         Frame=[]
-        Y_Noun=[]
-        Val_Frame=[]
-        Val_Noun=[]
         
         for j in range(i,i+num_classes_total):
             RGB,Noun = self.load_file(access_order[j],modality="RGB")
             frame_indices = self.get_frame_order(RGB)
             for count in range(self.fix_frames):
-                RGB_resized = cv2.resize(src=RGB[frame_indices[count]],dsize=self.input_shape)
-                RGB_normalized = cv2.normalize(RGB_resized, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
                 
-                if count==4:
-                    Val_Frame.append(RGB_normalized)
-                    Val_Noun.append((int)(Noun[frame_indices[count]]))
+                RGB_resized = cv2.resize(
+                    src=RGB[frame_indices[count]],
+                    dsize=self.input_shape)
                 
-                else:
-                    Frame.append(RGB_normalized)
-                    Y_Noun.append((int)(Noun[frame_indices[count]]))
+                RGB_normalized = cv2.normalize(
+                    RGB_resized, 
+                    None, 
+                    alpha=0, 
+                    beta=1, 
+                    norm_type=cv2.NORM_MINMAX, 
+                    dtype=cv2.CV_32F)
+                
+                if not self.mode=="test":
+                    if count==4:
+                        Val_Frame.append(RGB_normalized)
+                        Val_Noun.append((int)(Noun[frame_indices[count]]))
+                    
+                    else:
+                        Frame.append(RGB_normalized)
+                        Y_Noun.append((int)(Noun[frame_indices[count]]))
         
-        return Frame, Y_Noun,Val_Frame,Val_Noun
+        if self.mode=="test":
+            return Frame
+        else:
+            return Frame, Y_Noun,Val_Frame,Val_Noun
 
     def getTotal(self):
         return self.train.shape[0]

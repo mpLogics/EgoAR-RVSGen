@@ -8,9 +8,8 @@ from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 from keras import backend as bk
 
-import scipy.io as sio
+
 import pandas as pd
-import os
 from Data import LoadData,Data_Access
 
 #from OpticalFlow import learn_optical_flow
@@ -51,8 +50,6 @@ class RVS_Implement():
     def set_verb_rules(self):
         print("No existing rules found, creating new rules!")
         reduced_verb_space = GenVerbSpace()
-        Nouns = reduced_verb_space.getNounSet()
-        Verb_Set = reduced_verb_space.getVerbSet()
         totalSamples = reduced_verb_space.getTotalSamples(mode="train")
 
         P_Noun = reduced_verb_space.calProbNouns(totalSamples)
@@ -61,44 +58,48 @@ class RVS_Implement():
 
         return P_Noun,P_Verb,P_Noun_Verb
 
+"""
 
 rvs_rules = RVS_Implement()
 rvs_gen = GenVerbSpace()
 P_Noun,P_Verb,P_Noun_Verb = rvs_rules.set_verb_rules()
 
 total_samples = rvs_gen.getTotalSamples(mode="test")
-verb_predictor = rvs_rules.get_models(return_all=False)
+noun_predictor,verb_predictor = rvs_rules.get_models(return_all=True)
+noun_predictor.summar()
 verb_predictor.summary()
 
-Nouns = pd.read_csv("data/Splits/test_split1.csv")["Noun"]
-num_classes_verbs = 20
-scale_factor = 5
+num_classes_verbs = 100
+num_classes_nouns = 100
+scale_factor = 1
 fix_frames = 5
 frame_rows = 120
 frame_cols = 320
 channels = 1
+test_set = pd.read_csv("data/Splits/test_split1.csv")
+total_samples = test_set["FileName"].shape[0]
+ground_truth_Verb = np.array(test_set["Verb"])
+ground_truth_Action = np.array(test_set["Action"])
+ground_truth_Noun = np.array(test_set["Noun"])
 
 data_loader = LoadData()
 data_loader.mode = "test"
 K = [i for i in range(1,15)]
+access_order = [i for i in range(total_samples)]
+
 
 model_pred=False
-
 for z in range(len(K)):
-    
     if z>=1:
         model_pred=True
 
-    ground_truth = []
+    ground_truth_Verb = []
+    Verb_Predicted = []
+
     RVS_Predicted = []
-    Predicted=[]
     
     i=0
-    #accessor = Data_Access()
-    #accessor.random_flag=False
-    #accessor.modality = "OF"
-    #access_order = accessor.build_order()
-    access_order = [i for i in range(total_samples)]
+    
     num_batches=0
     
     base_model = verb_predictor.get_layer('dense_3').output 
@@ -110,18 +111,25 @@ for z in range(len(K)):
         if i>=2000:
             num_classes_verbs=1
             scale_factor = 1
+        
         try:
-            X_Value,Y_Value,Val_Frame,Val_Verb = data_loader.read_val_flow(
-                i,
-                access_order,
-                num_classes=num_classes_verbs,
-                multiply_factor=scale_factor)
+            if not model_pred:
+                Frame,Y_Noun,Val_Frame,Val_Noun = data_loader.read_frames(
+                    i,
+                    access_order,
+                    num_classes_nouns)
+
+                X_Value,Y_Value,Val_Frame,Val_Verb = data_loader.read_val_flow(
+                    i,
+                    access_order,
+                    num_classes=num_classes_verbs,
+                    multiply_factor=scale_factor)
         except:
             print("Error reading file index:",i)
             print("Num:",num_classes_verbs)
             break
-        
-        X = np.reshape(X_Value,(
+
+        X_OF = np.reshape(X_Value,(
                     num_classes_verbs*scale_factor,
                     fix_frames,
                     frame_rows,
@@ -130,30 +138,31 @@ for z in range(len(K)):
         
         #Predicting for Training Set
         if not model_pred:
-            pred1 = verb_predictor.predict(X)
-        
-        pred2 = feature_extractor.predict(X)
+            pred_OF = verb_predictor.predict(X_OF)
+            
+        feature_pred = feature_extractor.predict(X_OF)
 
-        for k in range(len(pred1)):
+        for k in range(len(feature_pred)):
             rvs_rules.VerbSet = np.array(
                 rvs_rules.rvs_generator.RVSGen(
-                    Noun_Pred=Nouns[access_order[i+k]],
+                    Noun_Pred=Noun,
                     K_Value=K[z],
                     P_Noun_Verb=P_Noun_Verb,
                     P_Verb=P_Verb))-1
                     
-            activated_values = rvs_rules.custom_activation(x=pred2[k],P_Verb=P_Verb)
+            activated_values = rvs_rules.custom_activation(x=feature_pred[k],P_Verb=P_Verb)
 
             RVS_Predicted.append(np.argmax(activated_values))
-            if not model_pred:
-                Predicted.append(np.argmax(pred1[k]))
-            ground_truth.append(Y_Value[k]-1)
+            
 
-        if num_batches%20==0:
-            print("\nCurrent K-value:",K[z],"Batch(es) read: ",num_batches)
-        #print("Files read = ",i)                   
+            if not model_pred:
+                Noun_Predicted.append(Noun)
+                Verb_Predicted.append(np.argmax(pred_OF[k])+1)
+
+        if num_batches%5==0:
+            print("\nCurrent K-value:",K[z],", Batch(es) read:",num_batches)
         num_batches+=1
-        
+
         i+=((num_classes_verbs*scale_factor) + num_classes_verbs)      
 
     if not model_pred:
@@ -167,6 +176,7 @@ for z in range(len(K)):
             "data/results/K_test_"+(str)(K[z])+"_Metrics.npz",
             a = np.array(ground_truth),
             b = np.array(RVS_Predicted))
+"""
 """
 while i < total_samples:
     try:
