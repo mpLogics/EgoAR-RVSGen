@@ -31,6 +31,7 @@ class Test_Experiments():
         return Y
 
     def predict_noun(self,noun_predictor):
+        print("Beginning Noun Prediction")
         batch_size = self.num_batch_samples
         Noun_Predicted = []
         i=0
@@ -135,6 +136,6 @@ rvs_rules=RVS_Implement()
 noun_predictor,verb_predictor = rvs_rules.get_models(return_all=True)
 Nouns = t1.predict_noun(noun_predictor=noun_predictor)
 Results = t1.predict_verb(rvs_rules,verb_predictor,use_RVS=True,Noun=Nouns,K_range=[1,14])
-Results.to_csv("Results.csv")
+Results.to_csv("data/results/Results.csv")
 
 
