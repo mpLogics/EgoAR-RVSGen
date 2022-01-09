@@ -53,7 +53,7 @@ class Test_Experiments():
                     for m in range(len(Frames[j])):
                         Noun = self.reverse_annot(np.argmax(pred_RGB[m]))
                         Nouns_Video.append(Noun)
-                    Noun = stats.mode(Nouns_Video)
+                    Noun = stats.mode(Nouns_Video)[0][0]
                     Noun_Predicted.append(Noun)
 
                 
@@ -177,7 +177,6 @@ Results = t1.predict_verb(
     rvs_rules,
     verb_predictor,
     use_RVS=True,
-    Noun=Nouns,
     K_range=[1,14],
     total_samples=total_samples,
     nouns_with_path="data/results/test_reports/Nouns.npz")
