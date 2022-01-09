@@ -264,9 +264,10 @@ class LoadData():
         Y_Noun=[]
         Val_Frame=[]
         Val_Noun=[]
-        Frame=[]
         
+        Frames=[]
         for j in range(i,i+num_classes_total):
+            Frame=[]
             if self.mode=="test":
                 RGB = self.load_file(access_order[j],modality="RGB")
             else:
@@ -295,9 +296,9 @@ class LoadData():
                     Frame.append(RGB_normalized)
                 else:
                     Frame.append(RGB_normalized)
-                    
+            Frames.append(Frame)
         if self.mode=="test":
-            return Frame
+            return Frames
         else:
             return Frame, Y_Noun,Val_Frame,Val_Noun
 

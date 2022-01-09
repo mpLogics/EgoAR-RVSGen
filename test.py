@@ -12,6 +12,7 @@ import numpy as np
 from Data import LoadData
 from RVS_Check import RVS_Implement
 import pandas as pd
+from scipy import stats
 
 class Test_Experiments():
     def __init__(self):
@@ -39,19 +40,26 @@ class Test_Experiments():
         num_batches=0
         while i < total_samples:
             if num_batches%5:
-                print("Files read:",i)
+                print("Files read:",i,"Ongoing batch size",batch_size)
             try:
-                Frame = data_loader.read_frames(
+                Frames = data_loader.read_frames(
                                 i,
                                 access_order,
                                 batch_size)
-                X_RGB = np.array(Frame)
-
-                pred_RGB = noun_predictor.predict(X_RGB)
-                
-                for k in range(len(pred_RGB)):
-                    Noun = self.reverse_annot(np.argmax(pred_RGB[k]))
+                Nouns_Video=[]
+                for j in range(len(Frames)):
+                    X_RGB = np.array(Frames[j])
+                    pred_RGB = noun_predictor.predict(X_RGB)
+                    for m in range(len(Frames[j])):
+                        Noun = self.reverse_annot(np.argmax(pred_RGB[m]))
+                        Nouns_Video.append(Noun)
+                    Noun = stats.mode(Nouns_Video)
                     Noun_Predicted.append(Noun)
+
+                
+                #for k in range(len(pred_RGB)):
+                #    Noun = self.reverse_annot(np.argmax(pred_RGB[k]))
+                #    Noun_Predicted.append(Noun)
             except:
                 print("Error encountered at index:",i)
             
