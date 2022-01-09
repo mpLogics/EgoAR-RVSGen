@@ -28,6 +28,9 @@ class Test_Experiments():
         return Y
 
     def predict_noun(self,noun_predictor,total_samples):
+        data_loader = LoadData()
+        data_loader.mode = "test"
+
         access_order = [i for i in range(total_samples)]
         print("Beginning Noun Prediction")
         batch_size = 100
@@ -35,7 +38,7 @@ class Test_Experiments():
         i=0
         while i < total_samples:
             #try:
-            Frame = self.data_loader.read_frames(
+            Frame = data_loader.read_frames(
                             i,
                             access_order,
                             batch_size)
@@ -54,6 +57,9 @@ class Test_Experiments():
         return np.array(Noun_Predicted)
     
     def predict_verb(self,rvs_rules,verb_predictor,use_RVS,K_range,total_samples,nouns_with_path):
+        data_loader = LoadData()
+        data_loader.mode = "test"
+        
         try:
             Noun = np.load(nouns_with_path,allow_pickle=True)
         except:
@@ -80,7 +86,7 @@ class Test_Experiments():
         err_ctr=0
         while i < total_samples:
             try:
-                X_Value = self.data_loader.read_val_flow(
+                X_Value = data_loader.read_val_flow(
                     i,
                     access_order,
                     num_classes=batch_size,
