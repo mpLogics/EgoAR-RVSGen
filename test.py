@@ -33,7 +33,7 @@ class Test_Experiments():
         batch_size = 100
         Noun_Predicted = []
         i=0
-        while i < self.total_samples:
+        while i < total_samples:
             try:
                 Frame = self.data_loader.read_frames(
                                 i,
@@ -78,7 +78,7 @@ class Test_Experiments():
         results = pd.DataFrame()
         samples = pd.read_csv("data/Splits/test_split1.csv")
         err_ctr=0
-        while i < self.total_samples:
+        while i < total_samples:
             try:
                 X_Value = self.data_loader.read_val_flow(
                     i,
