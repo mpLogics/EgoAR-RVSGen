@@ -39,8 +39,8 @@ class Test_Experiments():
         i=0
         num_batches=0
         while i < total_samples:
-            if num_batches%5:
-                print("Files read:",i,"Ongoing batch size",batch_size)
+            if num_batches%5 or i==500:
+                print("Files read:",i,"Ongoing batch size",batch_size,"Batches completed:",num_batches)
             try:
                 Frames = data_loader.read_frames(
                                 i,
