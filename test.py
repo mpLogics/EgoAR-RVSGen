@@ -14,13 +14,10 @@ from RVS_Check import RVS_Implement
 import pandas as pd
 
 class Test_Experiments():
-    def __init__(self,total_samples,test_batch_size):
-        total_samples = total_samples
+    def __init__(self,total_samples):
         data_loader = LoadData()
         data_loader.mode = "test"
-        access_order = [i for i in range(total_samples)]
-        num_batch_samples = test_batch_size
-        
+                
     def reverse_annot(self,Y):
         if Y<=15:
             Y+=1
@@ -30,16 +27,17 @@ class Test_Experiments():
             Y+=3
         return Y
 
-    def predict_noun(self,noun_predictor):
+    def predict_noun(self,noun_predictor,total_samples):
+        access_order = [i for i in range(total_samples)]
         print("Beginning Noun Prediction")
-        batch_size = self.num_batch_samples
+        batch_size = 100
         Noun_Predicted = []
         i=0
         while i < self.total_samples:
             try:
                 Frame = self.data_loader.read_frames(
                                 i,
-                                self.access_order,
+                                access_order,
                                 batch_size)
                 X_RGB = np.array(Frame)
                 pred_RGB = noun_predictor.predict(X_RGB)
@@ -54,9 +52,15 @@ class Test_Experiments():
             i+=batch_size
         return np.array(Noun_Predicted)
     
-    def predict_verb(self,rvs_rules,verb_predictor,use_RVS,Noun,K_range):
+    def predict_verb(self,rvs_rules,verb_predictor,use_RVS,K_range,total_samples,nouns_with_path):
+        try:
+            Noun = np.load(nouns_with_path,allow_pickle=True)
+        except:
+            print("No nouns found. Terminating!!!")
+            exit()
         
-        batch_size = self.num_batch_samples
+        access_order = [i for i in range(total_samples)]
+        batch_size = 100
         scale_factor = 1
         fix_frames = 5
         input_shape = (120,320,1)
@@ -77,7 +81,7 @@ class Test_Experiments():
             try:
                 X_Value = self.data_loader.read_val_flow(
                     i,
-                    self.access_order,
+                    access_order,
                     num_classes=batch_size,
                     multiply_factor=scale_factor)
                 
@@ -128,14 +132,24 @@ class Test_Experiments():
                 err_ctr+=1
         return results
 total_samples = pd.read_csv("data/Splits/test_split1.csv")["FileName"].shape[0]
-t1 = Test_Experiments(
-    total_samples=total_samples,
-    test_batch_size=100)
+t1 = Test_Experiments()
 
 rvs_rules=RVS_Implement()
 noun_predictor,verb_predictor = rvs_rules.get_models(return_all=True)
-Nouns = t1.predict_noun(noun_predictor=noun_predictor)
-Results = t1.predict_verb(rvs_rules,verb_predictor,use_RVS=True,Noun=Nouns,K_range=[1,14])
+
+Nouns = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
+
+np.savez("data/results/test_reports/Nouns.npz",a = Nouns)
+
+Results = t1.predict_verb(
+    rvs_rules,
+    verb_predictor,
+    use_RVS=True,
+    Noun=Nouns,
+    K_range=[1,14],
+    total_samples=total_samples,
+    nouns_with_path="data/results/test_reports/Nouns.npz")
+
 Results.to_csv("data/results/Results.csv")
 
 
