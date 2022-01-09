@@ -34,19 +34,19 @@ class Test_Experiments():
         Noun_Predicted = []
         i=0
         while i < total_samples:
-            try:
-                Frame = self.data_loader.read_frames(
-                                i,
-                                access_order,
-                                batch_size)
-                X_RGB = np.array(Frame)
+            #try:
+            Frame = self.data_loader.read_frames(
+                            i,
+                            access_order,
+                            batch_size)
+            X_RGB = np.array(Frame)
 
-                pred_RGB = noun_predictor.predict(X_RGB)
-                for k in len(pred_RGB):
-                    Noun = self.reverse_annot(np.argmax(pred_RGB[k]))
-                    Noun_Predicted.append(Noun)
-            except:
-                print("Error encountered at index:",i)
+            pred_RGB = noun_predictor.predict(X_RGB)
+            for k in len(pred_RGB):
+                Noun = self.reverse_annot(np.argmax(pred_RGB[k]))
+                Noun_Predicted.append(Noun)
+            #except:
+                #print("Error encountered at index:",i)
             
             if (i+batch_size)>=total_samples:
                 batch_size=1
