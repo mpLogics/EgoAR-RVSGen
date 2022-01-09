@@ -14,7 +14,7 @@ from RVS_Check import RVS_Implement
 import pandas as pd
 
 class Test_Experiments():
-    def __init__(self,total_samples):
+    def __init__(self):
         data_loader = LoadData()
         data_loader.mode = "test"
                 
@@ -40,6 +40,7 @@ class Test_Experiments():
                                 access_order,
                                 batch_size)
                 X_RGB = np.array(Frame)
+
                 pred_RGB = noun_predictor.predict(X_RGB)
                 for k in len(pred_RGB):
                     Noun = self.reverse_annot(np.argmax(pred_RGB[k]))
@@ -131,11 +132,17 @@ class Test_Experiments():
                 print("Error encountered at index:",i)
                 err_ctr+=1
         return results
+
 total_samples = pd.read_csv("data/Splits/test_split1.csv")["FileName"].shape[0]
 t1 = Test_Experiments()
 
 rvs_rules=RVS_Implement()
 noun_predictor,verb_predictor = rvs_rules.get_models(return_all=True)
+
+
+config = ConfigProto()
+config.gpu_options.allow_growth = True
+session = InteractiveSession(config=config)
 
 Nouns = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
 
@@ -151,5 +158,5 @@ Results = t1.predict_verb(
     nouns_with_path="data/results/test_reports/Nouns.npz")
 
 Results.to_csv("data/results/Results.csv")
-
+session.close()
 
