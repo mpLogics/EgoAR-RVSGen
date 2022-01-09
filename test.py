@@ -36,7 +36,10 @@ class Test_Experiments():
         batch_size = 100
         Noun_Predicted = []
         i=0
+        num_batches=0
         while i < total_samples:
+            if num_batches%5:
+                print("Files read:",i)
             try:
                 Frame = data_loader.read_frames(
                                 i,
@@ -55,6 +58,7 @@ class Test_Experiments():
             if (i+batch_size)>=total_samples:
                 batch_size=1
             i+=batch_size
+            num_batches+=1
         return np.array(Noun_Predicted)
     
     def predict_verb(self,rvs_rules,verb_predictor,use_RVS,K_range,total_samples,nouns_with_path):
