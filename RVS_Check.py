@@ -41,11 +41,11 @@ class RVS_Implement():
         return activation_values
     
     
-    def get_models(self,return_all):
-        if not return_all:
-            return keras.models.load_model("Verb_Predictor")
-        else:
-            return keras.models.load_model("Noun_Predictor"),keras.models.load_model("Verb_Predictor")
+    def get_noun_model(self):
+        return keras.models.load_model("Noun_Predictor")
+    def get_verb_model(self):
+        return keras.models.load_model("Verb_Predictor")
+
         
     def set_verb_rules(self):
         print("No existing rules found, creating new rules!")

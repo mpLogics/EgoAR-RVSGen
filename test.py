@@ -141,20 +141,26 @@ class Test_Experiments():
         return results
 
 total_samples = pd.read_csv("data/Splits/test_split1.csv")["FileName"].shape[0]
-t1 = Test_Experiments()
-
-rvs_rules=RVS_Implement()
-noun_predictor,verb_predictor = rvs_rules.get_models(return_all=True)
 
 
 config = ConfigProto()
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
 
-Nouns = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
+t1 = Test_Experiments()
+rvs_rules=RVS_Implement()
+noun_predictor = rvs_rules.get_noun_model()
 
+Nouns = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
 np.savez("data/results/test_reports/Nouns.npz",a = Nouns)
 
+session.close()
+
+config = ConfigProto()
+config.gpu_options.allow_growth = True
+session = InteractiveSession(config=config)
+
+verb_predictor = rvs_rules.get_verb_model()
 Results = t1.predict_verb(
     rvs_rules,
     verb_predictor,
@@ -165,5 +171,6 @@ Results = t1.predict_verb(
     nouns_with_path="data/results/test_reports/Nouns.npz")
 
 Results.to_csv("data/results/Results.csv")
+
 session.close()
 
