@@ -274,7 +274,7 @@ class LoadData():
             else:
                 RGB,Noun = self.load_file(access_order[j],modality="RGB")
             
-            frame_indices = self.get_frame_order(RGB)
+            frame_indices = self.get_frame_order(RGB,modality="RGB")
             for count in range(self.fix_frames):
                 
                 RGB_resized = cv2.resize(
