@@ -269,7 +269,11 @@ class LoadData():
         Frame=[]
         
         for j in range(i,i+num_classes_total):
-            RGB,Noun = self.load_file(access_order[j],modality="RGB")
+            if self.mode=="test":
+                RGB = self.load_file(access_order[j],modality="RGB")
+            else:
+                RGB,Noun = self.load_file(access_order[j],modality="RGB")
+            
             frame_indices = self.get_frame_order(RGB)
             for count in range(self.fix_frames):
                 
