@@ -261,11 +261,9 @@ class LoadData():
             return final_matrix
 
     def read_frames(self,i,access_order,num_classes_total):    
-        
-        if not self.mode=="test":
-            Y_Noun=[]
-            Val_Frame=[]
-            Val_Noun=[]
+        Y_Noun=[]
+        Val_Frame=[]
+        Val_Noun=[]
         Frame=[]
         
         for j in range(i,i+num_classes_total):
@@ -289,15 +287,15 @@ class LoadData():
                     norm_type=cv2.NORM_MINMAX, 
                     dtype=cv2.CV_32F)
                 
-                if not self.mode=="test":
+                if self.mode=="train":
+                    Y_Noun.append((int)(Noun[frame_indices[count]]))
                     if count==4:
                         Val_Frame.append(RGB_normalized)
-                        Val_Noun.append((int)(Noun[frame_indices[count]]))
+                        Val_Noun.append((int)(Noun[frame_indices[count]]))    
+                    Frame.append(RGB_normalized)
+                else:
+                    Frame.append(RGB_normalized)
                     
-                    else:
-                        Frame.append(RGB_normalized)
-                        Y_Noun.append((int)(Noun[frame_indices[count]]))
-        
         if self.mode=="test":
             return Frame
         else:
