@@ -45,7 +45,8 @@ class Test_Experiments():
             X_RGB = np.array(Frame)
 
             pred_RGB = noun_predictor.predict(X_RGB)
-            for k in len(pred_RGB):
+            
+            for k in range(len(pred_RGB)):
                 Noun = self.reverse_annot(np.argmax(pred_RGB[k]))
                 Noun_Predicted.append(Noun)
             #except:
@@ -59,7 +60,7 @@ class Test_Experiments():
     def predict_verb(self,rvs_rules,verb_predictor,use_RVS,K_range,total_samples,nouns_with_path):
         data_loader = LoadData()
         data_loader.mode = "test"
-        
+
         try:
             Noun = np.load(nouns_with_path,allow_pickle=True)
         except:
