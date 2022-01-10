@@ -110,7 +110,7 @@ class Train():
             saved_model = keras.models.load_model(model_name)
         except Exception:
             print("Saved model could not be read.")
-            return 1,[],[],[],[]
+            return None,0,[],[],[],[]
         
         epochs_completed = performance_metrics['a'].shape[0]
         Loss_per_epoch=[]
