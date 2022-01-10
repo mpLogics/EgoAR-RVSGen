@@ -48,7 +48,7 @@ class Model():
         outputs = layers.Dense(self.RGB_classes)(ops)
         activation = Activation("softmax")(outputs)
         model = models.Model(inputs=[video],outputs=activation)
-        model.compile(optimizer='adam',loss='sparse_categorical_entropy')
+        model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         return model
     
     def buildModel(self):
