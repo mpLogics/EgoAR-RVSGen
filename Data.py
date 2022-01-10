@@ -129,7 +129,7 @@ class LoadData():
         self.train = pd.read_csv(self.train_split)
         self.test = pd.read_csv(self.test_split)
         self.mode = "train"
-        self.input_shape = (299,299)
+        self.input_shape = (320,240)
         self.sample_rate = 0.1
         self.fix_frames = 5
         self.num_classes_total = 53

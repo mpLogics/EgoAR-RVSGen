@@ -36,7 +36,7 @@ config_values = json.load(config_file)["Configuration Values"]
 
 #"""
 m1 = Model()
-m1.input_shape = (config_values["train"]["input_shape_x"],
+m1.RGB_input_shape = (config_values["train"]["input_shape_x"],
                 config_values["train"]["input_shape_y"],
                 config_values["train"]["input_shape_z"]
                 )

@@ -46,7 +46,6 @@ class Model():
         activation = Activation("softmax")(outputs)
         model = models.Model(inputs=[video],outputs=activation)
         model.compile(optimizer='adam',loss='sparse_categorical_entropy')
-        model.summary()
         return model
     
     def buildModel(self):
@@ -146,7 +145,8 @@ class Train():
         else:
             self.model=saved_model
         print("Epochs completed =",epochs_completed)
-
+        self.model.summary()
+        
         for epochs in range(epochs_completed+1,self.Epochs+1):    
             #self.plot_makker.plot_metrics(m_path="data/performance_metrics/Metrics.npz",Epoch=epochs-1)
             print("\nEpoch:",epochs)
@@ -160,7 +160,6 @@ class Train():
             Val_Loss=[]
             Val_Acc=[]
             Val_Noun=[]
-            Val_Frame=[]
 
             while i<totalSamples:
                 if np.isnan(Frame).any():
