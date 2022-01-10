@@ -34,7 +34,7 @@ def getMinFrameValue():
 config_file = open("config.json")
 config_values = json.load(config_file)["Configuration Values"]
 
-"""
+#"""
 m1 = Model()
 m1.RGB_input_shape = (config_values["train"]["input_shape_x"],
                 config_values["train"]["input_shape_y"],
@@ -64,10 +64,10 @@ print("Epochs: ",t1.Epochs)
 
 t1.custom_train_model()
 session.close()
-"""
+#"""
 
 #Training Optical Flow
-#"""
+"""
 config = ConfigProto()
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
@@ -80,4 +80,4 @@ m2.train()
 
 
 session.close()
-#"""
+"""
