@@ -63,7 +63,6 @@ class Test_Experiments():
                         Nouns_Video.append(Noun)
                     Noun = stats.mode(Nouns_Video)[0][0]
                     Noun_Predicted.append(Noun)
-
                 
                 #for k in range(len(pred_RGB)):
                 #    Noun = self.reverse_annot(np.argmax(pred_RGB[k]))

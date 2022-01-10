@@ -126,14 +126,13 @@ class LoadData():
         self.train_test_splitNo = (("1","1"))
         self.train_split = "data/Splits/train_split" + self.train_test_splitNo[0] + ".csv"
         self.test_split = "data/Splits/test_split" + self.train_test_splitNo[1] + ".csv"
-        self.batch_size = 25
         self.train = pd.read_csv(self.train_split)
         self.test = pd.read_csv(self.test_split)
         self.mode = "train"
         self.input_shape = (299,299)
         self.sample_rate = 0.1
         self.fix_frames = 5
-        self.num_classes_total = 51
+        self.num_classes_total = 53
         
     def get_any_matrix(self,Mag,Angle,Encoding):
         interval_size = math.floor(len(Mag)/self.fix_frames)
@@ -260,6 +259,58 @@ class LoadData():
         else:
             return final_matrix
 
+    def read_any_rgb(self,access_order,start_index,end_index):    
+        Y_Noun=[]
+        Frame_Seq=[]
+        
+        for j in range(start_index,end_index):
+            Frame=[]
+            RGB,Noun = self.load_file(access_order[j],modality="RGB")
+            frame_indices = self.get_frame_order(RGB,modality="RGB")
+            
+            for count in range(self.fix_frames):
+                RGB_resized = cv2.resize(
+                    src=RGB[frame_indices[count]],
+                    dsize=self.input_shape)
+                
+                RGB_normalized = cv2.normalize(
+                    RGB_resized, 
+                    None, 
+                    alpha=0, 
+                    beta=1, 
+                    norm_type=cv2.NORM_MINMAX, 
+                    dtype=cv2.CV_32F)
+                Frame.append(RGB_normalized)
+                
+                RGB_val = np.array(Frame)
+                RGB_val = np.reshape(
+                    RGB_val,(
+                        1,RGB_val.shape[0],
+                        RGB_val.shape[1],
+                        RGB_val.shape[2],
+                        RGB_val.shape[3]))
+            
+        
+            Frame_Seq.append(RGB_val)
+            Y_Noun.append(Noun[0])
+
+        return Frame_Seq, Y_Noun
+    
+    def read_rgb(self,i,access_order):
+        start_idx = i
+        end_idx = i + 2*self.num_classes_total
+        Train_Frame = []
+        Train_Noun = []
+        Train_Frame,Train_Noun = self.read_any_rgb(access_order,start_index=start_idx,end_index = end_idx)
+
+        start_idx = end_idx
+        start_idx = end_idx + self.num_classes_total
+        Val_Frame = []
+        Val_Noun = []
+        Val_Frame,Val_Noun = self.read_any_rgb(access_order,start_index=i,end_index = i + self.num_classes_total)
+
+        return Train_Frame,Train_Noun,Val_Frame,Val_Noun
+    
     def read_frames(self,i,access_order,num_classes_total):    
         Y_Noun=[]
         Val_Frame=[]
@@ -275,7 +326,6 @@ class LoadData():
             
             frame_indices = self.get_frame_order(RGB,modality="RGB")
             for count in range(self.fix_frames):
-                
                 RGB_resized = cv2.resize(
                     src=RGB[frame_indices[count]],
                     dsize=self.input_shape)
@@ -289,18 +339,27 @@ class LoadData():
                     dtype=cv2.CV_32F)
                 
                 if self.mode=="train":
-                    Y_Noun.append((int)(Noun[frame_indices[count]]))
+                    #Y_Noun.append((int)(Noun[frame_indices[count]]))
                     if count==4:
                         Val_Frame.append(RGB_normalized)
                         Val_Noun.append((int)(Noun[frame_indices[count]]))    
                     Frame.append(RGB_normalized)
                 else:
                     Frame.append(RGB_normalized)
-            Frames.append(Frame)
+                
+                RGB_val = np.array(Frame)
+                RGB_val = np.reshape(
+                    RGB_val,(
+                        1,RGB_val.shape[0],
+                        RGB_val.shape[1],
+                        RGB_val.shape[2],
+                        RGB_val.shape[3]))
+            Frames.append(RGB_val)
+            Y_Noun.append(Noun[j])
         if self.mode=="test":
             return Frames
         else:
-            return Frame, Y_Noun,Val_Frame,Val_Noun
+            return Frames, Y_Noun,Val_Frame,Val_Noun
 
     def getTotal(self):
         return self.train.shape[0]

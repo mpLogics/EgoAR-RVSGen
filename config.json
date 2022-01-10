@@ -16,9 +16,9 @@
     "train" : {
         "run_value": false,
         "base_path":"data/",
-        "frames_to_be_extracted": 15,
-        "input_shape_x" : 299,
-        "input_shape_y" : 299,
+        "frames_to_be_extracted": 10,
+        "input_shape_x" : 240,
+        "input_shape_y" : 320,
         "input_shape_z" : 3,
         "base_trainable": true,
         "batch_preprocess_size" : 300,

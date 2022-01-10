@@ -34,24 +34,26 @@ def getMinFrameValue():
 config_file = open("config.json")
 config_values = json.load(config_file)["Configuration Values"]
 
-"""
+#"""
 m1 = Model()
 m1.input_shape = (config_values["train"]["input_shape_x"],
                 config_values["train"]["input_shape_y"],
                 config_values["train"]["input_shape_z"]
                 )
 m1.base_trainable = config_values["train"]["base_trainable"]
-m1.pooling = config_values["train"]["pooling"]
+#m1.pooling = config_values["train"]["pooling"]
 m1.modelWeights = config_values["train"]["modelWeights"]
 m1.activation = config_values["train"]["activation"]
 m1.include_top = config_values["train"]["include_top"]
-model,loss_func,optimizer = m1.buildModel()
+model = m1.Time_Distributed_Model()
+#model,loss_func,optimizer = m1.buildModel()
 
 t1 = Train()
 t1.fix_frames = config_values["train"]["frames_to_be_extracted"]
-t1.batch_preprocess_size = config_values["train"]["batch_preprocess_size"]
+#t1.batch_preprocess_size = config_values["train"]["batch_preprocess_size"]
 t1.Epochs = config_values["train"]["Epochs"]
 t1.model=model
+
 config = ConfigProto()
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
@@ -59,11 +61,13 @@ session = InteractiveSession(config=config)
 
 print("Training metrics")
 print("Epochs: ",t1.Epochs)
-print("Batch Preprocess size: ",t1.batch_preprocess_size)
 
-t1.custom_train_model(loss_func=loss_func,optimizer=optimizer)
+t1.custom_train_model()
+session.close()
+#"""
+
+#Training Optical Flow
 """
-
 config = ConfigProto()
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
@@ -76,3 +80,4 @@ m2.train()
 
 
 session.close()
+"""

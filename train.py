@@ -1,20 +1,22 @@
+from _typeshed import Self
 import numpy as np
-from numpy.core.numeric import NaN
 import tensorflow as tf
-from tensorflow import keras
-from tensorflow.python.keras.applications import imagenet_utils
-from tensorflow.python.ops.variables import trainable_variables
+from keras import layers, models, applications
+from keras.applications import inception_v3
+from keras.models import Sequential
+from keras.layers import Input, GlobalAveragePooling2D,Lambda, CuDNNLSTM,TimeDistributed,Dense,Activation
+import cv2
+from keras import backend as K
 from Data import LoadData,Data_Access
 from RVSGen import GenVerbSpace as GVS
 import pandas as pd
-import os
-import random
 from visualization import Visualizer
+
 
 class Model():
     def __init__(self):
-        self.input_shape = (299,299,3)
-        self.classes = 51
+        self.RGB_input_shape = (240,320,3)
+        self.RGB_classes = 53
         self.base_trainable = False
         self.include_top = False
         self.modelWeights = "imagenet"
@@ -25,12 +27,36 @@ class Model():
         self.temporal_extractor = None
         self.spatial_extractor = None
         
+    def Time_Distributed_Model(self):
+        video = Input(
+            shape=(
+                None, 
+                self.RGB_input_shape[0],
+                self.RGB_input_shape[1],
+                self.RGB_input_shape[2]),
+                name='video_input')
+
+        base_model = inception_v3.InceptionV3(
+            include_top=False,weights="imagenet",classes=self.RGB_classes)
+        
+        base_model.trainable = self.base_trainable
+        encoded_frame = TimeDistributed(Lambda(lambda x: base_model(x)))(video)
+        encoded_pool = TimeDistributed(GlobalAveragePooling2D())(encoded_frame)
+        encoded_vid = CuDNNLSTM(256)(encoded_pool)
+        ops = Dense(128, activation='relu')(encoded_vid)
+        outputs = layers.Dense(self.RGB_classes)(ops)
+        activation = Activation("softmax")(outputs)
+        model = models.Model(inputs=[video],outputs=activation)
+        model.compile(optimizer='adam',loss='sparse_categorical_entropy')
+        model.summary()
+        return model
+    
     def buildModel(self):
         base_model = keras.applications.InceptionV3(
             include_top=self.include_top,weights=self.modelWeights,
             input_tensor=self.inputTensor,input_shape=self.input_shape,
             pooling=self.pooling,classes=self.classes)
-        
+
         base_model.trainable = self.base_trainable
         x = base_model.output
         x = keras.layers.GlobalAveragePooling2D()(x)
@@ -45,7 +71,7 @@ class Model():
         print("Total classes = ",self.classes)
         self.spatial_extractor = keras.Model(base_model.input,outputs)
         loss_func = keras.losses.SparseCategoricalCrossentropy()
-        optimizer = keras.optimizers.Adam(learning_rate=0.0001)
+        optimizer = keras.optimizers.Adam(learning_rate=0.001)
         self.spatial_extractor.compile(optimizer,loss_func,metrics=["accuracy"])
     
         return loss_func,optimizer
@@ -54,10 +80,8 @@ class Train():
     def __init__(self):
         self.train_test_split = (("1","1"))
         self.model_save_path = ("saved_models")
-        self.batch_preprocess_size = 25
         self.Epochs = 60
-        self.classes = np.count_nonzero(GVS().getNounSet())
-        self.input_shape = (120,160,3)
+        self.input_shape = (240,320,3)
         self.base_trainable = False
         self.include_top = False    
         self.modelWeights = "imagenet"
@@ -66,10 +90,11 @@ class Train():
         self.inputTensor = None
         self.fix_frames = 15
         self.model = "None"
-        self.num_classes_total = 51
+        self.num_classes_total = 53
         self.plot_makker = Visualizer()
     
     def getCorrected(self,Y):
+        return Y - 1
         Y_corrected = np.copy(Y)
         for i in range(Y.shape[0]):
             if Y[i]<=15:
@@ -103,7 +128,7 @@ class Train():
 
         return saved_model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch
 
-    def custom_train_model(self,loss_func,optimizer):
+    def custom_train_model(self):
         L1 = LoadData()
         L1.train_test_splitNo = self.train_test_split 
         L1.batch_size = self.batch_preprocess_size
@@ -113,21 +138,22 @@ class Train():
         Accuracy_per_epoch=[]
         Val_Loss_per_epoch=[]
         Val_Acc_per_epoch=[]
-        access_order = Data_Access().build_order()
+        da = Data_Access()
+        da.random_flag = False
+        access_order = da.build_order()
         train_succ=False
-        self.model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings()
+        self.model,epochs_completed,Metrics = self.check_prev_trainings()
+        Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = Metrics
         
         print("Epochs completed =",epochs_completed)
-        
+
         for epochs in range(epochs_completed+1,self.Epochs+1):    
             self.plot_makker.plot_metrics(m_path="data/performance_metrics/Metrics.npz",Epoch=epochs-1)
             print("\nEpoch:",epochs)
             i = 0
             num_batches=0
-            crt_batch = 0
             Frame=[]
             Y_Noun=[]
-            diff=0
             plotter_flag = False
             Loss=[]
             Accuracy=[]
@@ -136,16 +162,20 @@ class Train():
             Val_Noun=[]
             Val_Frame=[]
 
-            while i<totalSamples-1:
+            while i<totalSamples:
                 if np.isnan(Frame).any():
                     print("Nan encountered. at file index",i)
                 
+                X_train,Y_Noun,X_Val,Val_Noun = L1.read_rgb(i,access_order)
                 try:
-                    Frame,Y_Noun,Val_Frame,Val_Noun = L1.read_frames(i,access_order,self.num_classes_total)
+                    #Frame,Y_Noun,Val_Frame,Val_Noun = L1.read_frames(i,access_order,self.num_classes_total)
+                    #X_train,Y_Noun,X_Val,Val_Noun = L1.read_rgb(i,access_order)
+                    pass
                 except Exception:
                     print("Error reading files from index: ",i)
                 
-                i+=self.num_classes_total
+                i+=(self.num_classes_total*3)
+                #i+=self.num_classes_total
                 
                 
                 #if crt_batch == self.batch_preprocess_size  or i == totalSamples-1 or True:
@@ -158,8 +188,8 @@ class Train():
                 num_batches+=1
                 
                 # Setting X and Y for training
-                X = np.array(Frame)
-                X_val = np.array(Val_Frame)
+                #X = np.array(Frame)
+                #X_val = np.array(Val_Frame)
                 
 
                 Y_corrected = self.getCorrected(np.array(Y_Noun))
@@ -171,7 +201,7 @@ class Train():
                 
                 # Training batch
                 try:
-                    history = self.model.fit(X,Y,epochs=1,validation_data=(X_val,Y_val))
+                    history = self.model.fit(X_train,Y,epochs=1,validation_data=(X_Val,Y_val))
                     train_succ=True
                 except Exception:
                     print("Unsuccessful training for",i)
@@ -190,11 +220,6 @@ class Train():
                     print("Average Validation Loss: ",np.mean(np.array(Val_Loss)))
                     print("Average Validation Accuracy: ",np.mean(np.array(Val_Acc)))
                 
-                Frame=[]
-                Y_Noun=[]
-                Val_Noun=[]
-                Val_Frame=[]
-                crt_batch=0
                 try:
                     if (num_batches+1)%30==0 and plotter_flag==False:
                         self.plot_makker.makePlot(Loss,caption = "Loss Curve",sloc = "data/Graphs/Loss_vs_Epoch_" + (str)(num_batches) + ".png")
