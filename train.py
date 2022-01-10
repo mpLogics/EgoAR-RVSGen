@@ -124,7 +124,7 @@ class Train():
             Val_Loss_per_epoch.append(performance_metrics['c'][i])
             Val_Acc_per_epoch.append(performance_metrics['d'][i])
 
-        return saved_model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch
+        return saved_model, epochs_completed, Loss_per_epoch, Accuracy_per_epoch, Val_Loss_per_epoch, Val_Acc_per_epoch
 
     def custom_train_model(self):
         L1 = LoadData()
