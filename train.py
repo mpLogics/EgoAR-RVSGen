@@ -1,11 +1,9 @@
-from _typeshed import Self
 import numpy as np
 import tensorflow as tf
 from keras import layers, models, applications
 from keras.applications import inception_v3
-from keras.models import Sequential
+#from keras.models import Sequential
 from keras.layers import Input, GlobalAveragePooling2D,Lambda, CuDNNLSTM,TimeDistributed,Dense,Activation
-import cv2
 from keras import backend as K
 from Data import LoadData,Data_Access
 from RVSGen import GenVerbSpace as GVS
