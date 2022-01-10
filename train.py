@@ -24,11 +24,12 @@ class Model():
         self.model_modality = None
         self.temporal_extractor = None
         self.spatial_extractor = None
+        self.fixed_frames = 10
         
     def Time_Distributed_Model(self):
         video = Input(
             shape=(
-                None, 
+                self.fixed_frames, 
                 self.RGB_input_shape[0],
                 self.RGB_input_shape[1],
                 self.RGB_input_shape[2]),
