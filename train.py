@@ -88,7 +88,7 @@ class Train():
         self.pooling = None
         self.activation = "softmax"
         self.inputTensor = None
-        self.fix_frames = 15
+        self.fix_frames = 10
         self.model = "None"
         self.num_classes_total = 53
         self.plot_makker = Visualizer()
@@ -131,6 +131,7 @@ class Train():
     def custom_train_model(self):
         L1 = LoadData()
         L1.train_test_splitNo = self.train_test_split 
+        L1.fix_frames = self.fix_frames
         #L1.batch_size = self.batch_preprocess_size
         totalSamples = L1.getTotal()
         print("Total samples = ",totalSamples)

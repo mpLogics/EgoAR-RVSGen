@@ -131,7 +131,7 @@ class LoadData():
         self.mode = "train"
         self.input_shape = (320,240)
         self.sample_rate = 0.1
-        self.fix_frames = 5
+        self.fix_frames = 10
         self.num_classes_total = 53
         
     def get_any_matrix(self,Mag,Angle,Encoding):
