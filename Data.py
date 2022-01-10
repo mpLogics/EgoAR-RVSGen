@@ -283,12 +283,12 @@ class LoadData():
                 Frame.append(RGB_normalized)
                 
                 RGB_val = np.array(Frame)
-                RGB_val = np.reshape(
-                    RGB_val,(
-                        1,RGB_val.shape[0],
-                        RGB_val.shape[1],
-                        RGB_val.shape[2],
-                        RGB_val.shape[3]))
+                #RGB_val = np.reshape(
+                #    RGB_val,(
+                #        1,RGB_val.shape[0],
+                #        RGB_val.shape[1],
+                #        RGB_val.shape[2],
+                #        RGB_val.shape[3]))
             
         
             Frame_Seq.append(RGB_val)
