@@ -129,7 +129,7 @@ class Train():
     def custom_train_model(self):
         L1 = LoadData()
         L1.train_test_splitNo = self.train_test_split 
-        L1.batch_size = self.batch_preprocess_size
+        #L1.batch_size = self.batch_preprocess_size
         totalSamples = L1.getTotal()
         print("Total samples = ",totalSamples)
         Loss_per_epoch=[]
