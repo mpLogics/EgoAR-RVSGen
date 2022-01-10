@@ -39,22 +39,26 @@ class Test_Experiments():
         Noun_Predicted = []
         i=0
         num_batches=0
-
+        Nouns_true=[]
+        df_Nouns = pd.read_csv("data/Splits/test_split1.csv")["Noun"]
         while i < total_samples:
-            if num_batches%5 or i==500:
-                print("Files read:",i,"Ongoing batch size",batch_size,"Batches completed:",num_batches)
+            print(num_batches)
+            if num_batches%5==0:
+                print("Files read:",i,", Ongoing batch size:",batch_size,", Batches completed:",num_batches)
             try:
                 Frames = data_loader.read_frames(
                                 i,
                                 access_order,
                                 batch_size)
                 Nouns_Video=[]
+                
                 print("Total Videos:",len(Frames))
+                
                 for j in range(len(Frames)):
                     X_RGB = np.array(Frames[j])
-                    print("Input Shape",X_RGB.shape)
                     pred_RGB = noun_predictor.predict(X_RGB)
                     for m in range(len(Frames[j])):
+                        Nouns_true.append(np.argmax(pred_RGB[m]))
                         Noun = self.reverse_annot(np.argmax(pred_RGB[m]))
                         Nouns_Video.append(Noun)
                     Noun = stats.mode(Nouns_Video)[0][0]
@@ -71,7 +75,7 @@ class Test_Experiments():
                 batch_size=1
             i+=batch_size
             num_batches+=1
-        return np.array(Noun_Predicted)
+        return np.array(Noun_Predicted),np.array(Nouns_true)
     
     def predict_verb(self,rvs_rules,verb_predictor,use_RVS,K_range,total_samples,nouns_with_path):
         data_loader = LoadData()
@@ -167,8 +171,8 @@ t1 = Test_Experiments()
 rvs_rules=RVS_Implement()
 noun_predictor = rvs_rules.get_noun_model()
 
-Nouns = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
-np.savez("data/results/test_reports/Nouns.npz",a = Nouns)
+Nouns,All_Nouns = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
+np.savez("data/results/test_reports/Nouns.npz",a = Nouns,b=All_Nouns)
 
 session.close()
 
