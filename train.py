@@ -196,6 +196,7 @@ class Train():
                 Y_val = tf.convert_to_tensor(Y_val_corrected)
                 
                 
+                history = self.model.fit(X_train,Y,epochs=1,validation_data=(X_Val,Y_val))
                 # Training batch
                 try:
                     history = self.model.fit(X_train,Y,epochs=1,validation_data=(X_Val,Y_val))
