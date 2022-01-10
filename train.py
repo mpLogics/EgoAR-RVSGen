@@ -140,8 +140,11 @@ class Train():
         da.random_flag = False
         access_order = da.build_order()
         train_succ=False
-        self.model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings(model_name="Noun_Predictor",modality="RGB")
-        
+        saved_model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings(model_name="Noun_Predictor",modality="RGB")
+        if saved_model==None:
+            pass
+        else:
+            self.model=saved_model
         print("Epochs completed =",epochs_completed)
 
         for epochs in range(epochs_completed+1,self.Epochs+1):    
