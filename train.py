@@ -124,7 +124,7 @@ class Train():
             Val_Loss_per_epoch.append(performance_metrics['c'][i])
             Val_Acc_per_epoch.append(performance_metrics['d'][i])
 
-        return saved_model,epochs_completed,(Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch)
+        return saved_model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch
 
     def custom_train_model(self):
         L1 = LoadData()
@@ -140,8 +140,7 @@ class Train():
         da.random_flag = False
         access_order = da.build_order()
         train_succ=False
-        self.model,epochs_completed,Metrics = self.check_prev_trainings(model_name="Noun_Predictor",modality="RGB")
-        Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = Metrics
+        self.model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings(model_name="Noun_Predictor",modality="RGB")
         
         print("Epochs completed =",epochs_completed)
 
