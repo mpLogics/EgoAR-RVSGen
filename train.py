@@ -167,6 +167,7 @@ class Train():
                     print("Nan encountered. at file index",i)
                 
                 X_train,Y_Noun,X_Val,Val_Noun = L1.read_rgb(i,access_order)
+                print("File Shape",np.array(X_train).shape)
                 try:
                     #Frame,Y_Noun,Val_Frame,Val_Noun = L1.read_frames(i,access_order,self.num_classes_total)
                     #X_train,Y_Noun,X_Val,Val_Noun = L1.read_rgb(i,access_order)
