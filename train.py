@@ -145,7 +145,7 @@ class Train():
         print("Epochs completed =",epochs_completed)
 
         for epochs in range(epochs_completed+1,self.Epochs+1):    
-            self.plot_makker.plot_metrics(m_path="data/performance_metrics/Metrics.npz",Epoch=epochs-1)
+            #self.plot_makker.plot_metrics(m_path="data/performance_metrics/Metrics.npz",Epoch=epochs-1)
             print("\nEpoch:",epochs)
             i = 0
             num_batches=0
