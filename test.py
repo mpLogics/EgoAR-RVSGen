@@ -31,6 +31,7 @@ class Test_Experiments():
     def predict_noun(self,noun_predictor,total_samples):
         data_loader = LoadData()
         data_loader.mode = "test"
+        data_loader.fix_frames = 10
 
         access_order = [i for i in range(total_samples)]
         print("Beginning Noun Prediction")
@@ -38,6 +39,7 @@ class Test_Experiments():
         Noun_Predicted = []
         i=0
         num_batches=0
+
         while i < total_samples:
             if num_batches%5 or i==500:
                 print("Files read:",i,"Ongoing batch size",batch_size,"Batches completed:",num_batches)
@@ -47,8 +49,10 @@ class Test_Experiments():
                                 access_order,
                                 batch_size)
                 Nouns_Video=[]
+                print("Total Videos:",len(Frames))
                 for j in range(len(Frames)):
                     X_RGB = np.array(Frames[j])
+                    print("Input Shape",X_RGB.shape)
                     pred_RGB = noun_predictor.predict(X_RGB)
                     for m in range(len(Frames[j])):
                         Noun = self.reverse_annot(np.argmax(pred_RGB[m]))
