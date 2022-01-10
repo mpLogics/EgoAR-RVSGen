@@ -169,12 +169,10 @@ class Train():
                 if np.isnan(Frame).any():
                     print("Nan encountered. at file index",i)
                 
-                X_train,Y_Noun,X_Val,Val_Noun = L1.read_rgb(i,access_order)
-                print("File Shape",np.array(X_train).shape)
                 try:
+                    X_train,Y_Noun,X_Val,Val_Noun = L1.read_rgb(i,access_order)
                     #Frame,Y_Noun,Val_Frame,Val_Noun = L1.read_frames(i,access_order,self.num_classes_total)
                     #X_train,Y_Noun,X_Val,Val_Noun = L1.read_rgb(i,access_order)
-                    pass
                 except Exception:
                     print("Error reading files from index: ",i)
                 
@@ -203,18 +201,16 @@ class Train():
                 Y_val = tf.convert_to_tensor(Y_val_corrected)
                 
                 
-                history = self.model.fit(np.array(X_train),Y,epochs=1,validation_data=(np.array(X_Val),Y_val))
+                
                 # Training batch
-                """
                 try:
-                    history = self.model.fit(X_train,Y,epochs=1,validation_data=(X_Val,Y_val))
+                    history = self.model.fit(np.array(X_train),Y,epochs=1,validation_data=(np.array(X_Val),Y_val))
                     train_succ=True
                 except Exception:
                     print("Unsuccessful training for",i)
                     train_succ=False
-                """
 
-                if True:
+                if train_succ:
                     # Collecting Metrics
                     Loss.append(history.history['loss'])
                     Accuracy.append(history.history['accuracy'])
@@ -247,7 +243,7 @@ class Train():
             self.model.save("Noun_Predictor")
             print("Model save successful!")
         
-        self.plot_makker.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
+        #self.plot_makker.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
         try:
             model.save('model_checkpoints/RGB_Noun.h5')
             print("Model trained successfully")
