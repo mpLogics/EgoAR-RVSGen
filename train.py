@@ -205,14 +205,16 @@ class Train():
                 
                 history = self.model.fit(np.array(X_train),Y,epochs=1,validation_data=(np.array(X_Val),Y_val))
                 # Training batch
+                """
                 try:
                     history = self.model.fit(X_train,Y,epochs=1,validation_data=(X_Val,Y_val))
                     train_succ=True
                 except Exception:
                     print("Unsuccessful training for",i)
                     train_succ=False
-                
-                if train_succ==True:
+                """
+
+                if True:
                     # Collecting Metrics
                     Loss.append(history.history['loss'])
                     Accuracy.append(history.history['accuracy'])
