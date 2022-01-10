@@ -123,7 +123,7 @@ class Train():
             Accuracy_per_epoch.append(performance_metrics['b'][i])
             Val_Loss_per_epoch.append(performance_metrics['c'][i])
             Val_Acc_per_epoch.append(performance_metrics['d'][i])
-
+        print("6 values")
         return saved_model, epochs_completed, Loss_per_epoch, Accuracy_per_epoch, Val_Loss_per_epoch, Val_Acc_per_epoch
 
     def custom_train_model(self):
