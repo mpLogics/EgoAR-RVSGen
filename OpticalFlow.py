@@ -180,7 +180,7 @@ class learn_optical_flow():
                 
                 
                 Y_val = tf.convert_to_tensor(Y_val_corrected)
-                
+                print("Before reshape",X_Value.shape)
                 # Training batch
                 X = np.reshape(X_Value,(
                     self.num_classes_total*self.upscale_factor,
@@ -188,7 +188,10 @@ class learn_optical_flow():
                     self.frame_rows,
                     self.frame_cols,
                     self.channels))
-                
+                print("After reshape",X.shape)
+                exit_key = input("Proceed?")
+                if exit_key=='n':
+                    exit()
                 X_val = np.reshape(Val_Frame,(
                     self.num_classes_total,
                     self.val_seq_size,
