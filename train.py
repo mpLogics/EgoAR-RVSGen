@@ -27,23 +27,18 @@ class Model():
         self.fixed_frames = 10
         
     def Time_Distributed_Model(self):
-        #video = Input(
-        #    shape=(
-        #        self.fixed_frames, 
-        #        self.RGB_input_shape[0],
-        #        self.RGB_input_shape[1],
-        #        self.RGB_input_shape[2]),
-        #        name='video_input')
+        video = Input(
+            shape=(
+                self.fixed_frames, 
+                self.RGB_input_shape[0],
+                self.RGB_input_shape[1],
+                self.RGB_input_shape[2]),
+                name='video_input')
 
         base_model = inception_v3.InceptionV3(
             include_top=False,
             weights="imagenet",
-            classes=self.RGB_classes,
-            input_shape=(
-                self.fixed_frames, 
-                self.RGB_input_shape[0],
-                self.RGB_input_shape[1],
-                self.RGB_input_shape[2]))
+            classes=self.RGB_classes)
         
         base_model.trainable = self.base_trainable
         encoded_frame = TimeDistributed(Lambda(lambda x: base_model(x)))(base_model.input)
@@ -207,7 +202,7 @@ class Train():
                 Y_val = tf.convert_to_tensor(Y_val_corrected)
                 
                 
-                history = self.model.fit(X_train,Y,epochs=1,validation_data=(X_Val,Y_val))
+                history = self.model.fit(np.array(X_train),Y,epochs=1,validation_data=(X_Val,Y_val))
                 # Training batch
                 try:
                     history = self.model.fit(X_train,Y,epochs=1,validation_data=(X_Val,Y_val))
