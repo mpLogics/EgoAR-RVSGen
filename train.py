@@ -43,7 +43,7 @@ class Model():
         encoded_pool = TimeDistributed(GlobalAveragePooling2D())(encoded_frame)
         encoded_vid = LSTM(256)(encoded_pool)
         ops = Dense(128, activation='relu')(encoded_vid)
-        outputs = layers.Dense(self.RGB_classes)(ops)
+        outputs = Dense(self.RGB_classes)(ops)
         activation = Activation("softmax")(outputs)
         model = Model(inputs=[video],outputs=activation)
         model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
