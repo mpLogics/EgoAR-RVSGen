@@ -1,13 +1,20 @@
+import tensorflow as tf
+from keras import layers, models, applications
+from keras.models import Sequential
+
 import numpy as np
 import tensorflow as tf
 #from tf.python.keras.models import Model, load_model
 from tensorflow.python.keras.models import Model, load_model
-#from tensorflow.keras.applications import inception_v3
+from tensorflow.keras.applications import inception_v3
 #from keras.models import Sequential
 from tensorflow.keras.layers import Input, GlobalAveragePooling2D,Lambda, LSTM,TimeDistributed,Dense,Activation
 from Data import LoadData,Data_Access
 from visualization import Visualizer
+from keras import backend as K
 
+# set learning phase to 0
+K.set_learning_phase(0)
 
 class Model():
     def __init__(self):
@@ -39,7 +46,7 @@ class Model():
             classes=self.RGB_classes)
         
         base_model.trainable = self.base_trainable
-        encoded_frame = TimeDistributed(base_model)(video)
+        encoded_frame = TimeDistributed(Lambda(lambda x: base_model(x)))(video)
         encoded_pool = TimeDistributed(GlobalAveragePooling2D())(encoded_frame)
         encoded_vid = LSTM(256)(encoded_pool)
         ops = Dense(128, activation='relu')(encoded_vid)
