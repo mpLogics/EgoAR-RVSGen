@@ -149,7 +149,8 @@ class Train():
             pass
         else:
             self.model=saved_model
-            self.model.save("Noun_Predictor")
+        
+        self.model.save("Noun_Predictor")
         print("Epochs completed =",epochs_completed)
         self.model.summary()
         
