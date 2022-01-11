@@ -45,7 +45,7 @@ class Model():
         ops = Dense(128, activation='relu')(encoded_vid)
         outputs = Dense(self.RGB_classes)(ops)
         activation = Activation("softmax")(outputs)
-        model = Model(video,activation)
+        model = tf.keras.models.Model(inputs=video,outputs=activation)
         model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         return model
     
