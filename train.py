@@ -1,10 +1,10 @@
 import numpy as np
 import tensorflow as tf
 #from tf.python.keras.models import Model, load_model
-from tf.keras import layers, models, applications
-from tf.keras.applications import inception_v3
+from tensorflow.keras import layers, models, applications
+from tensorflow.keras.applications import inception_v3
 #from keras.models import Sequential
-from tf.keras.layers import Input, GlobalAveragePooling2D,Lambda, LSTM,TimeDistributed,Dense,Activation
+from tensorflow.keras.layers import Input, GlobalAveragePooling2D,Lambda, LSTM,TimeDistributed,Dense,Activation
 from keras import backend as K
 from Data import LoadData,Data_Access
 from RVSGen import GenVerbSpace as GVS
