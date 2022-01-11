@@ -42,7 +42,7 @@ class Model():
         
         base_model = tf.keras.applications.inception_v3.InceptionV3(
             include_top=False,
-            weights="imagenet",
+            weights=self.modelWeights,
             classes=self.RGB_classes)
         
         base_model.trainable = self.base_trainable
@@ -134,6 +134,7 @@ class Train():
         return saved_model, epochs_completed, Loss_per_epoch, Accuracy_per_epoch, Val_Loss_per_epoch, Val_Acc_per_epoch
 
     def custom_train_model(self):
+        m2 = Model()
         L1 = LoadData()
         L1.train_test_splitNo = self.train_test_split 
         L1.fix_frames = self.fix_frames
@@ -154,7 +155,12 @@ class Train():
         else:
             self.model=saved_model
         self.model.summary()
-        self.model.save("Noun_Predictor")
+        print("Saving Weights")
+        self.model.save_weights('model_weights.h5')
+        
+        print("LOading Weights")
+
+        self.model.load_weights('model_weights.h5')
         print("Epochs completed =",epochs_completed)
         
         
