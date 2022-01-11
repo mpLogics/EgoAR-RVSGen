@@ -1,14 +1,11 @@
 import numpy as np
 import tensorflow as tf
 #from tf.python.keras.models import Model, load_model
-from tensorflow.keras import layers, models, applications
+from tensorflow.python.keras.models import Model, load_model
 from tensorflow.keras.applications import inception_v3
 #from keras.models import Sequential
 from tensorflow.keras.layers import Input, GlobalAveragePooling2D,Lambda, LSTM,TimeDistributed,Dense,Activation
-from keras import backend as K
 from Data import LoadData,Data_Access
-from RVSGen import GenVerbSpace as GVS
-import pandas as pd
 from visualization import Visualizer
 
 
@@ -48,7 +45,7 @@ class Model():
         ops = Dense(128, activation='relu')(encoded_vid)
         outputs = layers.Dense(self.RGB_classes)(ops)
         activation = Activation("softmax")(outputs)
-        model = models.Model(inputs=[video],outputs=activation)
+        model = Model(inputs=[video],outputs=activation)
         model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         return model
     
@@ -110,7 +107,7 @@ class Train():
     def check_prev_trainings(self,model_name,modality):
         try:
             performance_metrics = np.load("data/performance_metrics/" + modality + "/Metrics.npz")
-            saved_model = keras.models.load_model(model_name)
+            saved_model = load_model(model_name)
         except Exception:
             print("Saved model could not be read.")
             return None,0,[],[],[],[]
