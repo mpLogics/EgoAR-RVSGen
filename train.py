@@ -155,14 +155,6 @@ class Train():
         else:
             self.model=saved_model
         self.model.summary()
-        print("Saving Weights")
-        self.model.save_weights('model_weights.h5')
-        
-        print("LOading Weights")
-
-        self.model.load_weights('model_weights.h5')
-        print("Epochs completed =",epochs_completed)
-        
         
         for epochs in range(epochs_completed+1,self.Epochs+1):    
             #self.plot_makker.plot_metrics(m_path="data/performance_metrics/Metrics.npz",Epoch=epochs-1)
@@ -299,8 +291,9 @@ class Train():
             a = Loss_per_epoch,b=Accuracy_per_epoch,
             c = Val_Loss_per_epoch,d=Val_Acc_per_epoch)
 
-            self.model.save("Noun_Predictor")
-            print("Model save successful!")
+            self.model.save_weights('model_weights.h5')
+            #self.model.save("Noun_Predictor")
+            print("Model weights save successful!")
         
         #self.plot_makker.makePlot(Loss_per_epoch,caption = "Loss Curve",sloc="Loss_vs_Epoch_"+ (str)(epochs)+ ".png")
         try:
