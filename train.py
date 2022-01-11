@@ -25,25 +25,21 @@ class Model():
         self.fixed_frames = 10
         
     def Time_Distributed_Model(self):
-        #video = Input(
-        #    shape=(
-        #        self.fixed_frames, 
-        #        self.RGB_input_shape[0],
-        #        self.RGB_input_shape[1],
-        #        self.RGB_input_shape[2]),
-        #        name='video_input')
+        video = Input(
+            shape=(
+                self.fixed_frames, 
+                self.RGB_input_shape[0],
+                self.RGB_input_shape[1],
+                self.RGB_input_shape[2]),
+                name='video_input')
         
         base_model = tf.keras.applications.inception_v3.InceptionV3(
             include_top=False,
             weights="imagenet",
-            classes=self.RGB_classes,input_shape=(
-                self.fixed_frames, 
-                self.RGB_input_shape[0],
-                self.RGB_input_shape[1],
-                self.RGB_input_shape[2]))
+            classes=self.RGB_classes)
         
         base_model.trainable = self.base_trainable
-        encoded_frame = TimeDistributed(base_model)(base_model.output)
+        encoded_frame = TimeDistributed(base_model)(video)
         encoded_pool = TimeDistributed(GlobalAveragePooling2D())(encoded_frame)
         encoded_vid = LSTM(256)(encoded_pool)
         ops = Dense(128, activation='relu')(encoded_vid)
@@ -150,7 +146,6 @@ class Train():
             pass
         else:
             self.model=saved_model
-        
         self.model.summary()
         self.model.save("Noun_Predictor")
         print("Epochs completed =",epochs_completed)
