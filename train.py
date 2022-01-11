@@ -1,10 +1,10 @@
 import numpy as np
 import tensorflow as tf
 #from tf.python.keras.models import Model, load_model
-from tensorflow.python.keras.models import Model, load_model
-from tensorflow.keras.applications import inception_v3
+#from tensorflow.python.keras.models import Model, load_model
+#from tensorflow.keras.applications import inception_v3
 #from keras.models import Sequential
-from tensorflow.keras.layers import Input, GlobalAveragePooling2D,Lambda, LSTM,TimeDistributed,Dense,Activation
+#from tensorflow.keras.layers import Input, GlobalAveragePooling2D,Lambda, LSTM,TimeDistributed,Dense,Activation
 from Data import LoadData,Data_Access
 from visualization import Visualizer
 
@@ -25,7 +25,7 @@ class Model():
         self.fixed_frames = 10
         
     def Time_Distributed_Model(self):
-        video = Input(
+        video = tf.keras.Input(
             shape=(
                 self.fixed_frames, 
                 self.RGB_input_shape[0],
@@ -33,19 +33,19 @@ class Model():
                 self.RGB_input_shape[2]),
                 name='video_input')
         
-        base_model = inception_v3.InceptionV3(
+        base_model = tf.keras.applications.inception_v3.InceptionV3(
             include_top=False,
             weights="imagenet",
             classes=self.RGB_classes)
         
         base_model.trainable = self.base_trainable
-        encoded_frame = TimeDistributed(Lambda(lambda x: base_model(x)))(video)
-        encoded_pool = TimeDistributed(GlobalAveragePooling2D())(encoded_frame)
-        encoded_vid = LSTM(256)(encoded_pool)
-        ops = Dense(128, activation='relu')(encoded_vid)
-        outputs = Dense(self.RGB_classes)(ops)
-        activation = Activation("softmax")(outputs)
-        model = Model(video,activation)
+        encoded_frame = tf.keras.layers.TimeDistributed(tf.keras.layers.Lambda(lambda x: base_model(x)))(video)
+        encoded_pool = tf.keras.layers.TimeDistributed(tf.keras.layers.GlobalAveragePooling2D())(encoded_frame)
+        encoded_vid = tf.keras.layers.LSTM(256)(encoded_pool)
+        ops = tf.keras.layers.Dense(128, activation='relu')(encoded_vid)
+        outputs = tf.keras.layers.Dense(self.RGB_classes)(ops)
+        activation = tf.keras.layers.Activation("softmax")(outputs)
+        model = tf.keras.Model(inputs=video,outputs=activation)
         model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         return model
     
