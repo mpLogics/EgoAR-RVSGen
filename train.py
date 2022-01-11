@@ -165,7 +165,7 @@ class Train():
             Val_Acc=[]
             Val_Noun=[]
 
-            while i<totalSamples:
+            for i in range(0,totalSamples-(self.num_classes_total*3),self.num_classes_total*3):
                 if np.isnan(Frame).any():
                     print("Nan encountered. at file index",i)
                 
@@ -176,7 +176,7 @@ class Train():
                 except Exception:
                     print("Error reading files from index: ",i)
                 
-                i+=(self.num_classes_total*3)
+                #i+=(self.num_classes_total*3)
                 #i+=self.num_classes_total
                 
                 
@@ -231,6 +231,52 @@ class Train():
                 except Exception:
                     print("Plot saving unsuccessful!")
                 
+            for i in range(num_batches*self.num_classes_total*3,totalSamples,4):
+                try:
+                    X_train,Y_Noun = L1.read_any_rgb(access_order,start_index=i,end_index=i+3)
+                    X_Val,Val_Noun = L1.read_any_rgb(access_order,start_index=i+3,end_index=i+4)
+                except Exception:
+                    print("Error reading files from index: ",i)
+                
+                # Logs
+                print("\nClasses covered in batch: ",(np.unique(np.array(Y_Noun))).shape[0])
+                print("Batch(es) read: ",num_batches)
+                print("Files read = ",i)                   
+
+                num_batches+=1
+                
+                # Setting X and Y for training
+                X = np.array(X_train)
+                X_val = np.array(X_Val)
+                
+
+                Y_corrected = self.getCorrected(np.array(Y_Noun))
+                Y = tf.convert_to_tensor(Y_corrected)
+                
+                Y_val_corrected = self.getCorrected(np.array(Val_Noun))
+                Y_val = tf.convert_to_tensor(Y_val_corrected)
+                
+                # Training batch
+                try:
+                    history = self.model.fit(X,Y,epochs=1,validation_data=(X_val,Y_val))
+                    train_succ=True
+                except Exception:
+                    print("Unsuccessful training for",i)
+                    train_succ=False
+
+                if train_succ:
+                    # Collecting Metrics
+                    Loss.append(history.history['loss'])
+                    Accuracy.append(history.history['accuracy'])
+                    Val_Loss.append(history.history['val_loss'])
+                    Val_Acc.append(history.history['val_accuracy'])
+                
+                    # Displaying Metrics
+                    print("Average Loss: ",np.mean(np.array(Loss)))
+                    print("Average Accuracy: ",np.mean(np.array(Accuracy)))
+                    print("Average Validation Loss: ",np.mean(np.array(Val_Loss)))
+                    print("Average Validation Accuracy: ",np.mean(np.array(Val_Acc)))
+            
             Loss_per_epoch.append(np.mean(np.array(Loss)))
             Accuracy_per_epoch.append(np.mean(np.array(Accuracy)))
             Val_Loss_per_epoch.append(np.mean(np.array(Val_Loss)))
