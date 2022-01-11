@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 #from tf.python.keras.models import Model, load_model
-#from tensorflow.python.keras.models import Model, load_model
+from tensorflow.python.keras.models import Model, load_model
 #from tensorflow.keras.applications import inception_v3
 #from keras.models import Sequential
 from tensorflow.keras.layers import Input, GlobalAveragePooling2D,Lambda, LSTM,TimeDistributed,Dense,Activation
@@ -25,7 +25,7 @@ class Model():
         self.fixed_frames = 10
         
     def Time_Distributed_Model(self):
-        video = tf.keras.Input(
+        video = Input(
             shape=(
                 self.fixed_frames, 
                 self.RGB_input_shape[0],
