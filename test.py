@@ -30,7 +30,7 @@ class Test_Experiments():
 
     def predict_noun(self,noun_predictor,total_samples):
         data_loader = LoadData()
-        
+
         data_loader.fix_frames = 10
         noun_predictor.load_weights("model_weights.h5")
         print("Loaded Weights")
@@ -51,7 +51,7 @@ class Test_Experiments():
             #try:
             Frames,Y_Noun = data_loader.read_any_rgb(access_order,start_index=i,end_index=i+batch_size)
             X = np.array(Frames)
-            noun_predictor.evaluate(X,Y_Noun)
+            noun_predictor.evaluate(X,np.array(Y_Noun))
             pred = noun_predictor.predict(X)
             
             for j in range(len(pred)):
