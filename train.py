@@ -107,7 +107,7 @@ class Train():
         totalSamples = L1.getTotal()
         print("Total samples = ",totalSamples)
         da = Data_Access()
-        da.random_flag = False
+        da.random_flag = True
         access_order = da.build_order()
         self.model.summary()
         self.check_prev_trainings(model_weights="model_weights.h5")
@@ -147,7 +147,7 @@ class Train():
                 
                 # Training batch
                 try:
-                    history = self.model.fit(np.array(X_train),Y,epochs=2,validation_data=(np.array(X_Val),Y_val))
+                    history = self.model.fit(np.array(X_train),Y,epochs=1)#,validation_data=(np.array(X_Val),Y_val))
                 except Exception:
                     print("Unsuccessful training for",i)
 
