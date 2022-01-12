@@ -48,11 +48,13 @@ class Test_Experiments():
             if num_batches%5==0:
                 print("Files read:",i,", Ongoing batch size:",batch_size,", Batches completed:",num_batches)
             
-            #try:
-            Frames,Y_Noun = data_loader.read_any_rgb(access_order,start_index=i,end_index=i+batch_size)
-            X = np.array(Frames)
-            noun_predictor.evaluate(X,np.array(Y_Noun))
-            pred = noun_predictor.predict(X)
+            try:
+                Frames,Y_Noun = data_loader.read_any_rgb(access_order,start_index=i,end_index=i+batch_size)
+                X = np.array(Frames)
+                #noun_predictor.evaluate(X,np.array(Y_Noun))
+                pred = noun_predictor.predict(X)
+            except:
+                print("Error at file index",i)
             
             for j in range(len(pred)):
                 Noun_Predicted.append(np.argmax(pred[j]))
