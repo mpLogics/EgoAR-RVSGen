@@ -41,6 +41,7 @@ class Test_Experiments():
         Noun_Predicted = []
         i=0
         num_batches=0
+        err_ctr=0
         #Nouns_true=[]
         #df_Nouns = pd.read_csv("data/Splits/test_split1.csv")["Noun"]
         while i < total_samples:
@@ -55,6 +56,10 @@ class Test_Experiments():
                 #pred = noun_predictor.predict(X)
             except:
                 print("Error at file index",i)
+                err_ctr+=1
+            
+            if err_ctr>=5:
+                break
             
             #for j in range(len(pred)):
             #    Noun_Predicted.append(np.argmax(pred[j]))
