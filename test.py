@@ -47,26 +47,27 @@ class Test_Experiments():
             print(num_batches)
             if num_batches%5==0:
                 print("Files read:",i,", Ongoing batch size:",batch_size,", Batches completed:",num_batches)
-            try:
-                Frames,Y_Noun = data_loader.read_any_rgb(access_order,start_index=i,end_index=i+batch_size)
-                X = np.array(Frames)
-                noun_predictor.evaluate(X,Y_Noun)
-                pred = noun_predictor.predict(X)
-                
-                for j in range(len(pred)):
-                    Noun_Predicted.append(np.argmax(pred[j]))
+            
+            #try:
+            Frames,Y_Noun = data_loader.read_any_rgb(access_order,start_index=i,end_index=i+batch_size)
+            X = np.array(Frames)
+            noun_predictor.evaluate(X,Y_Noun)
+            pred = noun_predictor.predict(X)
+            
+            for j in range(len(pred)):
+                Noun_Predicted.append(np.argmax(pred[j]))
                 
                 #for k in range(len(pred_RGB)):
                 #    Noun = self.reverse_annot(np.argmax(pred_RGB[k]))
                 #    Noun_Predicted.append(Noun)
-            except:
-                print("Error encountered at index:",i)
+            #except:
+            #    print("Error encountered at index:",i)
             
             if (i+batch_size)>=total_samples:
                 batch_size=1
             i+=batch_size
             num_batches+=1
-        return np.array(Noun_Predicted),np.array(Nouns_true)
+        return np.array(Noun_Predicted)
     
     def predict_verb(self,rvs_rules,verb_predictor,use_RVS,K_range,total_samples,nouns_with_path):
         data_loader = LoadData()
