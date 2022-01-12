@@ -205,7 +205,7 @@ class Train():
                 
                 # Training batch
                 try:
-                    history = self.model.fit(np.array(X_train),Y,epochs=5,validation_data=(np.array(X_Val),Y_val))
+                    history = self.model.fit(np.array(X_train),Y,epochs=10,validation_data=(np.array(X_Val),Y_val))
                     train_succ=True
                 except Exception:
                     print("Unsuccessful training for",i)
@@ -278,14 +278,14 @@ class Train():
                     print("Average Validation Loss: ",np.mean(np.array(Val_Loss)))
                     print("Average Validation Accuracy: ",np.mean(np.array(Val_Acc)))
             
-            Loss_per_epoch.append(np.mean(np.array(Loss)))
-            Accuracy_per_epoch.append(np.mean(np.array(Accuracy)))
-            Val_Loss_per_epoch.append(np.mean(np.array(Val_Loss)))
-            Val_Acc_per_epoch.append(np.mean(np.array(Val_Acc)))
+            #Loss_per_epoch.append(np.mean(np.array(Loss)))
+            #Accuracy_per_epoch.append(np.mean(np.array(Accuracy)))
+            #Val_Loss_per_epoch.append(np.mean(np.array(Val_Loss)))
+            #Val_Acc_per_epoch.append(np.mean(np.array(Val_Acc)))
             
-            np.savez("data/performance_metrics/Metrics.npz",
-            a = Loss_per_epoch,b=Accuracy_per_epoch,
-            c = Val_Loss_per_epoch,d=Val_Acc_per_epoch)
+            #np.savez("data/performance_metrics/Metrics.npz",
+            #a = Loss_per_epoch,b=Accuracy_per_epoch,
+            #c = Val_Loss_per_epoch,d=Val_Acc_per_epoch)
 
             self.model.save_weights('model_weights.h5')
             #self.model.save("Noun_Predictor")
