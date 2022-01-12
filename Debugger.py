@@ -52,7 +52,7 @@ t1 = Train()
 t1.fix_frames = config_values["train"]["frames_to_be_extracted"]
 #t1.batch_preprocess_size = config_values["train"]["batch_preprocess_size"]
 t1.Epochs = config_values["train"]["Epochs"]
-t1.model=model
+t1.model = model
 
 config = ConfigProto()
 config.gpu_options.allow_growth = True

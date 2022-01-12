@@ -110,7 +110,7 @@ class Train():
         da.random_flag = False
         access_order = da.build_order()
         self.model.summary()
-        self.check_prev_trainings(model_weights="model_weights.h5",modality="RGB")
+        self.check_prev_trainings(model_weights="model_weights.h5")
         
         for epochs in range(self.Epochs+1):    
             print("\nEpoch:",epochs)
