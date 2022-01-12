@@ -106,13 +106,17 @@ class Train():
         L1.fix_frames = self.fix_frames
         totalSamples = L1.getTotal()
         print("Total samples = ",totalSamples)
-        da = Data_Access()
-        da.random_flag = True
-        access_order = da.build_order()
-        self.model.summary()
+        #da = Data_Access()
+        #da.random_flag = True
+        #access_order = da.build_order()
+        #self.model.summary()
         self.check_prev_trainings(model_weights="model_weights.h5")
         
         for epochs in range(self.Epochs+1):    
+            da = Data_Access()
+            da.random_flag = True
+            access_order = da.build_order()
+
             print("\nEpoch:",epochs)
             i = 0
             num_batches=0
