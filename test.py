@@ -51,13 +51,13 @@ class Test_Experiments():
             try:
                 Frames,Y_Noun = data_loader.read_any_rgb(access_order,start_index=i,end_index=i+batch_size)
                 X = np.array(Frames)
-                #noun_predictor.evaluate(X,np.array(Y_Noun))
-                pred = noun_predictor.predict(X)
+                noun_predictor.evaluate(X,(np.array(Y_Noun)-1))
+                #pred = noun_predictor.predict(X)
             except:
                 print("Error at file index",i)
             
-            for j in range(len(pred)):
-                Noun_Predicted.append(np.argmax(pred[j]))
+            #for j in range(len(pred)):
+            #    Noun_Predicted.append(np.argmax(pred[j]))
                 
                 #for k in range(len(pred_RGB)):
                 #    Noun = self.reverse_annot(np.argmax(pred_RGB[k]))
