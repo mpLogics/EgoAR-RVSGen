@@ -211,18 +211,18 @@ class Train():
                     print("Unsuccessful training for",i)
                     train_succ=False
 
-                if train_succ:
+                #if train_succ:
                     # Collecting Metrics
-                    Loss.append(history.history['loss'])
-                    Accuracy.append(history.history['accuracy'])
-                    Val_Loss.append(history.history['val_loss'])
-                    Val_Acc.append(history.history['val_accuracy'])
+                    #Loss.append(history.history['loss'])
+                    #Accuracy.append(history.history['accuracy'])
+                    #Val_Loss.append(history.history['val_loss'])
+                    #Val_Acc.append(history.history['val_accuracy'])
                 
                     # Displaying Metrics
-                    print("Average Loss: ",np.mean(np.array(Loss)))
-                    print("Average Accuracy: ",np.mean(np.array(Accuracy)))
-                    print("Average Validation Loss: ",np.mean(np.array(Val_Loss)))
-                    print("Average Validation Accuracy: ",np.mean(np.array(Val_Acc)))
+                    #print("Average Loss: ",np.mean(np.array(Loss)))
+                    #print("Average Accuracy: ",np.mean(np.array(Accuracy)))
+                    #print("Average Validation Loss: ",np.mean(np.array(Val_Loss)))
+                    #print("Average Validation Accuracy: ",np.mean(np.array(Val_Acc)))
                 
                 try:
                     if (num_batches+1)%30==0 and plotter_flag==False:
@@ -232,6 +232,7 @@ class Train():
                 except Exception:
                     print("Plot saving unsuccessful!")
                 
+            """
             for i in range(num_batches*self.num_classes_total*3,totalSamples,4):
                 try:
                     X_train,Y_Noun = L1.read_any_rgb(access_order,start_index=i,end_index=i+3)
@@ -277,7 +278,7 @@ class Train():
                     print("Average Accuracy: ",np.mean(np.array(Accuracy)))
                     print("Average Validation Loss: ",np.mean(np.array(Val_Loss)))
                     print("Average Validation Accuracy: ",np.mean(np.array(Val_Acc)))
-            
+            """
             #Loss_per_epoch.append(np.mean(np.array(Loss)))
             #Accuracy_per_epoch.append(np.mean(np.array(Accuracy)))
             #Val_Loss_per_epoch.append(np.mean(np.array(Val_Loss)))
