@@ -171,11 +171,8 @@ class LoadData():
         
         if modality=="RGB":
             modal = np.load(file_path,allow_pickle=True)["a"]
-            if self.mode=="train":
-                Annotation = np.load(file_path,allow_pickle=True)["c"]
-                return modal,Annotation
-            else:
-                return modal            
+            Annotation = np.load(file_path,allow_pickle=True)["c"]
+            return modal,Annotation
         
         else:
             file_in = np.load(file_path,allow_pickle=True)
