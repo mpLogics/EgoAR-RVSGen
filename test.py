@@ -30,7 +30,7 @@ class Test_Experiments():
 
     def predict_noun(self,noun_predictor,total_samples):
         data_loader = LoadData()
-        data_loader.mode=="test"
+        data_loader.mode="test"
         data_loader.fix_frames = 10
         noun_predictor.load_weights("model_weights.h5")
         print("Loaded Weights")
