@@ -168,6 +168,8 @@ class LoadData():
             file_path = "data/preprocessed_data/" + modality + "/" + self.train["FileName"][i] + ".npz"
         else:
             file_path = "data/preprocessed_data/" + modality + "/" + self.test["FileName"][i] + ".npz"
+            print("Testing")
+            print(file_path)
         
         if modality=="RGB":
             modal = np.load(file_path,allow_pickle=True)["a"]
