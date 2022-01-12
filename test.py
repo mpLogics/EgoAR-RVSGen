@@ -3,7 +3,7 @@ from tensorflow import keras
 from keras import Input
 from keras.models import Sequential
 from keras.layers import Dense,Dropout,Flatten,Input,ConvLSTM2D
-
+from train import Model
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 from keras import backend as bk
@@ -32,37 +32,29 @@ class Test_Experiments():
         data_loader = LoadData()
         data_loader.mode = "test"
         data_loader.fix_frames = 10
-
+        noun_predictor.load_weights("model_weights.h5")
+        print("Loaded Weights")
+        noun_predictor.summary()
         access_order = [i for i in range(total_samples)]
         print("Beginning Noun Prediction")
         batch_size = 100
         Noun_Predicted = []
         i=0
         num_batches=0
-        Nouns_true=[]
-        df_Nouns = pd.read_csv("data/Splits/test_split1.csv")["Noun"]
+        #Nouns_true=[]
+        #df_Nouns = pd.read_csv("data/Splits/test_split1.csv")["Noun"]
         while i < total_samples:
             print(num_batches)
             if num_batches%5==0:
                 print("Files read:",i,", Ongoing batch size:",batch_size,", Batches completed:",num_batches)
             try:
-                Frames = data_loader.read_frames(
-                                i,
-                                access_order,
-                                batch_size)
-                Nouns_Video=[]
+                Frames,Y_Noun = data_loader.read_any_rgb(access_order,start_index=i,end_index=i+batch_size)
+                X = np.array(Frames)
+                noun_predictor.evaluate(X,Y_Noun)
+                pred = noun_predictor.predict(X)
                 
-                print("Total Videos:",len(Frames))
-                
-                for j in range(len(Frames)):
-                    X_RGB = np.array(Frames[j])
-                    pred_RGB = noun_predictor.predict(X_RGB)
-                    for m in range(len(Frames[j])):
-                        Nouns_true.append(np.argmax(pred_RGB[m]))
-                        Noun = self.reverse_annot(np.argmax(pred_RGB[m]))
-                        Nouns_Video.append(Noun)
-                    Noun = stats.mode(Nouns_Video)[0][0]
-                    Noun_Predicted.append(Noun)
+                for j in range(len(pred)):
+                    Noun_Predicted.append(np.argmax(pred[j]))
                 
                 #for k in range(len(pred_RGB)):
                 #    Noun = self.reverse_annot(np.argmax(pred_RGB[k]))
@@ -168,10 +160,12 @@ session = InteractiveSession(config=config)
 
 t1 = Test_Experiments()
 rvs_rules=RVS_Implement()
-noun_predictor = rvs_rules.get_noun_model()
+m1 = Model()
+noun_predictor = m1.Time_Distributed_Model()
+#noun_predictor = rvs_rules.get_noun_model()
 
-Nouns,All_Nouns = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
-np.savez("data/results/test_reports/Nouns.npz",a = Nouns,b=All_Nouns)
+Nouns = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
+np.savez("data/results/test_reports/Nouns.npz",a = Nouns)
 
 session.close()
 
