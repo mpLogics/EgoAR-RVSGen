@@ -113,6 +113,7 @@ class Test_Experiments():
                     num_classes=batch_size,
                     multiply_factor=scale_factor)
                 
+                print(X_Value.shape)
                 X_OF = np.reshape(X_Value,(
                     batch_size*scale_factor,
                     fix_frames,
