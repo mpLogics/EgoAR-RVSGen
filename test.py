@@ -106,7 +106,7 @@ class Test_Experiments():
         #err_ctr = 0
         #Predicted_Verbs=[]
         while i <total_samples:
-            try:
+            #try:
                 X_Value,Verb = data_loader.read_val_flow(
                     i,
                     access_order,
@@ -126,12 +126,12 @@ class Test_Experiments():
                 #for i in range(len(pred_OF)):
                 #    Predicted_Verbs.append(np.argmax(pred_OF[i])+1)
 
-            except:
+            #except:
                 print("Error at reading file",i)
                 if (i+batch_size)>=total_samples:
                     batch_size = 1
                 
-            i+=batch_size
+                i+=batch_size
         """
         
         while i < total_samples:
