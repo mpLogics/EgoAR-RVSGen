@@ -209,6 +209,7 @@ class LoadData():
         else:
             Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
             prev_matrix,prev_Annot = self.get_any_matrix(Mag,Ang,Encoding)
+        
         final_matrix = np.reshape(
                 prev_matrix,(
                     (1,
@@ -222,7 +223,7 @@ class LoadData():
             if self.mode=="test":
                 Mag,Ang,Verb = self.load_file(access_order[j],modality="OF")
                 Verb_Set.append(Verb)
-                prev_matrix = self.get_any_matrix(Mag,Ang,Encoding=[])
+                init_matrix = self.get_any_matrix(Mag,Ang,Encoding=[])
             else:
                 Mag,Ang,Encoding = self.load_file(access_order[j],modality="OF")
                 init_matrix,init_Annot = self.get_any_matrix(Mag,Ang,Encoding)
