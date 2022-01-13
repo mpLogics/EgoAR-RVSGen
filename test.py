@@ -80,11 +80,11 @@ class Test_Experiments():
         data_loader = LoadData()
         data_loader.mode = "test"
 
-        try:
-            Noun = np.load(nouns_with_path,allow_pickle=True)
-        except:
-            print("No nouns found. Terminating!!!")
-            exit()
+        #try:
+        #    Noun = np.load(nouns_with_path,allow_pickle=True)
+        #except:
+        #    print("No nouns found. Terminating!!!")
+        #    exit()
         
         access_order = [i for i in range(total_samples)]
         batch_size = 100
@@ -92,18 +92,48 @@ class Test_Experiments():
         fix_frames = 5
         input_shape = (120,320,1)
         
-        if use_RVS:
-            rvs_rules = RVS_Implement()
-            P_Noun,P_Verb,P_Noun_Verb = rvs_rules.set_verb_rules()
-            base_model = verb_predictor.get_layer('dense_3').output 
-            feature_extractor = keras.Model(
-                inputs = verb_predictor.input,
-                outputs = base_model)
+        base_model = verb_predictor.get_layer('dense_3').output 
+        #feature_extractor = keras.Model(
+        #    inputs = verb_predictor.input,
+        #    outputs = base_model)
+
+        #rvs_rules = RVS_Implement()
+        #P_Noun,P_Verb,P_Noun_Verb = rvs_rules.set_verb_rules()
 
         i = 0
-        results = pd.DataFrame()
-        samples = pd.read_csv("data/Splits/test_split1.csv")
-        err_ctr=0
+        #results = pd.DataFrame()
+        #samples = pd.read_csv("data/Splits/test_split1.csv")
+        #err_ctr = 0
+        #Predicted_Verbs=[]
+        while i <total_samples:
+            try:
+                X_Value,Verb = data_loader.read_val_flow(
+                    i,
+                    access_order,
+                    num_classes=batch_size,
+                    multiply_factor=scale_factor)
+                
+                X_OF = np.reshape(X_Value,(
+                    batch_size*scale_factor,
+                    fix_frames,
+                    input_shape[0],
+                    input_shape[1],
+                    input_shape[2]))
+                
+                verb_predictor.evaluate(X_OF,np.array(Verb))
+                #pred_OF = verb_predictor.predict(X_OF)
+                #feature_pred = feature_extractor.predict(X_OF)
+                #for i in range(len(pred_OF)):
+                #    Predicted_Verbs.append(np.argmax(pred_OF[i])+1)
+
+            except:
+                print("Error at reading file",i)
+                if (i+batch_size)>=total_samples:
+                    batch_size = 1
+                
+            i+=batch_size
+        """
+        
         while i < total_samples:
             try:
                 X_Value = data_loader.read_val_flow(
@@ -120,10 +150,9 @@ class Test_Experiments():
                     input_shape[2]))
                 
                 pred_OF = verb_predictor.predict(X_OF)
-                
+                feature_pred = feature_extractor.predict(X_OF)
                 if use_RVS:
                     K = [i for i in range(K_range[0],K_range[1]+1)]
-                    feature_pred = feature_extractor.predict(X_OF)
                     
                     for k in range(len(feature_pred)):
                         
@@ -158,28 +187,20 @@ class Test_Experiments():
                 print("Error encountered at index:",i)
                 err_ctr+=1
         return results
+        """
 
 total_samples = pd.read_csv("data/Splits/test_split1.csv")["FileName"].shape[0]
 
-
-config = ConfigProto()
-config.gpu_options.allow_growth = True
-session = InteractiveSession(config=config)
-
 t1 = Test_Experiments()
 rvs_rules=RVS_Implement()
-m1 = Model()
-noun_predictor = m1.Time_Distributed_Model()
+#m1 = Model()
+#noun_predictor = m1.Time_Distributed_Model()
 #noun_predictor = rvs_rules.get_noun_model()
 
-Nouns = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
-np.savez("data/results/test_reports/Nouns.npz",a = Nouns)
+#Nouns = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
+#np.savez("data/results/test_reports/Nouns.npz",a = Nouns)
 
-session.close()
-
-config = ConfigProto()
-config.gpu_options.allow_growth = True
-session = InteractiveSession(config=config)
+#session.close()
 
 verb_predictor = rvs_rules.get_verb_model()
 Results = t1.predict_verb(
@@ -190,7 +211,5 @@ Results = t1.predict_verb(
     total_samples=total_samples,
     nouns_with_path="data/results/test_reports/Nouns.npz")
 
-Results.to_csv("data/results/Results.csv")
-
-session.close()
+#Results.to_csv("data/results/Results.csv")
 

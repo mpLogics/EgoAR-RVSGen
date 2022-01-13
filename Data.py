@@ -183,7 +183,7 @@ class LoadData():
                 encoding = file_in['d']
                 return mag,ang,encoding
             else:
-                return mag,ang
+                return mag,ang,self.test["Verb"][i]
     
 
     def get_frame_order(self,frames,modality):
@@ -201,8 +201,10 @@ class LoadData():
         return frame_indices
     
     def read_val_flow(self,i,access_order,num_classes,multiply_factor):
+        Verb_Set=[]
         if self.mode=="test":
-            Mag,Ang = self.load_file(access_order[i],modality="OF")
+            Mag,Ang,Verb = self.load_file(access_order[i],modality="OF")
+            Verb_Set.append(Verb)
             prev_matrix = self.get_any_matrix(Mag,Ang,Encoding=[])
         else:
             Mag,Ang,Encoding = self.load_file(access_order[i],modality="OF")
@@ -218,7 +220,8 @@ class LoadData():
         for j in range(i+1,i+(num_classes*multiply_factor)):
             
             if self.mode=="test":
-                Mag,Ang = self.load_file(access_order[j],modality="OF")
+                Mag,Ang,Verb = self.load_file(access_order[j],modality="OF")
+                Verb_Set.append(Verb)
                 prev_matrix = self.get_any_matrix(Mag,Ang,Encoding=[])
             else:
                 Mag,Ang,Encoding = self.load_file(access_order[j],modality="OF")
@@ -242,7 +245,6 @@ class LoadData():
             prev_val_matrix,prev_val_Annot = self.get_any_matrix(Mag,Ang,Encoding)
             final_val_matrix = np.reshape(prev_val_matrix,((1,prev_val_matrix.shape[0],prev_val_matrix.shape[1],prev_val_matrix.shape[2])))
 
-            # Obtaining training data for the batch
             for j in range(m+1,m+num_classes):
                 
                 Mag,Ang,Encoding = self.load_file(access_order[j],modality="OF")
@@ -254,7 +256,7 @@ class LoadData():
             
             return final_matrix,prev_Annot,final_val_matrix,prev_val_Annot
         else:
-            return final_matrix
+            return final_matrix,Verb_Set
 
     def read_any_rgb(self,access_order,start_index,end_index):    
         Y_Noun=[]
