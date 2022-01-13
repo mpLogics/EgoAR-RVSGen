@@ -79,6 +79,7 @@ class Test_Experiments():
     def predict_verb(self,rvs_rules,verb_predictor,use_RVS,K_range,total_samples,nouns_with_path):
         data_loader = LoadData()
         data_loader.mode = "test"
+        data_loader.fix_frames = 5
 
         #try:
         #    Noun = np.load(nouns_with_path,allow_pickle=True)
