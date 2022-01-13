@@ -143,6 +143,8 @@ class learn_optical_flow():
             Val_Loss=[]
             Val_Acc=[]
 
+            for i in range(0,totalSamples,i+batch_size):
+                print()
             while i<totalSamples-1:
 
                 try:
@@ -172,9 +174,10 @@ class learn_optical_flow():
                 print(Val_Verb)
                 num_batches+=1
                 
-                Y_corrected = self.getCorrected(np.array(Y_Value))
-                    
-                
+                if (np.unique(np.array(Y_Value))).shape[0]<=15:
+                    break
+
+                Y_corrected = self.getCorrected(np.array(Y_Value))                
                 Y = tf.convert_to_tensor(Y_corrected)
                 Y_val_corrected = self.getCorrected(np.array(Val_Verb))
                 
