@@ -33,12 +33,13 @@ class Test_Experiments():
         data_loader.mode="test"
         data_loader.fix_frames = 10
         noun_predictor.load_weights("model_weights.h5")
-        print("Loaded Weights")
+        print("Weights loaded")
         noun_predictor.summary()
         access_order = [i for i in range(total_samples)]
         print("Beginning Noun Prediction")
-        batch_size = 100
-        Noun_Predicted = []
+        batch_size = 150
+        Noun_Predicted_top1 = []
+        Noun_Predicted_top5 = []
         i=0
         num_batches=0
         err_ctr=0
@@ -52,18 +53,18 @@ class Test_Experiments():
             try:
                 Frames,Y_Noun = data_loader.read_any_rgb(access_order,start_index=i,end_index=i+batch_size)
                 X = np.array(Frames)
-                noun_predictor.evaluate(X,(np.array(Y_Noun)-1))
-                #pred = noun_predictor.predict(X)
+                #noun_predictor.evaluate(X,(np.array(Y_Noun)-1))
+                pred = noun_predictor.predict(X)
             except:
                 print("Error at file index",i)
                 err_ctr+=1
             
             if err_ctr>=5:
                 break
-            
-            #for j in range(len(pred)):
-            #    Noun_Predicted.append(np.argmax(pred[j]))
-                
+
+            for j in range(len(pred)):
+                Noun_Predicted_top1.append(np.argmax(pred[j])+1)
+                Noun_Predicted_top5.apend(pred[j].argsort()[-5:][::-1]+1)
                 #for k in range(len(pred_RGB)):
                 #    Noun = self.reverse_annot(np.argmax(pred_RGB[k]))
                 #    Noun_Predicted.append(Noun)
@@ -74,7 +75,7 @@ class Test_Experiments():
                 batch_size=1
             i+=batch_size
             num_batches+=1
-        return np.array(Noun_Predicted)
+        return np.array(Noun_Predicted_top1),np.array(Noun_Predicted_top5)
     
     def predict_verb(self,rvs_rules,verb_predictor,use_RVS,K_range,total_samples,nouns_with_path):
         data_loader = LoadData()
@@ -194,16 +195,16 @@ class Test_Experiments():
 total_samples = pd.read_csv("data/Splits/test_split1.csv")["FileName"].shape[0]
 
 t1 = Test_Experiments()
-rvs_rules=RVS_Implement()
-#m1 = Model()
-#noun_predictor = m1.Time_Distributed_Model()
+#rvs_rules=RVS_Implement()
+m1 = Model()
+noun_predictor = m1.Time_Distributed_Model()
 #noun_predictor = rvs_rules.get_noun_model()
 
-#Nouns = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
-#np.savez("data/results/test_reports/Nouns.npz",a = Nouns)
+Nouns,top_5 = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
+np.savez("data/results/test_reports/Nouns.npz",a = Nouns,b=top_5)
 
 #session.close()
-
+"""
 verb_predictor = rvs_rules.get_verb_model()
 Results = t1.predict_verb(
     rvs_rules,
@@ -214,4 +215,4 @@ Results = t1.predict_verb(
     nouns_with_path="data/results/test_reports/Nouns.npz")
 
 #Results.to_csv("data/results/Results.csv")
-
+"""
