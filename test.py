@@ -44,10 +44,8 @@ class Test_Experiments():
         num_batches=0
         err_ctr=0
         print("Total Samples:",total_samples)
-        #Nouns_true=[]
-        #df_Nouns = pd.read_csv("data/Splits/test_split1.csv")["Noun"]
-        while i < total_samples:
-            print(i)
+        
+        for i in range(0,total_samples-batch_size,batch_size):
             if num_batches%5 or num_batches%10==0:
                 print("Files read:",i,", Ongoing batch size:",batch_size,", Batches completed:",num_batches)
             
@@ -72,12 +70,34 @@ class Test_Experiments():
             print("Current Length of predictions (top 1):",len(Noun_Predicted_top1))
             print("Current Length of predictions (top 5):",len(Noun_Predicted_top5))
             
-            if (i+batch_size)>total_samples:
-                batch_size=1
-            
-            i+=batch_size
             num_batches+=1
         
+        batch_size = 1
+        for i in range(total_samples-batch_size,total_samples,1):
+            try:
+                Frames,Y_Noun = data_loader.read_any_rgb(access_order,start_index=i,end_index=i+batch_size)
+                X = np.array(Frames)
+                #noun_predictor.evaluate(X,(np.array(Y_Noun)-1))
+                pred = noun_predictor.predict(X)
+            except:
+                print("Error at file index",i)
+                err_ctr+=1
+            
+            if err_ctr>=5:
+                break
+            
+            print(len(pred))
+            
+            for j in range(len(pred)):                
+                Noun_Predicted_top1.append(np.argmax(pred[j])+1)
+                Noun_Predicted_top5.append(pred[j].argsort()[-5:][::-1]+1)
+            
+            print("Current Length of predictions (top 1):",len(Noun_Predicted_top1))
+            print("Current Length of predictions (top 5):",len(Noun_Predicted_top5))
+            print("Files read:",i,", Ongoing batch size:",batch_size,", Batches completed:",num_batches)
+            
+            num_batches+=1
+
         return np.array(Noun_Predicted_top1),np.array(Noun_Predicted_top5)
     
     def predict_verb(self,rvs_rules,verb_predictor,use_RVS,K_range,total_samples,nouns_with_path):
