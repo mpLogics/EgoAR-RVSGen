@@ -73,7 +73,7 @@ class Test_Experiments():
             num_batches+=1
         
         batch_size = 1
-        for i in range(total_samples-batch_size,total_samples,1):
+        for i in range(total_samples-100,total_samples,1):
             try:
                 Frames,Y_Noun = data_loader.read_any_rgb(access_order,start_index=i,end_index=i+batch_size)
                 X = np.array(Frames)
