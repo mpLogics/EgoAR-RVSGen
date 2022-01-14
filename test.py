@@ -61,10 +61,13 @@ class Test_Experiments():
             
             if err_ctr>=5:
                 break
-
-            for j in range(len(pred)):
-                Noun_Predicted_top1.append(np.argmax(pred[j])+1)
-                Noun_Predicted_top5.append(pred[j].argsort()[-5:][::-1]+1)
+            
+            print(len(pred))
+            
+            #for j in range(len(pred)):
+            #    
+            #    Noun_Predicted_top1.append(np.argmax(pred[j])+1)
+            #    Noun_Predicted_top5.append(pred[j].argsort()[-5:][::-1]+1)
                 #for k in range(len(pred_RGB)):
                 #    Noun = self.reverse_annot(np.argmax(pred_RGB[k]))
                 #    Noun_Predicted.append(Noun)
