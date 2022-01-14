@@ -49,7 +49,8 @@ class Model():
         outputs = Dense(self.RGB_classes)(ops)
         activation = Activation("softmax")(outputs)
         model = tf.keras.models.Model(inputs=video,outputs=activation)
-        model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
+        model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
         return model
     
     def buildModel(self):
@@ -111,11 +112,12 @@ class Train():
         #access_order = da.build_order()
         #self.model.summary()
         self.check_prev_trainings(model_weights="model_weights.h5")
+        da = Data_Access()
+        da.random_flag = False
+        access_order = da.build_order()
         
         for epochs in range(self.Epochs+1):    
-            da = Data_Access()
-            da.random_flag = True
-            access_order = da.build_order()
+            
             
             print(access_order[:51])
 
