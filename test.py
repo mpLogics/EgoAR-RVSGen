@@ -37,17 +37,17 @@ class Test_Experiments():
         noun_predictor.summary()
         access_order = [i for i in range(total_samples)]
         print("Beginning Noun Prediction")
-        batch_size = 150
+        batch_size = 100
         Noun_Predicted_top1 = []
         Noun_Predicted_top5 = []
         i=0
         num_batches=0
         err_ctr=0
+        print("Total Samples:",total_samples)
         #Nouns_true=[]
         #df_Nouns = pd.read_csv("data/Splits/test_split1.csv")["Noun"]
         while i < total_samples:
-            print(num_batches)
-            if num_batches%5==0:
+            if num_batches%5 or num_batches%10==0:
                 print("Files read:",i,", Ongoing batch size:",batch_size,", Batches completed:",num_batches)
             
             try:
