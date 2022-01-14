@@ -47,6 +47,7 @@ class Test_Experiments():
         #Nouns_true=[]
         #df_Nouns = pd.read_csv("data/Splits/test_split1.csv")["Noun"]
         while i < total_samples:
+            print(i)
             if num_batches%5 or num_batches%10==0:
                 print("Files read:",i,", Ongoing batch size:",batch_size,", Batches completed:",num_batches)
             
@@ -64,20 +65,22 @@ class Test_Experiments():
             
             print(len(pred))
             
-            #for j in range(len(pred)):
-            #    
-            #    Noun_Predicted_top1.append(np.argmax(pred[j])+1)
-            #    Noun_Predicted_top5.append(pred[j].argsort()[-5:][::-1]+1)
+            for j in range(len(pred)):
+                print("Predicted class:",np.argmax(pred[j]))                
+                Noun_Predicted_top1.append(np.argmax(pred[j])+1)
+                Noun_Predicted_top5.append(pred[j].argsort()[-5:][::-1]+1)
                 #for k in range(len(pred_RGB)):
                 #    Noun = self.reverse_annot(np.argmax(pred_RGB[k]))
                 #    Noun_Predicted.append(Noun)
             #except:
             #    print("Error encountered at index:",i)
             
-            if (i+batch_size)>=total_samples:
+            if (i+batch_size)>total_samples:
                 batch_size=1
+            
             i+=batch_size
             num_batches+=1
+        
         return np.array(Noun_Predicted_top1),np.array(Noun_Predicted_top5)
     
     def predict_verb(self,rvs_rules,verb_predictor,use_RVS,K_range,total_samples,nouns_with_path):
