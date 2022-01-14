@@ -116,6 +116,8 @@ class Train():
             da = Data_Access()
             da.random_flag = True
             access_order = da.build_order()
+            
+            print(access_order)
 
             print("\nEpoch:",epochs)
             i = 0
