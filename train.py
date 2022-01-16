@@ -49,8 +49,7 @@ class Model():
         outputs = Dense(self.RGB_classes)(ops)
         activation = Activation("softmax")(outputs)
         model = tf.keras.models.Model(inputs=video,outputs=activation)
-        optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
-        model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+        model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         return model
     
     def buildModel(self):
