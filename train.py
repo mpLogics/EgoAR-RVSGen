@@ -131,7 +131,7 @@ class Train():
                 except Exception:
                     print("Error reading files from index: ",i)
                 
-                if (np.unique(np.array(Y_Noun))).shape[0]<=50:
+                if (np.unique(np.array(Y_Noun))).shape[0]<=40:
                     break
                 # Logs
                 print("\nClasses covered in batch: ",(np.unique(np.array(Y_Noun))).shape[0])
