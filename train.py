@@ -131,7 +131,7 @@ class Train():
                 except Exception:
                     print("Error reading files from index: ",i)
                 
-                if (np.unique(np.array(Y_Noun))).shape[0]<=5:
+                if (np.unique(np.array(Y_Noun))).shape[0]<=35:
                     break
                 # Logs
                 print("\nClasses covered in batch: ",(np.unique(np.array(Y_Noun))).shape[0])
@@ -153,9 +153,7 @@ class Train():
                 
                 # Training batch
                 try:
-                    history = self.model.fit(np.array(X_train),Y,epochs=50)#,validation_data=(np.array(X_Val),Y_val))
-                    self.model.save_weights('model_weights.h5')
-                    break
+                    history = self.model.fit(np.array(X_train),Y,epochs=1)#,validation_data=(np.array(X_Val),Y_val))
                 except Exception:
                     print("Unsuccessful training for",i)
 
