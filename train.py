@@ -112,13 +112,12 @@ class Train():
         #self.model.summary()
         self.check_prev_trainings(model_weights="model_weights.h5")
         
-        
-        for epochs in range(self.Epochs+1):    
-            da = Data_Access()
-            da.random_flag = True
-            access_order = da.build_order()    
+        da = Data_Access()
+        da.random_flag = False
+        access_order = da.build_order()    
+        for epochs in range(self.Epochs+1):        
             
-            print(access_order[:51])
+            #print(access_order[:51])
 
             print("\nEpoch:",epochs)
             i = 0
@@ -153,7 +152,7 @@ class Train():
                 
                 # Training batch
                 try:
-                    history = self.model.fit(np.array(X_train),Y,epochs=5)#,validation_data=(np.array(X_Val),Y_val))
+                    history = self.model.fit(np.array(X_train),Y,epochs=1)#,validation_data=(np.array(X_Val),Y_val))
                 except Exception:
                     print("Unsuccessful training for",i)
 
