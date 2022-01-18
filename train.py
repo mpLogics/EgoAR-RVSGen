@@ -48,8 +48,9 @@ class Model():
         ops = Dense(128, activation='relu')(encoded_vid)
         outputs = Dense(self.RGB_classes)(ops)
         activation = Activation("softmax")(outputs)
+        optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001)
         model = tf.keras.models.Model(inputs=video,outputs=activation)
-        model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
         return model
     
     def buildModel(self):
@@ -144,7 +145,6 @@ class Train():
                 #X = np.array(Frame)
                 #X_val = np.array(Val_Frame)
                 
-
                 Y_corrected = self.getCorrected(np.array(Y_Noun))
                 Y = tf.convert_to_tensor(Y_corrected)
                 
