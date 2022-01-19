@@ -25,7 +25,6 @@ Total_elements={}
 for i in range(53):
     Class_wise[i+1] = 0
     Total_elements[i+1] = 0
-print(Class_wise)
 
 
 for i in range(Nouns['a'].shape[0]):
@@ -45,9 +44,8 @@ for i in range(len(Class_wise)):
         Acc_cw.append(Class_wise[i+1]/Total_elements[i+1])
 df = pd.DataFrame()
 
-
+print(Total_elements)
 print(Class_wise)
-
 print(Acc_cw)
 
 df["Total Examples"] = Tot
