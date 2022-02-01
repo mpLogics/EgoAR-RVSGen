@@ -48,7 +48,7 @@ class Model():
         ops = Dense(128, activation='relu')(encoded_vid)
         outputs = Dense(self.RGB_classes)(ops)
         activation = Activation("softmax")(outputs)
-        optimizer = tf.keras.optimizers.Adam(learning_rate=0.000001)
+        optimizer = tf.keras.optimizers.Adam(learning_rate=0.00001)
         model = tf.keras.models.Model(inputs=video,outputs=activation)
         model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
         return model
@@ -131,7 +131,7 @@ class Train():
                 except Exception:
                     print("Error reading files from index: ",i)
                 
-                if (np.unique(np.array(Y_Noun))).shape[0]<=2:
+                if (np.unique(np.array(Y_Noun))).shape[0]<=4:
                     break
                 # Logs
                 print("\nClasses covered in batch: ",(np.unique(np.array(Y_Noun))).shape[0])

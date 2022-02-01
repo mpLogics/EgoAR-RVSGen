@@ -157,11 +157,8 @@ class LoadData():
             
             j+=interval_size    
         
-        if self.mode=="train":
-            Annotations.append((int)(Encoding[0]))
-            return init_matrix,np.array(Annotations)
-        else:
-            return init_matrix
+        Annotations.append((int)(Encoding[0]))
+        return init_matrix,np.array(Annotations)
 
     def load_file(self,i,modality):
         if self.mode=="train":
@@ -199,6 +196,28 @@ class LoadData():
             frame_indices.append(j)
             j+=interval_size
         return frame_indices
+    
+    def read_any_flow(self,access_order,start_index,end_index):
+        Y_Verb=[]
+        Frame_Seq=[]
+
+        for j in range(start_index,end_index):
+            Mag,Angle,Encoding = self.load_file(access_order[j],modality="OF")
+            OF,Verb = self.get_any_matrix(Mag,Angle,Encoding)
+            Frame_Seq.append(OF)
+            Y_Verb.append(Verb)
+        return Frame_Seq,Y_Verb
+
+    def read_flow(self,i,access_order,num_classes):
+        start_idx = i
+        end_idx = i + 2*num_classes
+        Train_Frame,Train_Verb = self.read_any_flow(access_order,start_index=start_idx,end_index=end_idx)
+
+        start_idx = end_idx
+        start_idx = end_idx + num_classes
+        Val_Frame,Val_Noun = self.read_any_flow(access_order,start_index=start_idx,end_idx=end_idx)
+
+        return Train_Frame,Train_Verb,Val_Frame,Val_Noun
     
     def read_val_flow(self,i,access_order,num_classes,multiply_factor):
         Verb_Set=[]

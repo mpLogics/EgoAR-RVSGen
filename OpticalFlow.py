@@ -78,28 +78,93 @@ class learn_optical_flow():
     def check_prev_trainings(self,model_name,modality):
         try:
             saved_model = keras.models.load_model(model_name)
-            performance_metrics = np.load("data/performance_metrics/" + modality + "/Metrics.npz")
+            #performance_metrics = np.load("data/performance_metrics/" + modality + "/Metrics.npz")
         except Exception:
             print("Saved model could not be read.")
             return None,0,[],[],[],[]
         
-        epochs_completed = performance_metrics['a'].shape[0]
-        Loss_per_epoch=[]
-        Accuracy_per_epoch=[]
-        Val_Loss_per_epoch=[]
-        Val_Acc_per_epoch=[]
+        #epochs_completed = performance_metrics['a'].shape[0]
+        #Loss_per_epoch=[]
+        #Accuracy_per_epoch=[]
+        #Val_Loss_per_epoch=[]
+        #Val_Acc_per_epoch=[]
 
-        for i in range(performance_metrics['a'].shape[0]):
-            Loss_per_epoch.append(performance_metrics['a'][i])
-            Accuracy_per_epoch.append(performance_metrics['b'][i])
-            Val_Loss_per_epoch.append(performance_metrics['c'][i])
-            Val_Acc_per_epoch.append(performance_metrics['d'][i])
+        #for i in range(performance_metrics['a'].shape[0]):
+        #    Loss_per_epoch.append(performance_metrics['a'][i])
+        #    Accuracy_per_epoch.append(performance_metrics['b'][i])
+        #    Val_Loss_per_epoch.append(performance_metrics['c'][i])
+        #    Val_Acc_per_epoch.append(performance_metrics['d'][i])
 
-        return saved_model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch
+        #return saved_model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch
+        return saved_model
 
     def getCorrected(self,Y):
         Y_corrected = np.copy(Y)
         return Y_corrected-1
+    
+    def re_train_flow(self):
+        L1 = LoadData
+        L1 = LoadData()
+        L1.train_test_splitNo = self.train_test_split 
+        L1.fix_frames = self.fix_frames
+        totalSamples = L1.getTotal()
+        print("Total samples = ",totalSamples)
+        da = Data_Access()
+        da.random_flag = True
+        access_order = da.build_order()
+        self.model.summary()
+        saved,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings(
+            modality="OF",model_name="Verb_Predictor")
+        
+        if saved==None:
+            pass
+        else:
+            self.temporal_extractor = saved
+        print("Epochs completed =",epochs_completed)
+        
+        for epochs in range(self.Epochs+1):
+            print("Epoch",epochs)
+            i=0
+            num_batches=0
+            for i in range(0,totalSamples-(self.num_classes_total*self.multiply_factor),self.num_classes_total*self.multiply_factor):
+                try:
+                    X_train,Y_Verb,X_Val,Val_Verb = L1.read_flow(i,access_order,num_classes=self.num_classes_total)
+                except Exception:
+                    print("Error reading files from index: ",i)
+                # Logs
+                print("\nClasses covered in batch: ",(np.unique(np.array(Y_Verb))).shape[0])
+                print("Batch(es) read: ",num_batches)
+                print("Files read = ",i)                   
+                num_batches+=1
+
+                Y_corrected = self.getCorrected(np.array(Y_Verb))
+                Y = tf.convert_to_tensor(Y_corrected)
+                
+                Y_val_corrected = self.getCorrected(np.array(Val_Verb))
+                Y_val = tf.convert_to_tensor(Y_val_corrected)
+
+                # Training batch
+                X = np.reshape(X_train,(
+                    self.num_classes_total*self.upscale_factor,
+                    self.fix_frames,
+                    self.frame_rows,
+                    self.frame_cols,
+                    self.channels))
+
+                X_val = np.reshape(X_Val,(
+                    self.num_classes_total,
+                    self.val_seq_size,
+                    self.frame_rows,
+                    self.frame_cols,
+                    self.channels))
+                try:
+                    history = self.temporal_extractor.fit(np.array(X),Y,epochs=2,validation_data=(np.array(X_val),Y_val))
+                except Exception:
+                    print("Unsuccessful training for",i)
+            
+            self.temporal_extractor.save("Verb_Predictor")
+            print("Model save successful!")
+
 
     def train(self):
         L1 = LoadData()
@@ -126,6 +191,7 @@ class learn_optical_flow():
             pass
         else:
             self.temporal_extractor = saved
+        
         print("Epochs completed =",epochs_completed)
 
         for epochs in range(epochs_completed+1,self.Epochs+1):    
@@ -145,6 +211,10 @@ class learn_optical_flow():
 
             for i in range(0,totalSamples,i+batch_size):
                 print()
+
+
+
+
             while i<totalSamples-1:
 
                 try:
