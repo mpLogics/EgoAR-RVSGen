@@ -208,9 +208,9 @@ class LoadData():
             Y_Verb.append(Verb)
         return Frame_Seq,Y_Verb
 
-    def read_flow(self,i,access_order,num_classes):
+    def read_flow(self,i,access_order,num_classes,scale_factor):
         start_idx = i
-        end_idx = i + 2*num_classes
+        end_idx = i + scale_factor*num_classes
         Train_Frame,Train_Verb = self.read_any_flow(access_order,start_index=start_idx,end_index=end_idx)
 
         start_idx = end_idx

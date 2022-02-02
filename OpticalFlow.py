@@ -81,7 +81,7 @@ class learn_optical_flow():
             #performance_metrics = np.load("data/performance_metrics/" + modality + "/Metrics.npz")
         except Exception:
             print("Saved model could not be read.")
-            return None,0,[],[],[],[]
+            return None
         
         #epochs_completed = performance_metrics['a'].shape[0]
         #Loss_per_epoch=[]
@@ -102,7 +102,7 @@ class learn_optical_flow():
         Y_corrected = np.copy(Y)
         return Y_corrected-1
     
-    def re_train_flow(self):
+    def retrain_flow(self):
         L1 = LoadData
         L1 = LoadData()
         L1.train_test_splitNo = self.train_test_split 
@@ -113,22 +113,26 @@ class learn_optical_flow():
         da.random_flag = True
         access_order = da.build_order()
         self.model.summary()
-        saved,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch = self.check_prev_trainings(
-            modality="OF",model_name="Verb_Predictor")
+        saved = self.check_prev_trainings(modality="OF",model_name="Verb_Predictor")
         
         if saved==None:
             pass
         else:
             self.temporal_extractor = saved
-        print("Epochs completed =",epochs_completed)
+        #print("Epochs completed =",epochs_completed)
         
         for epochs in range(self.Epochs+1):
             print("Epoch",epochs)
             i=0
             num_batches=0
-            for i in range(0,totalSamples-(self.num_classes_total*self.multiply_factor),self.num_classes_total*self.multiply_factor):
+            
+            for i in range(0,totalSamples-(self.num_classes_total*self.upscale_factor),self.num_classes_total*self.upscale_factor):
                 try:
-                    X_train,Y_Verb,X_Val,Val_Verb = L1.read_flow(i,access_order,num_classes=self.num_classes_total)
+                    X_train,Y_Verb,X_Val,Val_Verb = L1.read_flow(
+                                                                i,
+                                                                access_order,
+                                                                num_classes=self.num_classes_total,
+                                                                scale_factor=self.upscale_factor)
                 except Exception:
                     print("Error reading files from index: ",i)
                 # Logs

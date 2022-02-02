@@ -48,7 +48,7 @@ class Model():
         ops = Dense(128, activation='relu')(encoded_vid)
         outputs = Dense(self.RGB_classes)(ops)
         activation = Activation("softmax")(outputs)
-        optimizer = tf.keras.optimizers.Adam(learning_rate=0.00001)
+        optimizer = tf.keras.optimizers.Adam(learning_rate=0.000005)
         model = tf.keras.models.Model(inputs=video,outputs=activation)
         model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
         return model
@@ -106,17 +106,17 @@ class Train():
         L1.fix_frames = self.fix_frames
         totalSamples = L1.getTotal()
         print("Total samples = ",totalSamples)
-        #da = Data_Access()
-        #da.random_flag = True
-        #access_order = da.build_order()
-        #self.model.summary()
+        da = Data_Access()
+        da.random_flag = True
+        access_order = da.build_order()
+        self.model.summary()
         self.check_prev_trainings(model_weights="model_weights.h5")
         
         
         for epochs in range(self.Epochs+1):        
-            da = Data_Access()
-            da.random_flag = True
-            access_order = da.build_order()    
+            #da = Data_Access()
+            #da.random_flag = True
+            #access_order = da.build_order()    
             
             #print(access_order[:51])
 
