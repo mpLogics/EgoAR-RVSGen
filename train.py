@@ -123,7 +123,7 @@ class Train():
             print("\nEpoch:",epochs)
             i = 0
             num_batches=0
-
+            epochs_per_batch = 1
             for i in range(0,totalSamples-(self.num_classes_total*3),self.num_classes_total*3):
                 
                 try:
@@ -131,9 +131,12 @@ class Train():
                 except Exception:
                     print("Error reading files from index: ",i)
                 
-                #if (np.unique(np.array(Y_Noun))).shape[0]<=1:
-                #    break
+                if (np.unique(np.array(Y_Noun))).shape[0]<=4:
+                    epochs_per_batch=5
+                
+                #break
                 # Logs
+                
                 print("\nClasses covered in batch: ",(np.unique(np.array(Y_Noun))).shape[0])
                 print("Batch(es) read: ",num_batches)
                 print("Files read = ",i)                   
@@ -152,7 +155,7 @@ class Train():
                 
                 # Training batch
                 try:
-                    history = self.model.fit(np.array(X_train),Y,epochs=1)#,validation_data=(np.array(X_Val),Y_val))
+                    history = self.model.fit(np.array(X_train),Y,epochs=epochs_per_batch)#,validation_data=(np.array(X_Val),Y_val))
                 except Exception:
                     print("Unsuccessful training for",i)
 
