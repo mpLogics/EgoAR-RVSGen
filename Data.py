@@ -202,7 +202,7 @@ class LoadData():
         #Frame_Seq=[]
         Mag,Angle,Encoding = self.load_file(access_order[start_index],modality="OF")
         OF_0,Verb_0 = self.get_any_matrix(Mag,Angle,Encoding)
-        
+        Y_Verb.append(Verb_0)
         
         for j in range(start_index+1,end_index):
             Mag,Angle,Encoding = self.load_file(access_order[j],modality="OF")
