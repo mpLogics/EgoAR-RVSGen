@@ -162,6 +162,7 @@ class learn_optical_flow():
                 #    self.frame_rows,
                 #    self.frame_cols,
                 #    self.channels))
+                
                 try:
                     history = self.temporal_extractor.fit(X_train,Y,epochs=2,validation_data=(np.array(X_Val),Y_val))
                 except Exception:

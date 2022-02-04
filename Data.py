@@ -157,6 +157,7 @@ class LoadData():
             
             j+=interval_size    
         Annotations.append((int)(Encoding[0]))
+        init_matrix = np.reshape(init_matrix,(1,init_matrix.shape[0],init_matrix.shape[1],init_matrix.shape[2],init_matrix.shape[3]))
         return init_matrix,np.array(Annotations)
 
     def load_file(self,i,modality):
