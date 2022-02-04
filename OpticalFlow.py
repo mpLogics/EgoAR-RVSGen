@@ -122,7 +122,7 @@ class learn_optical_flow():
         else:
             self.temporal_extractor = saved
         #print("Epochs completed =",epochs_completed)
-        epochs_per_batch = 32
+        epochs_per_batch = 4
         for epochs in range(self.Epochs+1):
             print("Epoch",epochs)
             i=0
