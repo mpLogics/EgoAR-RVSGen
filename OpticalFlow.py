@@ -110,7 +110,9 @@ class learn_optical_flow():
         totalSamples = L1.getTotal()
         print("Total samples = ",totalSamples)
         da = Data_Access()
-        da.random_flag = True
+        da.random_flag = False
+        da.modality = "OF"
+        
         access_order = da.build_order()
         #self.model.summary()
         saved = self.check_prev_trainings(modality="OF",model_name="Verb_Predictor_diff")
@@ -120,11 +122,12 @@ class learn_optical_flow():
         else:
             self.temporal_extractor = saved
         #print("Epochs completed =",epochs_completed)
-        
+        epochs_per_batch = 32
         for epochs in range(self.Epochs+1):
             print("Epoch",epochs)
             i=0
             num_batches=0
+            epochs_changed = False
             
             for i in range(0,totalSamples-(self.num_classes_total*self.upscale_factor),self.num_classes_total*(self.upscale_factor+1)):
 
@@ -162,9 +165,15 @@ class learn_optical_flow():
                 #    self.frame_rows,
                 #    self.frame_cols,
                 #    self.channels))
+                if epochs > 2 and epochs_per_batch>1 and not epochs_changed: 
+                    epochs_per_batch = epochs_per_batch/2
+                    epochs_changed=True
+                else:
+                    epochs_per_batch=1
+                    epochs_changed = True
                 
                 try:
-                    history = self.temporal_extractor.fit(X_train,Y,epochs=2,validation_data=(np.array(X_Val),Y_val))
+                    history = self.temporal_extractor.fit(X_train,Y,epochs=50,validation_data=(np.array(X_Val),Y_val))
                 except Exception:
                     print("Unsuccessful training for",i)
             
