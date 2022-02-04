@@ -126,7 +126,7 @@ class learn_optical_flow():
             i=0
             num_batches=0
             
-            for i in range(0,totalSamples-(self.num_classes_total*self.upscale_factor),self.num_classes_total*self.upscale_factor):
+            for i in range(0,totalSamples-(self.num_classes_total*self.upscale_factor),self.num_classes_total*(self.upscale_factor+1)):
 
                 try:
                     X_train,Y_Verb,X_Val,Val_Verb = L1.read_flow(
