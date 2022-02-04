@@ -132,10 +132,11 @@ class learn_optical_flow():
                                                                 access_order,
                                                                 num_classes=self.num_classes_total,
                                                                 scale_factor=self.upscale_factor)
-                print(X_train.shape)
-                print(Y_Verb.shape)
-                print(Val_Verb.shape)
-                print(X_Val.shape)
+                print(len(X_Val))
+                print(len(X_train))
+                print(X_train[0].shape)
+                print(X_Val[0].shape)
+                
                 try:
                     X_train,Y_Verb,X_Val,Val_Verb = L1.read_flow(
                                                                 i,
