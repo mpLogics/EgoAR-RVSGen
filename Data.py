@@ -142,7 +142,7 @@ class LoadData():
         Mag[0] = Mag[0]#[120:240,160:320]
         Angle[0] = Angle[0]#[120:240,160:320]
         prev_matrix = np.concatenate([Mag[0],Angle[0]],axis=1)
-        init_matrix = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
+        init_matrix = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1],1))
 
         for k in range(1,self.fix_frames):
             if j<=0:
@@ -152,11 +152,10 @@ class LoadData():
             Angle[j] = Angle[j]
             
             prev_matrix = np.concatenate([Mag[j],Angle[j]],axis=1)
-            temp = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1]))
+            temp = np.reshape(prev_matrix,(1,prev_matrix.shape[0],prev_matrix.shape[1],1))
             init_matrix = np.concatenate([init_matrix,temp])
             
             j+=interval_size    
-        
         Annotations.append((int)(Encoding[0]))
         return init_matrix,np.array(Annotations)
 
@@ -204,8 +203,6 @@ class LoadData():
         for j in range(start_index,end_index):
             Mag,Angle,Encoding = self.load_file(access_order[j],modality="OF")
             OF,Verb = self.get_any_matrix(Mag,Angle,Encoding)
-            print(OF.shape)
-            print(Verb.shape)
             Frame_Seq.append(OF)
             Y_Verb.append(Verb)
         return Frame_Seq,Y_Verb
