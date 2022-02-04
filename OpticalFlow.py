@@ -165,7 +165,7 @@ class learn_optical_flow():
                 #    self.frame_rows,
                 #    self.frame_cols,
                 #    self.channels))
-                if epochs > 2 and epochs_per_batch>1 and not epochs_changed: 
+                if epochs > 1 and epochs_per_batch>1 and not epochs_changed: 
                     epochs_per_batch = epochs_per_batch/2
                     epochs_changed=True
                 else:
