@@ -165,12 +165,11 @@ class learn_optical_flow():
                 #    self.frame_rows,
                 #    self.frame_cols,
                 #    self.channels))
-                if epochs > 1 and epochs_per_batch>1 and not epochs_changed: 
-                    epochs_per_batch = epochs_per_batch/2
+                if epochs > 1 and epochs_per_batch>1 and not epochs_changed and epochs_per_batch!=1: 
+                    epochs_per_batch = (int)(epochs_per_batch/2)
                     epochs_changed=True
-                else:
-                    epochs_per_batch=1
-                    epochs_changed = True
+                
+                
                 
                 try:
                     history = self.temporal_extractor.fit(X_train,Y,epochs=epochs_per_batch,validation_data=(np.array(X_Val),Y_val))
