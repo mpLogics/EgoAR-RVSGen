@@ -204,6 +204,8 @@ class LoadData():
         for j in range(start_index,end_index):
             Mag,Angle,Encoding = self.load_file(access_order[j],modality="OF")
             OF,Verb = self.get_any_matrix(Mag,Angle,Encoding)
+            print(OF.shape)
+            print(Verb.shape)
             Frame_Seq.append(OF)
             Y_Verb.append(Verb)
         return Frame_Seq,Y_Verb
