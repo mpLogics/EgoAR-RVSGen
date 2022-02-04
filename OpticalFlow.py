@@ -173,7 +173,7 @@ class learn_optical_flow():
                     epochs_changed = True
                 
                 try:
-                    history = self.temporal_extractor.fit(X_train,Y,epochs=50,validation_data=(np.array(X_Val),Y_val))
+                    history = self.temporal_extractor.fit(X_train,Y,epochs=epochs_per_batch,validation_data=(np.array(X_Val),Y_val))
                 except Exception:
                     print("Unsuccessful training for",i)
             
