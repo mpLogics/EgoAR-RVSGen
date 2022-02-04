@@ -156,9 +156,9 @@ class LoadData():
             init_matrix = np.concatenate([init_matrix,temp])
             
             j+=interval_size    
-        Annotations.append((int)(Encoding[0]))
+        #Annotations.append((int)(Encoding[0]))
         init_matrix = np.reshape(init_matrix,(1,init_matrix.shape[0],init_matrix.shape[1],init_matrix.shape[2],init_matrix.shape[3]))
-        return init_matrix,np.array(Annotations)
+        return init_matrix,(int)(Encoding[0])
 
     def load_file(self,i,modality):
         if self.mode=="train":
@@ -199,14 +199,18 @@ class LoadData():
     
     def read_any_flow(self,access_order,start_index,end_index):
         Y_Verb=[]
-        Frame_Seq=[]
-
-        for j in range(start_index,end_index):
+        #Frame_Seq=[]
+        Mag,Angle,Encoding = self.load_file(access_order[start_index],modality="OF")
+        OF_0,Verb_0 = self.get_any_matrix(Mag,Angle,Encoding)
+        
+        
+        for j in range(start_index+1,end_index):
             Mag,Angle,Encoding = self.load_file(access_order[j],modality="OF")
             OF,Verb = self.get_any_matrix(Mag,Angle,Encoding)
-            Frame_Seq.append(OF)
+            OF_0 = np.concatenate((OF_0,OF))
+            #Frame_Seq.append(OF)
             Y_Verb.append(Verb)
-        return Frame_Seq,Y_Verb
+        return OF_0,Y_Verb
 
     def read_flow(self,i,access_order,num_classes,scale_factor):
         start_idx = i
