@@ -112,8 +112,8 @@ class learn_optical_flow():
         da = Data_Access()
         da.random_flag = True
         access_order = da.build_order()
-        self.model.summary()
-        saved = self.check_prev_trainings(modality="OF",model_name="Verb_Predictor")
+        #self.model.summary()
+        saved = self.check_prev_trainings(modality="OF",model_name="Verb_Predictor_diff")
         
         if saved==None:
             pass
@@ -166,7 +166,7 @@ class learn_optical_flow():
                 except Exception:
                     print("Unsuccessful training for",i)
             
-            self.temporal_extractor.save("Verb_Predictor")
+            self.temporal_extractor.save("Verb_Predictor_diff")
             print("Model save successful!")
 
 
