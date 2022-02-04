@@ -213,7 +213,7 @@ class LoadData():
         Train_Frame,Train_Verb = self.read_any_flow(access_order,start_index=start_idx,end_index=end_idx)
 
         start_idx = end_idx
-        start_idx = end_idx + num_classes
+        end_idx = end_idx + num_classes
         Val_Frame,Val_Noun = self.read_any_flow(access_order,start_index=start_idx,end_index=end_idx)
 
         return Train_Frame,Train_Verb,Val_Frame,Val_Noun

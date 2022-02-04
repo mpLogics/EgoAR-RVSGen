@@ -127,16 +127,7 @@ class learn_optical_flow():
             num_batches=0
             
             for i in range(0,totalSamples-(self.num_classes_total*self.upscale_factor),self.num_classes_total*self.upscale_factor):
-                X_train,Y_Verb,X_Val,Val_Verb = L1.read_flow(
-                                                                i,
-                                                                access_order,
-                                                                num_classes=self.num_classes_total,
-                                                                scale_factor=self.upscale_factor)
-                print(len(X_Val))
-                print(len(X_train))
-                print(X_train[0].shape)
-                print(X_Val[0].shape)
-                
+
                 try:
                     X_train,Y_Verb,X_Val,Val_Verb = L1.read_flow(
                                                                 i,
@@ -158,21 +149,21 @@ class learn_optical_flow():
                 Y_val = tf.convert_to_tensor(Y_val_corrected)
 
                 # Training batch
-                X = np.reshape(X_train,(
-                    self.num_classes_total*self.upscale_factor,
-                    self.fix_frames,
-                    self.frame_rows,
-                    self.frame_cols,
-                    self.channels))
+                #X = np.reshape(X_train,(
+                #    self.num_classes_total*self.upscale_factor,
+                #    self.fix_frames,
+                #    self.frame_rows,
+                #    self.frame_cols,
+                #    self.channels))
 
-                X_val = np.reshape(X_Val,(
-                    self.num_classes_total,
-                    self.val_seq_size,
-                    self.frame_rows,
-                    self.frame_cols,
-                    self.channels))
+                #X_val = np.reshape(X_Val,(
+                #    self.num_classes_total,
+                #    self.val_seq_size,
+                #    self.frame_rows,
+                #    self.frame_cols,
+                #    self.channels))
                 try:
-                    history = self.temporal_extractor.fit(np.array(X),Y,epochs=2,validation_data=(np.array(X_val),Y_val))
+                    history = self.temporal_extractor.fit(X_train,Y,epochs=2,validation_data=(np.array(X_Val),Y_val))
                 except Exception:
                     print("Unsuccessful training for",i)
             
