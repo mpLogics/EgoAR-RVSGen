@@ -180,7 +180,6 @@ class learn_optical_flow():
             self.temporal_extractor = saved
             print("Saved model loaded")
         #print("Epochs completed =",epochs_completed)
-        epochs_per_batch = 1
         for epochs in range(self.Epochs+1):
             da = Data_Access()
             da.random_flag = True
