@@ -70,3 +70,11 @@ Time : 2021-09-19 08:31:14.300311
 Description: OpenCV(4.5.3) C:\Users\runneradmin\AppData\Local\Temp\pip-req-build-sn_xpupm\opencv\modules\imgproc\src\color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cv::cvtColor'
 
 
+Success!
+Time : 2021-12-20 00:33:08.629174
+Description: Preprocessing Complete
+
+Success!
+Time : 2021-12-20 00:33:44.442477
+Description: Preprocessing Complete
+

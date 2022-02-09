@@ -102,10 +102,17 @@ class Test_Experiments():
         return np.array(Noun_Predicted_top1),np.array(Noun_Predicted_top5)
     
     def predict_verb(self,rvs_rules,verb_predictor,use_RVS,K_range,total_samples,nouns_with_path):
+        access_order = [i for i in range(2022)]
         data_loader = LoadData()
         data_loader.mode = "test"
         data_loader.fix_frames = 5
-
+        Verb_Predicted_top1 = []
+        Verb_Predicted_top5 = []
+        i=0
+        num_batches=0
+        err_ctr=0
+        print("Total Samples:",total_samples)
+        
         #try:
         #    Noun = np.load(nouns_with_path,allow_pickle=True)
         #except:
@@ -118,7 +125,7 @@ class Test_Experiments():
         fix_frames = 5
         input_shape = (120,320,1)
         
-        base_model = verb_predictor.get_layer('dense_3').output 
+        #base_model = verb_predictor.get_layer('dense_3').output 
         #feature_extractor = keras.Model(
         #    inputs = verb_predictor.input,
         #    outputs = base_model)
@@ -131,23 +138,80 @@ class Test_Experiments():
         #samples = pd.read_csv("data/Splits/test_split1.csv")
         #err_ctr = 0
         #Predicted_Verbs=[]
+        #base_model = verb_predictor.get_layer('dense_1').output 
+        #feature_extractor = keras.Model(
+        #    inputs = verb_predictor.input,
+        #    outputs = base_model)
+
+        for i in range(0,total_samples-batch_size,batch_size):
+            if num_batches%5 or num_batches%10==0:
+                print("Files read:",i,", Ongoing batch size:",batch_size,", Batches completed:",num_batches)
+            
+            
+            try:
+                X_Value,Verb = data_loader.read_any_flow(
+                    access_order,
+                    start_index = i,
+                    end_index = i + batch_size)
+                
+            except:
+                print("Error at file index",i)
+                err_ctr+=1
+            
+            if err_ctr>=5:
+                break
+            
+            
+            for j in range(len(pred)):                
+                Verb_Predicted_top1.append(np.argmax(pred[j])+1)
+                Verb_Predicted_top5.append(pred[j].argsort()[-5:][::-1]+1)
+            
+            print("Current Length of predictions (top 1):",len(Verb_Predicted_top1))
+            print("Current Length of predictions (top 5):",len(Verb_Predicted_top5))
+            
+            num_batches+=1
+        
+        batch_size = 1
+        
+        for i in range(2000,total_samples,1):
+            
+            try:
+                X_Value,Verb = data_loader.read_any_flow(
+                    access_order,
+                    start_index = i,
+                    end_index = i + batch_size)
+                pred = verb_predictor.predict(X_Value)
+            except:
+                print("Error at file index",i)
+                err_ctr+=1
+            
+            if err_ctr>=5:
+                break
+            
+            print(len(pred))
+            
+            for j in range(len(pred)):                
+                Verb_Predicted_top1.append(np.argmax(pred[j])+1)
+                Verb_Predicted_top5.append(pred[j].argsort()[-5:][::-1]+1)
+            
+            print("Current Length of predictions (top 1):",len(Verb_Predicted_top1))
+            print("Current Length of predictions (top 5):",len(Verb_Predicted_top5))
+            print("Files read:",i,", Ongoing batch size:",batch_size,", Batches completed:",num_batches)
+            
+            num_batches+=1
+
+        return np.array(Verb_Predicted_top1),np.array(Verb_Predicted_top5)
+
+        """
         while i <total_samples:
             #try:
-                X_Value,Verb = data_loader.read_val_flow(
-                    i,
+                X_Value,Verb = data_loader.read_any_flow(
                     access_order,
-                    num_classes=batch_size,
-                    multiply_factor=scale_factor)
+                    start_index = i,
+                    end_index = i + batch_size)
                 
-                print(X_Value.shape)
-                X_OF = np.reshape(X_Value,(
-                    batch_size*scale_factor,
-                    fix_frames,
-                    input_shape[0],
-                    input_shape[1],
-                    input_shape[2]))
                 
-                verb_predictor.evaluate(X_OF,np.array(Verb))
+                verb_predictor.evaluate(X_Value,np.array(Verb))
                 #pred_OF = verb_predictor.predict(X_OF)
                 #feature_pred = feature_extractor.predict(X_OF)
                 #for i in range(len(pred_OF)):
@@ -159,7 +223,7 @@ class Test_Experiments():
                     batch_size = 1
                 
                 i+=batch_size
-        """
+        
         
         while i < total_samples:
             try:
@@ -214,29 +278,32 @@ class Test_Experiments():
                 print("Error encountered at index:",i)
                 err_ctr+=1
         return results
+        
         """
+def test_my_model():
+    total_samples = pd.read_csv("data/Splits/test_split1.csv")["FileName"].shape[0]
 
-total_samples = pd.read_csv("data/Splits/test_split1.csv")["FileName"].shape[0]
+    t1 = Test_Experiments()
+    rvs_rules=RVS_Implement()
+    #m1 = Model()
+    #noun_predictor = m1.Time_Distributed_Model()
+    #noun_predictor = rvs_rules.get_noun_model()
 
-t1 = Test_Experiments()
-#rvs_rules=RVS_Implement()
-m1 = Model()
-noun_predictor = m1.Time_Distributed_Model()
-#noun_predictor = rvs_rules.get_noun_model()
+    #Nouns,top_5 = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
+    #np.savez("data/results/test_reports/Nouns.npz",a = Nouns,b=top_5)
 
-Nouns,top_5 = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
-np.savez("data/results/test_reports/Nouns.npz",a = Nouns,b=top_5)
-
-#session.close()
-"""
-verb_predictor = rvs_rules.get_verb_model()
-Results = t1.predict_verb(
-    rvs_rules,
-    verb_predictor,
-    use_RVS=True,
-    K_range=[1,14],
-    total_samples=total_samples,
-    nouns_with_path="data/results/test_reports/Nouns.npz")
+    #session.close()
+    #"""
+    verb_predictor = rvs_rules.get_verb_model()
+    verb_predictor.summary()
+    Verbs,top_5 = t1.predict_verb(
+        rvs_rules,
+        verb_predictor,
+        use_RVS=True,
+        K_range=[1,14],
+        total_samples=total_samples,
+        nouns_with_path="data/results/test_reports/Nouns.npz")
+    np.savez("data/results/test_reports/Verbs.npz",a=Verbs,b=top_5)
 
 #Results.to_csv("data/results/Results.csv")
-"""
+#"""

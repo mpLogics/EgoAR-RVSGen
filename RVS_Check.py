@@ -43,8 +43,9 @@ class RVS_Implement():
     
     def get_noun_model(self):
         return keras.models.load_model("Noun_Predictor")
+    
     def get_verb_model(self):
-        return keras.models.load_model("Verb_Predictor")
+        return keras.models.load_model("Verb_Predictors/Verb_Predictor_diff_521_1399_ver")
 
         
     def set_verb_rules(self):

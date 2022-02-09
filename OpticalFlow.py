@@ -1,9 +1,15 @@
 import tensorflow as tf
-from tensorflow import keras
-from keras import Input
-from keras.models import Sequential
-from keras.layers import Dense,Dropout,Flatten,Input,ConvLSTM2D,Activation
+from tensorflow.keras import Input
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.layers import Dense,Dropout,Flatten,Input,ConvLSTM2D,Activation
+import test
+import RVS_Prob_Checker
 
+from Data import LoadData
+
+import test
+import RVS_Prob_Checker
 
 import numpy as np
 import os
@@ -20,6 +26,35 @@ from RVSGen import GenVerbSpace as GVS
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 
+class My_Custom_Generator(tf.keras.utils.Sequence):
+  
+  def __init__(self, total_classes, batch_size, upscale_factor, access_order) :
+    self.access_order = access_order
+    self.num_classes_total = total_classes
+    self.upscale_factor = upscale_factor
+    self.batch_size = batch_size
+    self.data_loader = LoadData()
+    
+  def getCorrected(self,Y):
+    Y_corrected = np.copy(Y)
+    return Y_corrected-1
+
+  def __len__(self) :
+    return (np.ceil(len(self.image_filenames) / float(self.batch_size))).astype(np.int)
+  
+  
+  def __getitem__(self, idx) :
+    X,Y_Verb = data_loader.read_flow(idx,self.access_order,self.num_classes_total,self.upscale_factor,extract_val_set=False)
+    Y_corrected = self.getCorrected(np.array(Y_Verb))
+    Y = tf.convert_to_tensor(Y_corrected)
+
+    return X,Y
+    #batch_x = self.image_filenames[idx * self.batch_size : (idx+1) * self.batch_size]
+    #batch_y = self.labels[idx * self.batch_size : (idx+1) * self.batch_size]
+    
+    #return np.array([
+    #        resize(imread('/content/all_images/' + str(file_name)), (80, 80, 3))
+    #           for file_name in batch_x])/255.0, np.array(batch_y)
 
 class learn_optical_flow():
     def __init__(self):
@@ -37,11 +72,30 @@ class learn_optical_flow():
         self.frame_cols = 320
         self.channels = 1
     
+    def set_class_weights(self):
+        df = pd.read_csv("data/Splits/train_split1.csv")
+        V = df["Verb"]
+
+        class_frequency = {i:0 for i in range(self.num_classes_total)}
+        class_weights = {i:10000.0 for i in range(self.num_classes_total)}
+        
+        for i in df["Verb"]:
+            class_frequency[i-1]+=1
+
+        print(class_frequency)
+        
+        for i in df["Verb"]:
+            class_weights[i-1] = (round)(10000/class_frequency[i-1])
+
+
+        print("Calculated Class weights:",class_weights)
+        return class_weights
+
     def convLSTM_model(self):
         model = Sequential()
         
         model.add(ConvLSTM2D(
-            filters = 32, 
+            filters = 16, 
             kernel_size = (5, 5),
             return_sequences = True, 
             data_format = "channels_last", 
@@ -50,34 +104,36 @@ class learn_optical_flow():
                 self.frame_rows,
                 self.frame_cols, 
                 self.channels)))
-        model.add(Dropout(0.5))
+        model.add(Dropout(0.8))
         
-        model.add(ConvLSTM2D(
-            filters = 16, 
-            kernel_size = (3, 3), 
-            return_sequences = True))
-        model.add(Dropout(0.5))
-
         model.add(ConvLSTM2D(
             filters = 8, 
             kernel_size = (3, 3), 
             return_sequences = False))
-        model.add(Dropout(0.5))
+        model.add(Dropout(0.7))
+
+        #model.add(ConvLSTM2D(
+        #    filters = 8, 
+        #    kernel_size = (3, 3), 
+        #    return_sequences = False))
+        #model.add(Dropout(0.5))
         
         model.add(Flatten())
-        model.add(Dense(units = 256))
-        model.add(Dense(units = 128))
-        model.add(Dense(units = 64))
+        #model.add(Dense(units = 256))
+        #model.add(Dense(units = 128))
+        model.add(Dense(units = 32))
+        model.add(Dropout(0.6))
         model.add(Dense(units = 19))
         #model.add(Dense(19, activation = "softmax"))
         model.add(Activation('softmax'))
+        optimizer = Adam(learning_rate=0.00000005)
         model.summary()
-        model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
         self.temporal_extractor = model
 
     def check_prev_trainings(self,model_name,modality):
         try:
-            saved_model = keras.models.load_model(model_name)
+            saved_model = tf.keras.models.load_model(model_name)
             #performance_metrics = np.load("data/performance_metrics/" + modality + "/Metrics.npz")
         except Exception:
             print("Saved model could not be read.")
@@ -102,6 +158,7 @@ class learn_optical_flow():
         Y_corrected = np.copy(Y)
         return Y_corrected-1
     
+
     def retrain_flow(self):
         L1 = LoadData
         L1 = LoadData()
@@ -109,21 +166,26 @@ class learn_optical_flow():
         L1.fix_frames = self.fix_frames
         totalSamples = L1.getTotal()
         print("Total samples = ",totalSamples)
-        da = Data_Access()
-        da.random_flag = False
-        da.modality = "OF"
-        
-        access_order = da.build_order()
+        #da = Data_Access()
+        #da.random_flag = False
+        #da.modality = "OF"
+        class_wghts = self.set_class_weights()
+        #access_order = da.build_order()
         #self.model.summary()
-        saved = self.check_prev_trainings(modality="OF",model_name="Verb_Predictor_diff")
+        saved = self.check_prev_trainings(modality="OF",model_name="Verb_Predictor_diff_521_1399")
         
         if saved==None:
             pass
         else:
             self.temporal_extractor = saved
+            print("Saved model loaded")
         #print("Epochs completed =",epochs_completed)
-        epochs_per_batch = 32
+        epochs_per_batch = 1
         for epochs in range(self.Epochs+1):
+            da = Data_Access()
+            da.random_flag = True
+            da.modality = "OF"
+            access_order = da.build_order()
             print("Epoch",epochs)
             i=0
             num_batches=0
@@ -131,14 +193,18 @@ class learn_optical_flow():
             
             for i in range(0,totalSamples-(self.num_classes_total*self.upscale_factor),self.num_classes_total*(self.upscale_factor+1)):
 
-                try:
-                    X_train,Y_Verb,X_Val,Val_Verb = L1.read_flow(
-                                                                i,
-                                                                access_order,
-                                                                num_classes=self.num_classes_total,
-                                                                scale_factor=self.upscale_factor)
+                try:                    
+                    X_train,Y_Verb = L1.read_flow(
+                                                    i,
+                                                    access_order,
+                                                    num_classes=self.num_classes_total,
+                                                    scale_factor=self.upscale_factor,
+                                                    extract_val_set=False)
                 except Exception:
                     print("Error reading files from index: ",i)
+                
+                
+                
                 # Logs
                 print("\nClasses covered in batch: ",(np.unique(np.array(Y_Verb))).shape[0])
                 print("Batch(es) read: ",num_batches)
@@ -147,9 +213,9 @@ class learn_optical_flow():
 
                 Y_corrected = self.getCorrected(np.array(Y_Verb))
                 Y = tf.convert_to_tensor(Y_corrected)
-                
-                Y_val_corrected = self.getCorrected(np.array(Val_Verb))
-                Y_val = tf.convert_to_tensor(Y_val_corrected)
+                        
+                #Y_val_corrected = self.getCorrected(np.array(Val_Verb))
+                #Y_val = tf.convert_to_tensor(Y_val_corrected)
 
                 # Training batch
                 #X = np.reshape(X_train,(
@@ -165,19 +231,23 @@ class learn_optical_flow():
                 #    self.frame_rows,
                 #    self.frame_cols,
                 #    self.channels))
-                if epochs > 1 and epochs_per_batch>1 and not epochs_changed and epochs_per_batch!=1: 
-                    epochs_per_batch = (int)(epochs_per_batch/2)
-                    epochs_changed=True
                 
-                
-                
+                if (np.unique(np.array(Y_Verb))).shape[0]<=15:
+                    break
                 try:
-                    history = self.temporal_extractor.fit(X_train,Y,epochs=epochs_per_batch,validation_data=(np.array(X_Val),Y_val))
+                    #history = self.temporal_extractor.fit(X_train,Y,epochs=64,validation_data=(np.array(X_Val),Y_val),class_weights=self.set_class_weights(Y_corrected))
+                    self.temporal_extractor.train_on_batch(x = X_train,y=Y,class_weight=class_wghts)
+                    self.temporal_extractor.evaluate(x=X_train,y=Y,)
+                    #print(history1.history)
                 except Exception:
                     print("Unsuccessful training for",i)
-            
-            self.temporal_extractor.save("Verb_Predictor_diff")
+            self.temporal_extractor.save("Verb_Predictors/Verb_Predictor_diff_521_1399_ver")
             print("Model save successful!")
+            test.test_my_model()
+            RVS_Prob_Checker.get_test_metrics()
+            
+
+
 
 
     def train(self):

@@ -135,6 +135,7 @@ class LoadData():
         self.num_classes_total = 53
         
     def get_any_matrix(self,Mag,Angle,Encoding):
+
         interval_size = math.floor(len(Mag)/self.fix_frames)
         Annotations=[]
         j = 0
@@ -158,7 +159,10 @@ class LoadData():
             j+=interval_size    
         #Annotations.append((int)(Encoding[0]))
         init_matrix = np.reshape(init_matrix,(1,init_matrix.shape[0],init_matrix.shape[1],init_matrix.shape[2],init_matrix.shape[3]))
-        return init_matrix,(int)(Encoding[0])
+        if self.mode=="train":
+            return init_matrix,(int)(Encoding[0])
+        else:
+            return init_matrix,(int)(Encoding)
 
     def load_file(self,i,modality):
         if self.mode=="train":
@@ -215,16 +219,21 @@ class LoadData():
             Y_Verb.append(Verb)
         return OF_0,Y_Verb
 
-    def read_flow(self,i,access_order,num_classes,scale_factor):
+    def read_flow(self,i,access_order,num_classes,scale_factor,extract_val_set=True):
         start_idx = i
-        end_idx = i + scale_factor*num_classes
-        Train_Frame,Train_Verb = self.read_any_flow(access_order,start_index=start_idx,end_index=end_idx)
+        if extract_val_set:
+            end_idx = i + scale_factor*num_classes
+            Train_Frame,Train_Verb = self.read_any_flow(access_order,start_index=start_idx,end_index=end_idx)
 
-        start_idx = end_idx
-        end_idx = end_idx + num_classes
-        Val_Frame,Val_Noun = self.read_any_flow(access_order,start_index=start_idx,end_index=end_idx)
+            start_idx = end_idx
+            end_idx = end_idx + num_classes
+            Val_Frame,Val_Noun = self.read_any_flow(access_order,start_index=start_idx,end_index=end_idx)
 
-        return Train_Frame,Train_Verb,Val_Frame,Val_Noun
+            return Train_Frame,Train_Verb,Val_Frame,Val_Noun
+        else:
+            end_idx = i + scale_factor*num_classes + num_classes
+            Train_Frame,Train_Verb = self.read_any_flow(access_order,start_index=start_idx,end_index=end_idx)
+            return Train_Frame,Train_Verb
     
     def read_val_flow(self,i,access_order,num_classes,multiply_factor):
         Verb_Set=[]
