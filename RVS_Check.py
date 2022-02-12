@@ -48,6 +48,7 @@ class RVS_Implement():
         #                config_values["train"]["input_shape_z"]
         #                )
         model = m1.Time_Distributed_Model()
+        model.summary()
         model.load_weights(model_weights)
         return model
 
