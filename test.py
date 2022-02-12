@@ -54,7 +54,6 @@ class Test_Experiments():
             try:
                 Frames,Y_Noun = data_loader.read_any_rgb(access_order,start_index=i,end_index=i+batch_size)
                 X = np.array(Frames)
-                #noun_predictor.evaluate(X,(np.array(Y_Noun)-1))
                 pred = noun_predictor.predict(X)
             except:
                 print("Error at file index",i)
@@ -63,14 +62,12 @@ class Test_Experiments():
             if err_ctr>=5:
                 break
             
-            print(len(pred))
-            
             for j in range(len(pred)):                
                 Noun_Predicted_top1.append(np.argmax(pred[j])+1)
                 Noun_Predicted_top5.append(pred[j].argsort()[-5:][::-1]+1)
             
-            print("Current Length of predictions (top 1):",len(Noun_Predicted_top1))
-            print("Current Length of predictions (top 5):",len(Noun_Predicted_top5))
+            #print("Current Length of predictions (top 1):",len(Noun_Predicted_top1))
+            #print("Current Length of predictions (top 5):",len(Noun_Predicted_top5))
             
             num_batches+=1
         
@@ -80,7 +77,6 @@ class Test_Experiments():
             try:
                 Frames,Y_Noun = data_loader.read_any_rgb(access_order,start_index=i,end_index=i+batch_size)
                 X = np.array(Frames)
-                #noun_predictor.evaluate(X,(np.array(Y_Noun)-1))
                 pred = noun_predictor.predict(X)
             except:
                 print("Error at file index",i)
@@ -89,20 +85,147 @@ class Test_Experiments():
             if err_ctr>=5:
                 break
             
-            print(len(pred))
-            
             for j in range(len(pred)):                
                 Noun_Predicted_top1.append(np.argmax(pred[j])+1)
                 Noun_Predicted_top5.append(pred[j].argsort()[-5:][::-1]+1)
             
-            print("Current Length of predictions (top 1):",len(Noun_Predicted_top1))
-            print("Current Length of predictions (top 5):",len(Noun_Predicted_top5))
+            #print("Current Length of predictions (top 1):",len(Noun_Predicted_top1))
+            #print("Current Length of predictions (top 5):",len(Noun_Predicted_top5))
             print("Files read:",i,", Ongoing batch size:",batch_size,", Batches completed:",num_batches)
             
             num_batches+=1
 
         return np.array(Noun_Predicted_top1),np.array(Noun_Predicted_top5)
     
+    def get_action(self,P_Noun_Verb,noun_features,n_args,verb_features,v_args):
+        
+        max_rows = len(noun_features)
+        max_cols = len(verb_features)
+        
+        #Obtaining ffv - final feature vector
+        ffv = np.zeros((max_rows,max_cols))
+
+        for i in range(len(noun_features)):
+            for j in range(len(verb_features)):
+                ffv[i][j] = P_Noun_Verb[(n_args[i],v_args[j])]*noun_features[i]*verb_features[j]
+        
+        predicted_value = np.argmax(ffv)
+        i_pred = (int)(predicted_value/max_rows)
+        j_pred = predicted_value % max_rows
+        
+        Noun = n_args[i_pred] + 1
+        Verb = v_args[j_pred] + 1
+
+        return Noun, Verb     
+    
+    def predict_action(self,noun_predictor,verb_predictor,total_samples):
+
+        #noun_predictor.load_weights("model_weights.h5")
+        #verb_predictor.load_weights("")
+        Final_Nouns=[]
+        Final_Verbs=[]
+
+        rvs_rules = RVS_Implement()
+        P_Noun,P_Verb,P_Noun_Verb = rvs_rules.set_verb_rules()
+
+        noun_base_model = noun_predictor.get_layer('dense_1').output
+        verb_base_model = verb_predictor.get_layer('dense_1').output 
+        
+        noun_feature_extractor = keras.Model(
+            inputs = noun_predictor.input,
+            outputs = noun_base_model)
+
+        verb_feature_extractor = keras.Model(
+            inputs = verb_predictor.input,
+            outputs = verb_base_model)
+        
+        noun_loader = LoadData()
+        noun_loader.mode = "test"
+        noun_loader.fix_frames = 10
+        
+        verb_loader = LoadData()
+        verb_loader.mode = "test"
+        verb_loader.fix_frames = 5
+        
+        noun_predictor.summary()
+        access_order = [i for i in range(total_samples)]
+        batch_size = 100
+        num_batches = 0
+        
+        err_ctr=0
+        Noun_predicted_top5 = []
+        for i in range(0,total_samples-batch_size,batch_size):
+            
+            if num_batches % 5 or num_batches % 10 == 0:
+                print("Files read:",i,", Ongoing batch size:",batch_size,", Batches completed:",num_batches)
+
+            try:
+                X_RGB,Y_Noun = noun_loader.read_any_rgb(
+                                                        access_order,
+                                                        start_index=i,end_index=i+batch_size)
+                X_RGB = np.array(X_RGB)
+
+                X_Flow,Verb = verb_loader.read_any_flow(
+                                                        access_order,
+                                                        start_index = i,end_index = i + batch_size)
+                
+                noun_pred = noun_feature_extractor.predict(X_RGB)
+                verb_pred = verb_feature_extractor.predict(X_Flow)
+
+                for i in range(len(noun_pred)):
+                    # Top 5 noun feature vectors
+                    n_args = noun_pred[i].argsort()[-5:][::-1]
+                    # Top 5 verb feature vectors
+                    v_args = verb_pred[i].argsort()[-5:][::-1]
+
+                    Noun,Verb = self.get_action(
+                        P_Noun_Verb=P_Noun_Verb,
+                        noun_features=noun_pred,n_args=n_args,
+                        verb_features=verb_pred,v_args=v_args)
+                    
+                    Final_Nouns.append(Noun+1)
+                    Final_Verbs.append(Verb+1)                
+
+            except:
+                print("Error at index",i)
+                err_ctr+=1
+        batch_size = 1
+        for i in range(2000,total_samples,1):
+            if num_batches % 5 or num_batches % 10 == 0:
+                print("Files read:",i,", Ongoing batch size:",batch_size,", Batches completed:",num_batches)
+
+            try:
+                X_RGB,Y_Noun = noun_loader.read_any_rgb(
+                                                        access_order,
+                                                        start_index=i,end_index=i+batch_size)
+                X_RGB = np.array(X_RGB)
+
+                X_Flow,Verb = verb_loader.read_any_flow(
+                                                        access_order,
+                                                        start_index = i,end_index = i + batch_size)
+                
+                noun_pred = noun_feature_extractor.predict(X_RGB)
+                verb_pred = verb_feature_extractor.predict(X_Flow)
+
+                for i in range(len(noun_pred)):
+                    # Top 5 noun feature vectors
+                    n_args = noun_pred[i].argsort()[-5:][::-1]
+                    # Top 5 verb feature vectors
+                    v_args = verb_pred[i].argsort()[-5:][::-1]
+
+                    Noun,Verb = self.get_action(
+                        P_Noun_Verb=P_Noun_Verb,
+                        noun_features=noun_pred,n_args=n_args,
+                        verb_features=verb_pred,v_args=v_args)
+                    
+                    Final_Nouns.append(Noun+1)
+                    Final_Verbs.append(Verb+1)                
+
+            except:
+                print("Error at index",i)
+                err_ctr+=1
+        
+        return Final_Nouns,Final_Verbs
     
     def set_data_output(self,total_samples,K_range):
         df = pd.DataFrame()
@@ -328,13 +451,22 @@ def test_my_model():
 
     t1 = Test_Experiments()
     rvs_rules=RVS_Implement()
+    
     #m1 = Model()
     #noun_predictor = m1.Time_Distributed_Model()
+    
     noun_predictor = rvs_rules.get_noun_model("model_weight_633s.h5")
-
-    Nouns,top_5 = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
-    np.savez("data/results/test_reports/Nouns.npz",a = Nouns,b=top_5)
-
+    verb_predictor = rvs_rules.get_verb_model()
+    
+    #Nouns,top_5 = t1.predict_noun(noun_predictor=noun_predictor,total_samples=total_samples)
+    
+    Nouns,Verbs = t1.predict_action(
+        noun_predictor=noun_predictor,
+        verb_predictor=verb_predictor,
+        total_samples=total_samples)
+    
+    np.savez("Actions.npz",a = Nouns,b=Verbs)
+    
     #session.close()
     #"""
     #verb_predictor = rvs_rules.get_verb_model()

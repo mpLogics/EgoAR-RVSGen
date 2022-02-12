@@ -10,6 +10,7 @@ print("Sum of probabilities:",np.sum(np.array(list(P_Noun_Verb.values()))))
 import numpy as np
 import pandas as pd
 
+
 def get_top_1(tot_classes,ground_truth,predicted):
     return np.sum(ground_truth==predicted),np.mean(ground_truth==predicted)
 
