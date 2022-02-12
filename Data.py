@@ -188,7 +188,6 @@ class LoadData():
     
 
     def get_frame_order(self,frames,modality):
-        
         if modality=="OF":
             length = frames.shape[0]
         else:
@@ -208,8 +207,8 @@ class LoadData():
         OF_0,Verb_0 = self.get_any_matrix(Mag,Angle,Encoding)
         Y_Verb.append(Verb_0)
         
-        print("Starting at :",start_index)
-        print("Ending at :",end_index)
+        #print("Starting at :",start_index)
+        #print("Ending at :",end_index)
 
         for j in range(start_index+1,end_index):
             Mag,Angle,Encoding = self.load_file(access_order[j],modality="OF")

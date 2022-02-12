@@ -101,14 +101,17 @@ class Train():
 
     def custom_train_model(self):
         #m2 = Model()
+        
         L1 = LoadData()
         L1.train_test_splitNo = self.train_test_split 
         L1.fix_frames = self.fix_frames
         totalSamples = L1.getTotal()
         print("Total samples = ",totalSamples)
+        
         da = Data_Access()
         da.random_flag = True
         access_order = da.build_order()
+        
         self.model.summary()
         self.check_prev_trainings(model_weights="model_weights.h5")
         
@@ -124,6 +127,7 @@ class Train():
             i = 0
             num_batches=0
             epochs_per_batch = 1
+            
             for i in range(0,totalSamples-(self.num_classes_total*3),self.num_classes_total*3):
                 
                 try:

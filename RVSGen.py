@@ -11,7 +11,7 @@ class GenVerbSpace():
         self.Verb_Space = pd.read_csv(self.Verb_Path,header=None)
         self.Non_Occuring_Actions = 901
         #self.Action_Space = pd.read_csv(self.Action_Path,header=None)
-        self.Splits = 3
+        self.Splits = 1
 
     
     def getVerbSet(self):

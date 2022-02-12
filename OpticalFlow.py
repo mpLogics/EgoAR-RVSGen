@@ -3,13 +3,13 @@ from tensorflow.keras import Input
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import Dense,Dropout,Flatten,Input,ConvLSTM2D,Activation
-import test
-import RVS_Prob_Checker
+#import test
+#import RVS_Prob_Checker
 
 from Data import LoadData
 
-import test
-import RVS_Prob_Checker
+#import test
+#import RVS_Prob_Checker
 
 import numpy as np
 import os
@@ -28,27 +28,41 @@ from tensorflow.compat.v1 import InteractiveSession
 
 class My_Custom_Generator(tf.keras.utils.Sequence):
   
-  def __init__(self, total_classes, batch_size, upscale_factor, access_order) :
-    self.access_order = access_order
+  def __init__(self, total_classes, batch_size, upscale_factor) :
+    
+    self.L1 = LoadData()
+    self.L1.train_test_splitNo = (1,1)
+    self.L1.fix_frames = 5
     self.num_classes_total = total_classes
     self.upscale_factor = upscale_factor
+    self.total_samples = self.L1.getTotal() - (self.num_classes_total*self.upscale_factor)
+    print("Total samples = ",self.total_samples)
+    self.access_order = None
+    self.on_epoch_end()
     self.batch_size = batch_size
-    self.data_loader = LoadData()
+    self.idx = 0
     
   def getCorrected(self,Y):
     Y_corrected = np.copy(Y)
     return Y_corrected-1
 
-  def __len__(self) :
-    return (np.ceil(len(self.image_filenames) / float(self.batch_size))).astype(np.int)
+  def __len__(self):
+    return (np.floor(self.total_samples / (self.batch_size))).astype(type(self.total_samples))
   
-  
-  def __getitem__(self, idx) :
-    X,Y_Verb = data_loader.read_flow(idx,self.access_order,self.num_classes_total,self.upscale_factor,extract_val_set=False)
+  def __getitem__(self,index):
+    X,Y_Verb = self.L1.read_flow(self.idx,self.access_order,self.num_classes_total,self.upscale_factor,extract_val_set=False)
+    self.idx += self.num_classes_total*(self.upscale_factor+1)
     Y_corrected = self.getCorrected(np.array(Y_Verb))
     Y = tf.convert_to_tensor(Y_corrected)
-
     return X,Y
+
+  def on_epoch_end(self):
+    self.idx = 0
+    self.da = Data_Access()
+    self.da.random_flag = True
+    self.da.modality = "OF"
+    self.access_order = self.da.build_order()
+
     #batch_x = self.image_filenames[idx * self.batch_size : (idx+1) * self.batch_size]
     #batch_y = self.labels[idx * self.batch_size : (idx+1) * self.batch_size]
     
@@ -126,52 +140,73 @@ class learn_optical_flow():
         model.add(Dense(units = 19))
         #model.add(Dense(19, activation = "softmax"))
         model.add(Activation('softmax'))
-        optimizer = Adam(learning_rate=0.00000005)
+        optimizer = Adam(learning_rate=0.0000001)
         model.summary()
         model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
         self.temporal_extractor = model
 
+    def check_prev_trainings_weights(self,model_weights):
+        
+        try:
+            self.temporal_extractor.load_weights(model_weights)
+            print("Saved weights restored!")
+        except Exception:
+            print("Saved weights could not be read.")
+
     def check_prev_trainings(self,model_name,modality):
+        
         try:
             saved_model = tf.keras.models.load_model(model_name)
             #performance_metrics = np.load("data/performance_metrics/" + modality + "/Metrics.npz")
         except Exception:
             print("Saved model could not be read.")
             return None
-        
-        #epochs_completed = performance_metrics['a'].shape[0]
-        #Loss_per_epoch=[]
-        #Accuracy_per_epoch=[]
-        #Val_Loss_per_epoch=[]
-        #Val_Acc_per_epoch=[]
 
-        #for i in range(performance_metrics['a'].shape[0]):
-        #    Loss_per_epoch.append(performance_metrics['a'][i])
-        #    Accuracy_per_epoch.append(performance_metrics['b'][i])
-        #    Val_Loss_per_epoch.append(performance_metrics['c'][i])
-        #    Val_Acc_per_epoch.append(performance_metrics['d'][i])
-
-        #return saved_model,epochs_completed,Loss_per_epoch,Accuracy_per_epoch,Val_Loss_per_epoch,Val_Acc_per_epoch
         return saved_model
 
     def getCorrected(self,Y):
         Y_corrected = np.copy(Y)
         return Y_corrected-1
     
+    def get_model(self):
+        return self.temporal_extractor
+
+    def train_using_generator(self):
+        #for i in range(10):
+        
+        batch_generator = My_Custom_Generator(total_classes=19,batch_size=114,upscale_factor=5)
+        class_wghts = self.set_class_weights()
+
+        print("Learning rate:",self.temporal_extractor.optimizer.learning_rate)
+        self.temporal_extractor.load_weights('verb_weights.h5')
+        self.temporal_extractor.fit_generator(generator = batch_generator,
+                                              class_weight = class_wghts,
+                                              steps_per_epoch = 70,
+                                              epochs = 1)
+                
+        self.temporal_extractor.save_weights('verb_weights1.h5')
+        print("Model save successful!")
+
+        #self.temporal_extractor.save("Verb_Predictors/Verb_Predictor_diff_521_1399_ver_19")
+        
+        #FileNames = df["FileName"]
+        #Labels = df["Verb"]
 
     def retrain_flow(self):
-        L1 = LoadData
+        
         L1 = LoadData()
         L1.train_test_splitNo = self.train_test_split 
         L1.fix_frames = self.fix_frames
         totalSamples = L1.getTotal()
         print("Total samples = ",totalSamples)
+        
         #da = Data_Access()
         #da.random_flag = False
         #da.modality = "OF"
         class_wghts = self.set_class_weights()
         #access_order = da.build_order()
         #self.model.summary()
+        
         saved = self.check_prev_trainings(modality="OF",model_name="Verb_Predictor_diff_521_1399")
         
         if saved==None:
@@ -244,10 +279,6 @@ class learn_optical_flow():
             print("Model save successful!")
             test.test_my_model()
             RVS_Prob_Checker.get_test_metrics()
-            
-
-
-
 
     def train(self):
         L1 = LoadData()
@@ -294,9 +325,6 @@ class learn_optical_flow():
 
             for i in range(0,totalSamples,i+batch_size):
                 print()
-
-
-
 
             while i<totalSamples-1:
 

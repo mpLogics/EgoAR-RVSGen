@@ -34,7 +34,7 @@ def getMinFrameValue():
 config_file = open("config.json")
 config_values = json.load(config_file)["Configuration Values"]
 
-"""
+#"""
 m1 = Model()
 m1.RGB_input_shape = (config_values["train"]["input_shape_x"],
                 config_values["train"]["input_shape_y"],
@@ -67,7 +67,7 @@ session.close()
 #"""
 
 #Training Optical Flow
-#"""
+"""
 config = ConfigProto()
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
@@ -76,7 +76,8 @@ m2 = learn_optical_flow()
 #m2.build_temporal_model()
 m2.convLSTM_model()
 #m2.debug()
-m2.retrain_flow()
+#m2.retrain_flow()
+m2.train_using_generator()
 #m2.train()
 
 

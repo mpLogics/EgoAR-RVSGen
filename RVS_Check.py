@@ -3,7 +3,7 @@ from tensorflow import keras
 from keras import Input
 from keras.models import Sequential
 from keras.layers import Dense,Dropout,Flatten,Input,ConvLSTM2D
-
+from train import Model
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 from keras import backend as bk
@@ -12,7 +12,7 @@ from keras import backend as bk
 import pandas as pd
 from Data import LoadData,Data_Access
 
-#from OpticalFlow import learn_optical_flow
+from OpticalFlow import learn_optical_flow
 import math
 from RVSGen import GenVerbSpace
 import numpy as np
@@ -41,11 +41,29 @@ class RVS_Implement():
         return activation_values
     
     
-    def get_noun_model(self):
-        return keras.models.load_model("Noun_Predictor")
+    def get_noun_model(self,model_weights):
+        m1 = Model()
+        #m1.RGB_input_shape = (config_values["train"]["input_shape_x"],
+        #                config_values["train"]["input_shape_y"],
+        #                config_values["train"]["input_shape_z"]
+        #                )
+        model = m1.Time_Distributed_Model()
+        model.load_weights(model_weights)
+        return model
+
+        #m1.base_trainable = config_values["train"]["base_trainable"]
+        #return keras.models.load_model("model_name")
     
     def get_verb_model(self):
-        return keras.models.load_model("Verb_Predictors/Verb_Predictor_diff_521_1399_ver")
+
+        m1 = learn_optical_flow()
+        m1.convLSTM_model()
+        #print("Loading Weights")
+        m1.temporal_extractor.load_weights('verb_weights.h5')
+        #print("Weights loaded successfully")
+        #model.load_weights("verb_weights.h5")
+        #return keras.models.load_model("Verb_Predictors/Verb_Predictor_diff_521_1399_ver_19")
+        return m1.temporal_extractor
 
         
     def set_verb_rules(self):
