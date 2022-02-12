@@ -129,7 +129,7 @@ class Test_Experiments():
         P_Noun,P_Verb,P_Noun_Verb = rvs_rules.set_verb_rules()
 
         noun_base_model = noun_predictor.get_layer('dense_1').output
-        verb_base_model = verb_predictor.get_layer('dense_1').output 
+        verb_base_model = verb_predictor.get_layer('dense_3').output 
         
         noun_feature_extractor = keras.Model(
             inputs = noun_predictor.input,
