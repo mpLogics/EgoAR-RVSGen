@@ -99,15 +99,16 @@ class Test_Experiments():
     
     def get_action(self,P_Noun_Verb,noun_features,n_args,verb_features,v_args):
         
-        max_rows = len(noun_features)
-        max_cols = len(verb_features)
+        max_rows = 5
+        max_cols = 5
         
         #Obtaining ffv - final feature vector
         ffv = np.zeros((max_rows,max_cols))
-
-        for i in range(len(noun_features)):
-            for j in range(len(verb_features)):
-                ffv[i][j] = P_Noun_Verb[(n_args[i],v_args[j])]*noun_features[i]*verb_features[j]
+        
+        for i in range(max_rows):
+            for j in range(max_cols):
+                #print(P_Noun_Verb[(n_args[i]+1,v_args[j]+1)]*noun_features[i]*verb_features[j])
+                ffv[i][j] = noun_features[n_args[i]]*verb_features[v_args[j]]
         
         predicted_value = np.argmax(ffv)
         i_pred = (int)(predicted_value/max_rows)
@@ -140,11 +141,11 @@ class Test_Experiments():
             outputs = verb_base_model)
         
         noun_loader = LoadData()
-        noun_loader.mode = "test"
+        noun_loader.mode = "train"
         noun_loader.fix_frames = 10
         
         verb_loader = LoadData()
-        verb_loader.mode = "test"
+        verb_loader.mode = "train"
         verb_loader.fix_frames = 5
         
         noun_predictor.summary()
@@ -161,14 +162,14 @@ class Test_Experiments():
 
             try:
                 X_RGB,Y_Noun = noun_loader.read_any_rgb(
-                                                        access_order,
-                                                        start_index=i,end_index=i+batch_size)
+                                                access_order,
+                                                start_index=i,end_index=i+batch_size)
                 X_RGB = np.array(X_RGB)
 
                 X_Flow,Verb = verb_loader.read_any_flow(
-                                                        access_order,
-                                                        start_index = i,end_index = i + batch_size)
-                
+                                                    access_order,
+                                                    start_index = i,end_index = i + batch_size)
+                    
                 noun_pred = noun_feature_extractor.predict(X_RGB)
                 verb_pred = verb_feature_extractor.predict(X_Flow)
 
@@ -180,8 +181,8 @@ class Test_Experiments():
 
                     Noun,Verb = self.get_action(
                         P_Noun_Verb=P_Noun_Verb,
-                        noun_features=noun_pred,n_args=n_args,
-                        verb_features=verb_pred,v_args=v_args)
+                        noun_features=noun_pred[i],n_args=n_args,
+                        verb_features=verb_pred[i],v_args=v_args)
                     
                     Final_Nouns.append(Noun+1)
                     Final_Verbs.append(Verb+1)                
@@ -189,6 +190,10 @@ class Test_Experiments():
             except:
                 print("Error at index",i)
                 err_ctr+=1
+
+            if err_ctr>=5:
+                break
+        
         batch_size = 1
         for i in range(2000,total_samples,1):
             if num_batches % 5 or num_batches % 10 == 0:
@@ -196,14 +201,14 @@ class Test_Experiments():
 
             try:
                 X_RGB,Y_Noun = noun_loader.read_any_rgb(
-                                                        access_order,
-                                                        start_index=i,end_index=i+batch_size)
+                                                access_order,
+                                                start_index=i,end_index=i+batch_size)
                 X_RGB = np.array(X_RGB)
 
                 X_Flow,Verb = verb_loader.read_any_flow(
-                                                        access_order,
-                                                        start_index = i,end_index = i + batch_size)
-                
+                                                    access_order,
+                                                    start_index = i,end_index = i + batch_size)
+                    
                 noun_pred = noun_feature_extractor.predict(X_RGB)
                 verb_pred = verb_feature_extractor.predict(X_Flow)
 
@@ -215,8 +220,8 @@ class Test_Experiments():
 
                     Noun,Verb = self.get_action(
                         P_Noun_Verb=P_Noun_Verb,
-                        noun_features=noun_pred,n_args=n_args,
-                        verb_features=verb_pred,v_args=v_args)
+                        noun_features=noun_pred[i],n_args=n_args,
+                        verb_features=verb_pred[i],v_args=v_args)
                     
                     Final_Nouns.append(Noun+1)
                     Final_Verbs.append(Verb+1)                
