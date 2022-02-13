@@ -97,28 +97,157 @@ class Test_Experiments():
 
         return np.array(Noun_Predicted_top1),np.array(Noun_Predicted_top5)
     
-    def get_action(self,P_Noun_Verb,noun_features,n_args,verb_features,v_args):
+    def get_action(self,P_Noun_Verb,P_Verb,noun_features,n_args,verb_features,v_args,rvs_rules,action_features):
         
         max_rows = 5
         max_cols = 5
-        
+        K_Value = 5
+
         #Obtaining ffv - final feature vector
         ffv = np.zeros((max_rows,max_cols))
         
         for i in range(max_rows):
-            for j in range(max_cols):
-                #print(P_Noun_Verb[(n_args[i]+1,v_args[j]+1)]*noun_features[i]*verb_features[j])
-                ffv[i][j] = noun_features[n_args[i]]*verb_features[v_args[j]]
-        
-        predicted_value = np.argmax(ffv)
-        i_pred = (int)(predicted_value/max_rows)
-        j_pred = predicted_value % max_rows
-        
-        Noun = n_args[i_pred] + 1
-        Verb = v_args[j_pred] + 1
+            rvs_rules.VerbSet = np.array(
+                rvs_rules.rvs_generator.RVSGen(
+                    Noun_Pred=n_args[i]+1,
+                    K_Value=4,
+                    P_Noun_Verb=P_Noun_Verb,
+                    P_Verb=P_Verb))-1
+            
+            activated_values = rvs_rules.custom_activation(
+                x = verb_features,
+                P_Verb=P_Verb)
 
-        return Noun, Verb     
+            rvs_args = activated_values.argsort()[-5:][::-1]
+
+            for j in range(K_Value):
+                ffv[i][j] = verb_features[rvs_args[j]]*noun_features[n_args[i]]
+
+            #print(P_Noun_Verb[(n_args[i]+1,v_args[j]+1)]*noun_features[i]*verb_features[j])
+            #ffv[i][j] = noun_features[n_args[i]]*verb_features[v_args[j]]
+        
+        action_features.append(ffv)
+
+        #predicted_value = np.argmax(ffv)
+        #i_pred = (int)(predicted_value/max_rows)
+        #j_pred = predicted_value % max_rows
+        
+        #Noun = n_args[i_pred] + 1
+        #Verb = v_args[j_pred] + 1
+
+        #return Noun, Verb     
+        return action_features
     
+    def train_action(self,noun_predictor,verb_predictor):
+        df = pd.read_csv("data/Splits/train_split1.csv")
+        gt_action = df["Action"]
+        action_features=[] 
+        total_samples=8299
+        rvs_rules = RVS_Implement()
+        P_Noun,P_Verb,P_Noun_Verb = rvs_rules.set_verb_rules()
+
+        noun_base_model = noun_predictor.get_layer('dense_1').output
+        verb_base_model = verb_predictor.get_layer('dense_3').output 
+
+        noun_feature_extractor = keras.Model(
+            inputs = noun_predictor.input,
+            outputs = noun_base_model)
+
+        verb_feature_extractor = keras.Model(
+            inputs = verb_predictor.input,
+            outputs = verb_base_model)
+
+        noun_loader = LoadData()
+        noun_loader.mode = "train"
+        noun_loader.fix_frames = 10
+        
+        verb_loader = LoadData()
+        verb_loader.mode = "train"
+        verb_loader.fix_frames = 5
+
+        access_order = [i for i in range(total_samples)]
+        batch_size = 150
+        num_batches = 0
+        ctr = 0
+        
+        for i in range(0,batch_size*(int)(total_samples/(batch_size)),batch_size):
+            #"""
+            try:
+                X_RGB,Y_Noun = noun_loader.read_any_rgb(
+                                                    access_order,
+                                                    start_index=i,end_index=i+batch_size)
+                X_RGB = np.array(X_RGB)
+
+                X_Flow,Verb = verb_loader.read_any_flow(
+                                                    access_order,
+                                                    start_index = i,end_index = i + batch_size)
+                        
+                noun_pred = noun_feature_extractor.predict(X_RGB)
+                verb_pred = verb_feature_extractor.predict(X_Flow)
+
+                for j in range(len(noun_pred)):
+                    
+                    # Top 5 noun feature vectors
+                    n_args = noun_pred[j].argsort()[-5:][::-1]
+                    # Top 5 verb feature vectors
+                    v_args = verb_pred[j].argsort()[-5:][::-1]
+
+                    action_features = self.get_action(action_features=action_features,rvs_rules=rvs_rules,
+                        P_Verb=P_Verb,P_Noun_Verb=P_Noun_Verb,
+                        noun_features = noun_pred[j],n_args=n_args,
+                        verb_features = verb_pred[j],v_args=v_args)
+                print(len(action_features))
+                num_batches+=1
+            
+            except:
+                print("Error at index ",i)
+            #"""
+            #num_batches+=1
+            if num_batches % 5 or num_batches % 10 == 0:
+                print("Files read:",i,", Ongoing batch size:",batch_size,", Batches completed:",num_batches)
+
+            
+
+        batch_size_new = 1
+        
+        for i in range(batch_size*(int)(total_samples/(batch_size))+1,total_samples,batch_size_new):
+            #"""
+            try:
+                X_RGB,Y_Noun = noun_loader.read_any_rgb(
+                                                    access_order,
+                                                    start_index=i,end_index=i+batch_size)
+                X_RGB = np.array(X_RGB)
+
+                X_Flow,Verb = verb_loader.read_any_flow(
+                                                    access_order,
+                                                    start_index = i,end_index = i + batch_size)
+                        
+                noun_pred = noun_feature_extractor.predict(X_RGB)
+                verb_pred = verb_feature_extractor.predict(X_Flow)
+
+                for j in range(len(noun_pred)):
+                    
+                    # Top 5 noun feature vectors
+                    n_args = noun_pred[j].argsort()[-5:][::-1]
+                    # Top 5 verb feature vectors
+                    v_args = verb_pred[j].argsort()[-5:][::-1]
+
+                    action_features = self.get_action(action_features=action_features,rvs_rules=rvs_rules,
+                        P_Verb=P_Verb,P_Noun_Verb=P_Noun_Verb,
+                        noun_features=noun_pred[j],n_args=n_args,
+                        verb_features=verb_pred[j],v_args=v_args)
+                num_batches+=1
+            except:
+                print("Error at index",i)
+            
+            #num_batches+=1
+            if num_batches % 5 or num_batches % 10 == 0:
+                print("Files read:",i,", Ongoing batch size:",batch_size_new,", Batches completed:",num_batches)
+
+        return action_features
+        
+
+
     def predict_action(self,noun_predictor,verb_predictor,total_samples):
 
         #noun_predictor.load_weights("model_weights.h5")
@@ -127,6 +256,7 @@ class Test_Experiments():
         Final_Verbs=[]
 
         rvs_rules = RVS_Implement()
+
         P_Noun,P_Verb,P_Noun_Verb = rvs_rules.set_verb_rules()
 
         noun_base_model = noun_predictor.get_layer('dense_1').output
@@ -451,6 +581,19 @@ class Test_Experiments():
 
         return np.array(Verb_Predicted_top1),np.array(Verb_Predicted_top5)
         
+def train_for_action():
+    t1 = Test_Experiments()
+    rvs_rules=RVS_Implement()
+
+    noun_predictor = rvs_rules.get_noun_model("model_weight_633s.h5")
+    verb_predictor = rvs_rules.get_verb_model()
+
+    action_features = t1.train_action(
+        noun_predictor=noun_predictor,
+        verb_predictor=verb_predictor)
+    
+    np.savez("Actions.npz",a = action_features)
+
 def test_my_model():
     total_samples = pd.read_csv("data/Splits/test_split1.csv")["FileName"].shape[0]
 
@@ -487,4 +630,4 @@ def test_my_model():
 
 #Results.to_csv("data/results/Results.csv")
 #"""
-test_my_model()
+train_for_action()
