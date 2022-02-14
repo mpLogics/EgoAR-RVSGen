@@ -104,8 +104,10 @@ class Test_Experiments():
         K_Value = 5
 
         #Obtaining ffv - final feature vector
-        ffv = np.zeros((max_rows,max_cols))
-        
+        #ffv = np.zeros((max_rows,max_cols))
+        n=[]
+        v=[]
+
         for i in range(max_rows):
             rvs_rules.VerbSet = np.array(
                 rvs_rules.rvs_generator.RVSGen(
@@ -119,13 +121,20 @@ class Test_Experiments():
                 P_Verb=P_Verb)
 
             rvs_args = activated_values.argsort()[-5:][::-1]
-
+            
+            #print(verb_features[0])
+            
             for j in range(K_Value):
-                ffv[i][j] = verb_features[rvs_args[j]]*noun_features[n_args[i]]
+                v.append(verb_features[rvs_args[j]])
+                n.append(noun_features[n_args[i]])
+
+            ffv = np.concatenate((np.array(v),np.array(n)))
+
+                #ffv[i][j] = ((verb_features[rvs_args[j]],noun_features[n_args[i]]))
 
             #print(P_Noun_Verb[(n_args[i]+1,v_args[j]+1)]*noun_features[i]*verb_features[j])
             #ffv[i][j] = noun_features[n_args[i]]*verb_features[v_args[j]]
-        
+            
         action_features.append(ffv)
 
         #predicted_value = np.argmax(ffv)
