@@ -13,7 +13,7 @@ The major contributions of the proposed method can be summarized as follows:
 - We apply a ConvLSTM model to predict the verbs, instead of using a simple CNN.
 
 ## Code Usage
-- Clone the repository and prepare the EGTEA dataset. 
+- Clone the repository and prepare the EGTEA dataset. (To be completed)
 
 
 ## Technology Stack 
